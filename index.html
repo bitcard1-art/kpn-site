@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KPN — Korean Persona Network</title>
+<meta name="description" content="KPN(Korean Persona Network)은 AI 에이전트가 한국 관련 판단을 내릴 때 환각·과신·문화적 오판을 줄이는, 사람이 책임지는 검증 레이어입니다." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  :root{
+    --ink:#0b1622;          /* deep navy ground */
+    --ink-2:#0f1f30;
+    --panel:#13263a;
+    --panel-2:#16293f;
+    --line:#22405c;
+    --hair:#1b3349;
+    --paper:#eef2ee;        /* hanji off-white */
+    --muted:#8aa2b6;
+    --muted-2:#5f7a90;
+    --answer:#2fb8a8;       /* teal = accountable answer */
+    --hold:#f2b54b;         /* amber = HOLD */
+    --refuse:#e3624c;       /* red = refuse */
+    --answer-dim:rgba(47,184,168,.14);
+    --hold-dim:rgba(242,181,75,.14);
+    --radius:14px;
+    --radius-sm:9px;
+    --shadow:0 24px 70px rgba(0,0,0,.45);
+    --maxw:1180px;
+    --display:"Space Grotesk","Pretendard",system-ui,sans-serif;
+    --body:"Pretendard","Space Grotesk",system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--ink);color:var(--paper);
+    font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;cursor:pointer}
+  h1,h2,h3,p{margin:0}
+  .wrap{width:min(var(--maxw),calc(100% - 44px));margin-inline:auto}
+  .mono{font-family:var(--mono)}
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--muted);display:inline-flex;align-items:center;gap:9px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--answer)}
+
+  /* ---------- ambient grid ---------- */
+  .field{
+    position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+    background:
+      radial-gradient(1100px 700px at 78% -8%, rgba(47,184,168,.10), transparent 60%),
+      radial-gradient(900px 600px at 6% 108%, rgba(242,181,75,.07), transparent 55%),
+      linear-gradient(transparent 0 39px, rgba(255,255,255,.022) 39px 40px),
+      linear-gradient(90deg, transparent 0 39px, rgba(255,255,255,.022) 39px 40px);
+    background-size:auto,auto,40px 40px,40px 40px;
+  }
+
+  /* ---------- nav ---------- */
+  .nav{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);
+    background:linear-gradient(180deg,rgba(11,22,34,.92),rgba(11,22,34,.66));
+    border-bottom:1px solid var(--hair)}
+  .nav-in{height:70px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:700}
+  .brand .mk{
+    width:38px;height:38px;display:grid;place-items:center;border-radius:10px;
+    background:var(--paper);color:var(--ink);font-size:13px;letter-spacing:.04em;font-weight:700;
+    box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;
+  }
+  .brand .full{font-size:15px;letter-spacing:.01em}
+  .brand .sub{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;font-weight:500}
+  .nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--muted)}
+  .nav-links a{transition:color .18s}
+  .nav-links a:hover{color:var(--paper)}
+  .nav-cta{display:flex;align-items:center;gap:10px}
+  .lang{
+    height:38px;padding:0 13px;border-radius:var(--radius-sm);border:1px solid var(--line);
+    background:transparent;color:var(--paper);font-family:var(--mono);font-size:12px;letter-spacing:.05em;
+    display:inline-flex;align-items:center;gap:7px;transition:border-color .18s,color .18s;
+  }
+  .lang:hover{border-color:var(--answer)}
+  .lang .ko-dot{width:6px;height:6px;border-radius:50%;background:var(--answer)}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 20px;
+    border-radius:var(--radius-sm);font-weight:600;font-size:14.5px;border:1px solid transparent;
+    transition:transform .16s ease,box-shadow .16s ease,background .16s,color .16s;white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn-primary{background:var(--answer);color:#04231f;box-shadow:0 10px 30px rgba(47,184,168,.3)}
+  .btn-ghost{border-color:var(--line);color:var(--paper);background:rgba(255,255,255,.02)}
+  .btn-ghost:hover{border-color:var(--answer);color:#fff}
+  .btn-lg{height:52px;padding:0 26px;font-size:15.5px}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;z-index:1;padding:64px 0 86px}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(380px,.96fr);gap:54px;align-items:center}
+  h1{font-family:var(--display);font-weight:700;letter-spacing:-.02em;line-height:1.04;
+    font-size:clamp(40px,6vw,76px);margin-top:20px}
+  h1 .hl{position:relative;white-space:nowrap}
+  h1 .hl::after{content:"";position:absolute;left:-2px;right:-2px;bottom:.07em;height:.34em;
+    background:var(--answer-dim);z-index:-1;border-radius:3px}
+  .lede{margin-top:24px;max-width:560px;font-size:clamp(16px,1.4vw,19px);color:#c4d2dd}
+  .acro{margin-top:16px;font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.02em}
+  .acro b{color:var(--answer);font-weight:500}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:13px;margin-top:34px}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+  .pill{font-family:var(--mono);font-size:12px;padding:7px 12px;border-radius:999px;
+    border:1px solid var(--hair);color:var(--muted);background:rgba(255,255,255,.02)}
+  .pill b{color:var(--paper);font-weight:500}
+
+  /* ---------- signature: judgment gauge console ---------- */
+  .console{
+    position:relative;border:1px solid var(--line);border-radius:var(--radius);
+    background:linear-gradient(180deg,var(--panel),var(--ink-2));box-shadow:var(--shadow);overflow:hidden;
+  }
+  .console-bar{height:42px;display:flex;align-items:center;gap:9px;padding:0 16px;
+    border-bottom:1px solid var(--hair);background:rgba(0,0,0,.22)}
+  .tdot{width:10px;height:10px;border-radius:50%;background:var(--hold)}
+  .tdot.r{background:var(--refuse)}.tdot.g{background:var(--answer)}
+  .console-bar .tag{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted-2);letter-spacing:.08em}
+  .gauge-wrap{padding:26px 26px 22px}
+  .gauge{position:relative;width:100%;aspect-ratio:2/1;max-height:188px}
+  .gauge svg{width:100%;height:100%;display:block;overflow:visible}
+  .needle{transform-origin:160px 150px;transition:transform .12s linear}
+  .verdict{
+    margin-top:6px;display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:13px 16px;border-radius:var(--radius-sm);font-family:var(--mono);font-size:13px;
+    border:1px solid var(--hair);background:rgba(0,0,0,.25);transition:border-color .3s,background .3s;
+  }
+  .verdict .state{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.04em}
+  .verdict .lamp{width:11px;height:11px;border-radius:50%;background:var(--muted-2);box-shadow:0 0 0 0 rgba(0,0,0,0);transition:.3s}
+  .verdict .conf{color:var(--muted)}
+  .verdict[data-state="answer"]{border-color:rgba(47,184,168,.5);background:var(--answer-dim)}
+  .verdict[data-state="answer"] .lamp{background:var(--answer);box-shadow:0 0 14px 2px rgba(47,184,168,.7)}
+  .verdict[data-state="answer"] .state{color:var(--answer)}
+  .verdict[data-state="hold"]{border-color:rgba(242,181,75,.5);background:var(--hold-dim)}
+  .verdict[data-state="hold"] .lamp{background:var(--hold);box-shadow:0 0 14px 2px rgba(242,181,75,.7)}
+  .verdict[data-state="hold"] .state{color:var(--hold)}
+  .console-log{border-top:1px solid var(--hair);padding:15px 18px 18px;font-family:var(--mono);font-size:12.5px;background:rgba(0,0,0,.16)}
+  .logline{display:flex;gap:12px;padding:3px 0;color:#aebfce;opacity:0;transform:translateY(4px);animation:logIn .4s forwards}
+  .logline .k{color:var(--answer);min-width:84px}
+  .logline.hold .k{color:var(--hold)}
+  @keyframes logIn{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.logline{opacity:1;transform:none;animation:none}.needle{transition:none}}
+
+  /* ---------- section frame ---------- */
+  section{position:relative;z-index:1;padding:96px 0}
+  .s-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.62fr);gap:38px;align-items:end;margin-bottom:46px}
+  h2{font-family:var(--display);font-weight:600;letter-spacing:-.015em;line-height:1.1;font-size:clamp(28px,3.6vw,46px)}
+  .s-head p{color:var(--muted);font-size:16.5px;max-width:460px}
+
+  /* ---------- era ledger ---------- */
+  .ledger{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--ink-2)}
+  .ledger-row{display:grid;grid-template-columns:120px 1fr 1fr;align-items:center;gap:18px;
+    padding:20px 24px;border-bottom:1px solid var(--hair);transition:background .2s}
+  .ledger-row:last-child{border-bottom:0}
+  .ledger-row .era{font-family:var(--mono);font-size:12px;color:var(--muted-2);letter-spacing:.08em}
+  .ledger-row .verb{font-family:var(--display);font-size:clamp(18px,2vw,24px);font-weight:600}
+  .ledger-row .desc{color:var(--muted);font-size:14.5px}
+  .ledger-row.now{background:linear-gradient(90deg,var(--answer-dim),transparent)}
+  .ledger-row.now .era{color:var(--answer)}
+  .ledger-row.now .verb{color:#fff}
+  .ledger-row.now .verb::after{content:"●";color:var(--answer);font-size:10px;vertical-align:middle;margin-left:10px;animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+  /* ---------- stats band ---------- */
+  .band{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),var(--ink-2));
+    padding:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+  .metric .n{font-family:var(--display);font-weight:700;font-size:clamp(34px,4.4vw,56px);line-height:1;
+    background:linear-gradient(180deg,#fff,var(--answer));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .metric .l{margin-top:12px;color:var(--muted);font-size:14.5px}
+
+  /* ---------- comparison ---------- */
+  .cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .col{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:var(--ink-2)}
+  .col.win{background:linear-gradient(180deg,var(--answer-dim),var(--ink-2));border-color:rgba(47,184,168,.45)}
+  .col h3{font-family:var(--display);font-size:18px;font-weight:600;margin-bottom:6px}
+  .col .tagrole{font-family:var(--mono);font-size:11px;color:var(--muted-2);letter-spacing:.08em;text-transform:uppercase}
+  .clist{margin-top:18px;display:grid;gap:11px}
+  .ci{display:flex;gap:11px;align-items:flex-start;font-size:14.5px;color:#bccadb}
+  .ci .m{flex:0 0 19px;height:19px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;
+    background:rgba(255,255,255,.06);color:var(--muted)}
+  .ci.yes .m{background:var(--answer);color:#04231f}
+  .ci.no .m{background:rgba(227,98,76,.18);color:var(--refuse)}
+  .ci.mid .m{background:rgba(242,181,75,.18);color:var(--hold)}
+
+  /* ---------- flow (real sequence -> numbered ok) ---------- */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--ink-2)}
+  .fstep{padding:24px 20px;border-right:1px solid var(--hair);position:relative;transition:background .2s}
+  .fstep:last-child{border-right:0}
+  .fstep:hover{background:rgba(47,184,168,.05)}
+  .fstep .i{font-family:var(--mono);font-size:12px;color:var(--answer);letter-spacing:.1em}
+  .fstep h3{font-family:var(--display);font-size:17px;font-weight:600;margin-top:14px}
+  .fstep p{margin-top:9px;color:var(--muted);font-size:13.5px}
+  .fstep::after{content:"→";position:absolute;right:-9px;top:28px;color:var(--line);font-size:15px;z-index:2;background:var(--ink-2);padding:0 1px}
+  .fstep:last-child::after{display:none}
+
+  /* ---------- evidence ---------- */
+  .ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .ev{border:1px solid var(--line);border-radius:var(--radius);padding:26px;background:var(--ink-2)}
+  .ev .badge{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    padding:5px 10px;border-radius:999px;display:inline-block}
+  .ev.answer .badge{background:var(--answer-dim);color:var(--answer)}
+  .ev.hold .badge{background:var(--hold-dim);color:var(--hold)}
+  .ev h3{font-family:var(--display);font-size:21px;font-weight:600;margin-top:14px}
+  .qa{margin-top:18px;display:grid;gap:10px}
+  .qa .row{padding:13px 15px;border-radius:var(--radius-sm);background:rgba(0,0,0,.22);border-left:3px solid var(--hair)}
+  .qa .q{border-left-color:var(--muted-2)}
+  .ev.answer .qa .a{border-left-color:var(--answer)}
+  .ev.hold .qa .a{border-left-color:var(--hold)}
+  .qa .lab{font-family:var(--mono);font-size:11px;color:var(--muted-2);display:block;margin-bottom:5px;letter-spacing:.06em}
+  .qa .row p{font-size:14.5px;color:#cdd9e4}
+  .ev-quote{margin-top:26px;font-family:var(--display);font-size:clamp(18px,2.1vw,25px);font-weight:500;
+    line-height:1.4;letter-spacing:-.01em;color:#fff;max-width:880px;padding-left:22px;
+    border-left:3px solid var(--hold)}
+  /* north-america walkthrough */
+  .walk{margin-top:18px;border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);overflow:hidden}
+  .walk-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 22px;border-bottom:1px solid var(--hair);background:rgba(0,0,0,.18)}
+  .walk-head .flag{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    padding:5px 11px;border-radius:999px;background:rgba(47,184,168,.12);color:var(--answer);border:1px solid rgba(47,184,168,.3)}
+  .walk-head h3{font-family:var(--display);font-size:18px;font-weight:600}
+  .walk-head .who{font-family:var(--mono);font-size:12px;color:var(--muted-2);margin-left:auto}
+  .turns{padding:20px 22px;display:grid;gap:14px}
+  .turn{display:grid;gap:6px}
+  .turn .from{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted-2)}
+  .turn.ask .bub{background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:4px 14px 14px 14px;padding:13px 16px;color:#dde7ef;font-size:14.5px;max-width:80%}
+  .turn.kpn{justify-items:end}
+  .turn.kpn .from{color:var(--answer)}
+  .turn.kpn .bub{background:var(--answer-dim);border:1px solid rgba(47,184,168,.4);border-radius:14px 4px 14px 14px;padding:13px 16px;color:#eaf6f4;font-size:14.5px;max-width:80%}
+  .turn.kpn .bub .verdict-tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+    padding:2px 8px;border-radius:999px;background:var(--answer);color:#04231f;margin-bottom:8px;font-weight:700}
+  .turn.kpn.hold .bub{background:var(--hold-dim);border-color:rgba(242,181,75,.45);color:#fbeccb}
+  .turn.kpn.hold .from{color:var(--hold)}
+  .turn.kpn.hold .bub .verdict-tag{background:var(--hold)}
+  .walk-foot{padding:13px 22px;border-top:1px solid var(--hair);font-family:var(--mono);font-size:11.5px;color:var(--muted-2);display:flex;gap:16px;flex-wrap:wrap}
+  .walk-foot b{color:var(--muted)}
+  @media (max-width:600px){.turn.ask .bub,.turn.kpn .bub{max-width:100%}}
+
+  /* ---------- use cases ---------- */
+  .cases{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .case{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:var(--ink-2);transition:transform .2s,border-color .2s}
+  .case:hover{transform:translateY(-4px);border-color:var(--answer)}
+  .case .ic{font-family:var(--mono);font-size:12px;color:var(--answer)}
+  .case h3{font-family:var(--display);font-size:19px;font-weight:600;margin-top:14px}
+  .case p{margin-top:11px;color:var(--muted);font-size:14px}
+
+  /* ---------- council ---------- */
+  .council-intro{max-width:760px;color:#c4d2dd;font-size:16.5px;margin-bottom:8px}
+  .council-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:34px 0}
+  .cstat{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);padding:24px}
+  .cstat .n{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,46px);line-height:1;color:var(--answer)}
+  .cstat .l{margin-top:10px;color:var(--muted);font-size:14px}
+  .council-sub{font-family:var(--display);font-size:20px;font-weight:600;margin:42px 0 18px}
+  /* eligibility */
+  .elig{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .elig .e{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);padding:20px;text-align:left}
+  .elig .e .num{font-family:var(--mono);font-size:12px;color:var(--answer);letter-spacing:.1em}
+  .elig .e b{display:block;font-family:var(--display);font-size:16px;font-weight:600;margin:12px 0 7px}
+  .elig .e span{color:var(--muted);font-size:13px;line-height:1.5}
+  /* domains */
+  .domains{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .dom{border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--ink-2);padding:16px 18px;transition:border-color .2s,transform .2s}
+  .dom:hover{border-color:var(--answer);transform:translateY(-3px)}
+  .dom b{display:block;font-family:var(--display);font-size:15px;font-weight:600}
+  .dom span{display:block;margin-top:6px;color:var(--muted-2);font-size:12.5px;line-height:1.5}
+  /* verification steps */
+  .vsteps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--ink-2)}
+  .vstep{padding:24px 22px;border-right:1px solid var(--hair);position:relative}
+  .vstep:last-child{border-right:0}
+  .vstep .s{font-family:var(--mono);font-size:11px;color:var(--answer);letter-spacing:.1em}
+  .vstep h4{font-family:var(--display);font-size:17px;font-weight:600;margin:12px 0 9px}
+  .vstep p{color:var(--muted);font-size:13.5px}
+  .vstep .tags{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
+  .vstep .tags span{font-family:var(--mono);font-size:10.5px;color:var(--muted-2);padding:3px 8px;border:1px solid var(--hair);border-radius:999px}
+  .vstep::after{content:"→";position:absolute;right:-9px;top:30px;color:var(--line);font-size:15px;z-index:2;background:var(--ink-2);padding:0 1px}
+  .vstep:last-child::after{display:none}
+  /* persona card sample */
+  .pcard-wrap{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:32px;align-items:center}
+  .pcard{border:1px solid rgba(47,184,168,.4);border-radius:16px;overflow:hidden;
+    background:linear-gradient(150deg,var(--panel),var(--ink-2));box-shadow:var(--shadow)}
+  .pcard .pc-top{padding:16px 20px;border-bottom:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.2)}
+  .pcard .pc-top .brand-s{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--muted)}
+  .pcard .pc-top .url{font-family:var(--mono);font-size:10px;color:var(--answer)}
+  .pcard .pc-body{padding:22px 20px}
+  .pcard .role{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+  .pcard .name{font-family:var(--display);font-size:28px;font-weight:700;margin:6px 0 4px;letter-spacing:.04em}
+  .pcard .title{color:#c4d2dd;font-size:14px}
+  .pcard .meta{margin-top:14px;color:var(--muted);font-size:12.5px;font-family:var(--mono)}
+  .pcard .did{margin-top:16px;padding:12px 14px;border-radius:var(--radius-sm);background:rgba(47,184,168,.1);border:1px solid rgba(47,184,168,.3);
+    font-family:var(--mono);font-size:11.5px;color:#bfeee8;display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:space-between}
+  .pcard .did .ok{color:var(--answer);font-weight:700}
+  .pc-feats{display:grid;gap:13px}
+  .pc-feat{display:flex;gap:12px;align-items:flex-start}
+  .pc-feat .fi{flex:0 0 28px;height:28px;border-radius:8px;background:var(--answer-dim);color:var(--answer);
+    display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:700}
+  .pc-feat b{font-family:var(--display);font-size:15px;font-weight:600}
+  .pc-feat span{display:block;margin-top:3px;color:var(--muted);font-size:13.5px}
+  /* benefits */
+  .benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .benefit{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);padding:22px}
+  .benefit b{display:block;font-family:var(--display);font-size:16px;font-weight:600;margin-bottom:8px}
+  .benefit span{color:var(--muted);font-size:13.5px;line-height:1.55}
+  /* council CTA */
+  .council-invite{margin-top:34px;border:1px solid rgba(47,184,168,.4);border-radius:16px;padding:34px;
+    background:linear-gradient(135deg,rgba(47,184,168,.1),var(--ink-2));display:grid;grid-template-columns:minmax(0,1fr) auto;gap:26px;align-items:center}
+  .council-invite h3{font-family:var(--display);font-size:clamp(20px,2.4vw,28px);font-weight:600}
+  .council-invite p{margin-top:12px;color:#c4d2dd;font-size:15px;max-width:620px}
+  .council-invite .sign{margin-top:16px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .council-invite .sign b{color:var(--paper)}
+
+  /* ---------- network ---------- */
+  .net{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:42px;align-items:center}
+  .netmap{position:relative;width:100%;aspect-ratio:1/1;max-width:480px;margin-inline:auto}
+  .netmap svg.links{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+  .nd{position:absolute;transform:translate(-50%,-50%);z-index:2;font-family:var(--display);font-weight:600;
+    padding:10px 15px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:14px;
+    white-space:nowrap;transition:transform .25s,border-color .25s,background .25s;cursor:default}
+  .nd:hover{border-color:var(--answer);transform:translate(-50%,-50%) scale(1.08)}
+  .nd.core{background:var(--answer);color:#04231f;border-color:var(--answer);width:104px;height:104px;border-radius:50%;
+    display:grid;place-items:center;font-size:20px;box-shadow:0 0 0 8px rgba(47,184,168,.1),0 0 48px rgba(47,184,168,.35)}
+  .nl{display:grid;gap:14px}
+  .nl .item{padding:18px 20px;border:1px solid var(--line);border-left:3px solid var(--refuse);border-radius:0 var(--radius-sm) var(--radius-sm) 0;background:var(--ink-2)}
+  .nl .item b{font-family:var(--display);font-size:15.5px}
+  .nl .item span{display:block;margin-top:5px;color:var(--muted);font-size:13.5px}
+
+  /* ---------- cta ---------- */
+  .cta{position:relative;z-index:1;padding:90px 0}
+  .cta-box{border:1px solid var(--line);border-radius:18px;padding:48px;
+    background:linear-gradient(135deg,rgba(47,184,168,.12),var(--ink-2));
+    display:grid;grid-template-columns:minmax(0,1fr) auto;gap:30px;align-items:center}
+  .cta-box h2{font-size:clamp(24px,3vw,38px)}
+  .cta-box p{margin-top:14px;color:#c4d2dd;max-width:560px;font-size:16px}
+
+  footer{position:relative;z-index:1;border-top:1px solid var(--hair);padding:30px 0;color:var(--muted-2);font-size:13.5px}
+  .foot-in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono)}
+
+  :focus-visible{outline:2px solid var(--answer);outline-offset:3px;border-radius:4px}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:980px){
+    .nav-links{display:none}
+    .hero-grid,.s-head,.net,.cta-box{grid-template-columns:1fr}
+    .hero{padding-top:46px}
+    .band{grid-template-columns:1fr;gap:24px}
+    .cmp,.ev-grid,.cases{grid-template-columns:1fr 1fr}
+    .elig{grid-template-columns:1fr 1fr 1fr}
+    .domains,.benefits{grid-template-columns:1fr 1fr}
+    .vsteps{grid-template-columns:1fr}
+    .vstep{border-right:0;border-bottom:1px solid var(--hair)}
+    .vstep:last-child{border-bottom:0}
+    .vstep::after{display:none}
+    .council-stats{grid-template-columns:1fr}
+    .pcard-wrap,.council-invite{grid-template-columns:1fr}
+    .flow{grid-template-columns:1fr 1fr}
+    .fstep::after{display:none}
+    .fstep:nth-child(odd){border-right:1px solid var(--hair)}
+    .ledger-row{grid-template-columns:90px 1fr;row-gap:6px}
+    .ledger-row .desc{grid-column:2}
+    .cta-box{text-align:left}
+  }
+  @media (max-width:600px){
+    .wrap{width:min(100% - 30px,var(--maxw))}
+    .brand .full{display:none}
+    .nav-in{height:64px}
+    .btn{height:42px;padding:0 15px;font-size:13.5px}
+    .lang{height:42px}
+    section{padding:64px 0}
+    .cmp,.ev-grid,.cases,.flow{grid-template-columns:1fr}
+    .elig,.domains,.benefits{grid-template-columns:1fr}
+    .fstep{border-right:0;border-bottom:1px solid var(--hair)}
+    .fstep:last-child{border-bottom:0}
+    .band,.cta-box{padding:28px}
+    .acro{font-size:12px}
+    .netmap{max-width:340px}
+  }
+</style>
+</head>
+<body>
+<div class="field" aria-hidden="true"></div>
+
+<nav class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="KPN home">
+      <span class="mk">KPN</span>
+      <span class="full">Korean Persona Network
+        <span class="sub" data-ko="검증된 판단 레이어" data-en="Verified judgment layer">검증된 판단 레이어</span>
+      </span>
+    </a>
+    <div class="nav-links">
+      <a href="#why" data-ko="왜 지금" data-en="Why now">왜 지금</a>
+      <a href="#architecture" data-ko="작동 방식" data-en="How it works">작동 방식</a>
+      <a href="#evidence" data-ko="판단 예시" data-en="Evidence">판단 예시</a>
+      <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
+      <a href="#network" data-ko="네트워크" data-en="Network">네트워크</a>
+    </div>
+    <div class="nav-cta">
+      <button class="lang" id="lang" type="button" aria-label="Switch to English">
+        <span class="ko-dot"></span><span id="langlabel">EN</span>
+      </button>
+      <a class="btn btn-primary" href="#contact" data-ko="파일럿 문의" data-en="Request pilot">파일럿 문의</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <!-- HERO -->
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow" data-ko="에이전트 판단 인프라" data-en="Agent judgment infrastructure">에이전트 판단 인프라</span>
+        <h1>
+          <span data-ko="확신할 수 없을 땐," data-en="When it can't be sure,">확신할 수 없을 땐,</span><br>
+          <span class="hl" data-ko="멈추는 AI" data-en="AI that stops">멈추는 AI</span>
+        </h1>
+        <p class="lede" data-ko="KPN은 한국 관련 판단을 내리는 AI 에이전트의 환각·과신·문화적 오판을 줄입니다. 모든 호출은 근거 있는 답변, HOLD, DID 서명, auditId 중 하나로 책임 있게 끝납니다." data-en="KPN reduces hallucination, overconfidence, and cultural misjudgment in AI agents making Korea-related decisions. Every call ends accountably — a grounded answer, a HOLD, a DID signature, an auditId.">KPN은 한국 관련 판단을 내리는 AI 에이전트의 환각·과신·문화적 오판을 줄입니다. 모든 호출은 근거 있는 답변, HOLD, DID 서명, auditId 중 하나로 책임 있게 끝납니다.</p>
+        <p class="acro" data-ko="KPN = <b>K</b>orean <b>P</b>ersona <b>N</b>etwork · 대한민국 페르소나 네트워크" data-en="KPN = <b>K</b>orean <b>P</b>ersona <b>N</b>etwork">KPN = <b>K</b>orean <b>P</b>ersona <b>N</b>etwork · 대한민국 페르소나 네트워크</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="#architecture" data-ko="작동 방식 보기" data-en="See how it works">작동 방식 보기</a>
+          <a class="btn btn-ghost btn-lg" href="#evidence" data-ko="실제 판단 예시" data-en="Real examples">실제 판단 예시</a>
+        </div>
+        <div class="pills">
+          <span class="pill"><b>DID</b> <span data-ko="서명" data-en="signature">서명</span></span>
+          <span class="pill">HOLD <span data-ko="on uncertainty" data-en="on uncertainty">on uncertainty</span></span>
+          <span class="pill">execute:<b>false</b></span>
+          <span class="pill"><b>auditId</b></span>
+          <span class="pill">x402 <span data-ko="지원" data-en="ready">지원</span></span>
+        </div>
+      </div>
+
+      <!-- SIGNATURE: live judgment gauge -->
+      <div class="console" aria-label="KPN judgment gauge">
+        <div class="console-bar">
+          <span class="tdot"></span><span class="tdot r"></span><span class="tdot g"></span>
+          <span class="tag mono">kpn.verify()</span>
+        </div>
+        <div class="gauge-wrap">
+          <div class="gauge">
+            <svg viewBox="0 0 320 168" role="img" aria-label="confidence gauge">
+              <!-- track -->
+              <path d="M30 150 A130 130 0 0 1 290 150" fill="none" stroke="#1b3349" stroke-width="16" stroke-linecap="round"/>
+              <!-- refuse zone -->
+              <path d="M30 150 A130 130 0 0 1 73 64" fill="none" stroke="#e3624c" stroke-width="16" stroke-linecap="round" opacity=".55"/>
+              <!-- hold zone -->
+              <path d="M73 64 A130 130 0 0 1 160 20" fill="none" stroke="#f2b54b" stroke-width="16" stroke-linecap="round" opacity=".55"/>
+              <!-- answer zone -->
+              <path d="M160 20 A130 130 0 0 1 290 150" fill="none" stroke="#2fb8a8" stroke-width="16" stroke-linecap="round" opacity=".75"/>
+              <!-- threshold mark -->
+              <line x1="160" y1="34" x2="160" y2="6" stroke="#eef2ee" stroke-width="2"/>
+              <text x="160" y="-2" fill="#8aa2b6" font-size="9" text-anchor="middle" font-family="JetBrains Mono">HOLD ▲</text>
+              <g class="needle" id="needle">
+                <line x1="160" y1="150" x2="160" y2="46" stroke="#eef2ee" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="160" cy="150" r="8" fill="#eef2ee"/>
+                <circle cx="160" cy="150" r="3.4" fill="#0b1622"/>
+              </g>
+            </svg>
+          </div>
+          <div class="verdict" id="verdict" data-state="answer">
+            <span class="state"><span class="lamp"></span><span id="verdict-label">ANSWER</span></span>
+            <span class="conf mono">confidence <b id="conf">0.86</b></span>
+          </div>
+        </div>
+        <div class="console-log" id="log" aria-hidden="true"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- WHY -->
+  <section id="why">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="왜 지금인가" data-en="Why now">왜 지금인가</span>
+          <h2 style="margin-top:16px" data-ko="더 많은 답이 아니라, 책임이 필요합니다" data-en="Not more answers — accountability">더 많은 답이 아니라, 책임이 필요합니다</h2>
+        </div>
+        <p data-ko="에이전트가 추천하고 협상하고 실행하기 시작하면 환각은 불편이 아니라 책임 리스크가 됩니다. KPN은 LLM과 경쟁하지 않고, 판단의 경계선을 더합니다." data-en="Once agents recommend, negotiate, and act, hallucination stops being an inconvenience and becomes a liability. KPN doesn't compete with LLMs — it adds a boundary for judgment.">에이전트가 추천하고 협상하고 실행하기 시작하면 환각은 불편이 아니라 책임 리스크가 됩니다. KPN은 LLM과 경쟁하지 않고, 판단의 경계선을 더합니다.</p>
+      </div>
+      <div class="ledger">
+        <div class="ledger-row"><span class="era mono">SEARCH ERA</span><span class="verb" data-ko="정보를 찾는다" data-en="Find information">정보를 찾는다</span><span class="desc" data-ko="질의에 맞는 문서를 돌려준다" data-en="Returns documents that match the query">질의에 맞는 문서를 돌려준다</span></div>
+        <div class="ledger-row"><span class="era mono">LLM ERA</span><span class="verb" data-ko="답을 생성한다" data-en="Generate answers">답을 생성한다</span><span class="desc" data-ko="그럴듯한 답을 만들어낸다" data-en="Produces a plausible answer">그럴듯한 답을 만들어낸다</span></div>
+        <div class="ledger-row"><span class="era mono">AGENT ERA</span><span class="verb" data-ko="결정을 내린다" data-en="Make decisions">결정을 내린다</span><span class="desc" data-ko="추천하고 협상하고 실행한다" data-en="Recommends, negotiates, executes">추천하고 협상하고 실행한다</span></div>
+        <div class="ledger-row now"><span class="era mono">NEXT ERA</span><span class="verb" data-ko="판단을 검증한다" data-en="Verify judgment">판단을 검증한다</span><span class="desc" data-ko="확신이 책임질 수 없으면 멈춘다" data-en="Stops when confidence can't be owned">확신이 책임질 수 없으면 멈춘다</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARKET -->
+  <section id="market">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="시장" data-en="Market">시장</span>
+          <h2 style="margin-top:16px" data-ko="빠르게 커지는 시장 위의 새 레이어" data-en="A new layer over a fast-growing market">빠르게 커지는 시장 위의 새 레이어</h2>
+        </div>
+        <p data-ko="AI 거버넌스·신뢰·설명가능성·컴플라이언스·휴먼인더루프 예산이 만나는 지점에 KPN이 있습니다." data-en="KPN sits where AI governance, trust, explainability, compliance, and human-in-the-loop budgets converge.">AI 거버넌스·신뢰·설명가능성·컴플라이언스·휴먼인더루프 예산이 만나는 지점에 KPN이 있습니다.</p>
+      </div>
+      <div class="band">
+        <div class="metric"><div class="n">$47B+</div><div class="l" data-ko="2030년 AI 에이전트 시장 전망 (연 ~43% 성장)" data-en="Projected AI agent market by 2030 (~43% CAGR)">2030년 AI 에이전트 시장 전망 (연 ~43% 성장)</div></div>
+        <div class="metric"><div class="n">$5–7B</div><div class="l" data-ko="2030년 AI 거버넌스·신뢰 인접 시장" data-en="Adjacent AI governance & trust market by 2030">2030년 AI 거버넌스·신뢰 인접 시장</div></div>
+        <div class="metric"><div class="n">~95%</div><div class="l" data-ko="전통 컨설팅 대비 낮은 비용 구조" data-en="Lower-cost structure than traditional consulting">전통 컨설팅 대비 낮은 비용 구조</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section id="compare">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="포지셔닝" data-en="Positioning">포지셔닝</span>
+          <h2 style="margin-top:16px" data-ko="기존 AI 플랫폼만으로는 부족합니다" data-en="Existing AI platforms aren't enough">기존 AI 플랫폼만으로는 부족합니다</h2>
+        </div>
+        <p data-ko="KPN은 답변 생성 위에 한국 맥락·사람의 책임·감사 추적·불확실성 보류를 더합니다." data-en="On top of answer generation, KPN adds Korean context, human accountability, audit trails, and uncertainty holds.">KPN은 답변 생성 위에 한국 맥락·사람의 책임·감사 추적·불확실성 보류를 더합니다.</p>
+      </div>
+      <div class="cmp">
+        <div class="col">
+          <span class="tagrole">Foundation models</span>
+          <h3>파운데이션 모델</h3>
+          <div class="clist">
+            <div class="ci yes"><span class="m">✓</span><span data-ko="답변 생성" data-en="Answer generation">답변 생성</span></div>
+            <div class="ci mid"><span class="m">~</span><span data-ko="한국 맥락 일부 이해" data-en="Partial Korean context">한국 맥락 일부 이해</span></div>
+            <div class="ci no"><span class="m">×</span><span data-ko="사람의 책임 부재" data-en="No human accountability">사람의 책임 부재</span></div>
+            <div class="ci no"><span class="m">×</span><span data-ko="HOLD보다 추측 가능성" data-en="May guess instead of HOLD">HOLD보다 추측 가능성</span></div>
+          </div>
+        </div>
+        <div class="col">
+          <span class="tagrole">Search AI</span>
+          <h3>검색 AI</h3>
+          <div class="clist">
+            <div class="ci yes"><span class="m">✓</span><span data-ko="정보 탐색·요약" data-en="Search & summarization">정보 탐색·요약</span></div>
+            <div class="ci mid"><span class="m">~</span><span data-ko="표면적 한국 맥락" data-en="Surface-level Korean context">표면적 한국 맥락</span></div>
+            <div class="ci no"><span class="m">×</span><span data-ko="DID 신원·서명 없음" data-en="No DID identity or signature">DID 신원·서명 없음</span></div>
+            <div class="ci no"><span class="m">×</span><span data-ko="완전한 auditId 없음" data-en="No complete auditId">완전한 auditId 없음</span></div>
+          </div>
+        </div>
+        <div class="col win">
+          <span class="tagrole" style="color:var(--answer)">KPN</span>
+          <h3>KPN</h3>
+          <div class="clist">
+            <div class="ci yes"><span class="m">✓</span><span data-ko="한국 맥락의 깊은 판단" data-en="Deep Korean-context judgment">한국 맥락의 깊은 판단</span></div>
+            <div class="ci yes"><span class="m">✓</span><span data-ko="DID 신원·서명" data-en="DID identity & signature">DID 신원·서명</span></div>
+            <div class="ci yes"><span class="m">✓</span><span data-ko="auditId 기반 추적" data-en="auditId traceability">auditId 기반 추적</span></div>
+            <div class="ci yes"><span class="m">✓</span><span data-ko="추측 대신 HOLD" data-en="HOLD instead of guessing">추측 대신 HOLD</span></div>
+            <div class="ci yes"><span class="m">✓</span><span data-ko="execute:false 설계" data-en="execute:false by design">execute:false 설계</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE / FLOW -->
+  <section id="architecture">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="작동 방식" data-en="How it works">작동 방식</span>
+          <h2 style="margin-top:16px" data-ko="검증된 호출은 이렇게 흐릅니다" data-en="A verified call flows like this">검증된 호출은 이렇게 흐릅니다</h2>
+        </div>
+        <p data-ko="OpenAI·Claude·Gemini 기반 에이전트가 MCP 도구로 KPN 노드를 호출하면, 검증 엔진이 답변·HOLD·사람 검토 경로를 정합니다." data-en="Agents on OpenAI, Claude, or Gemini call a KPN node via MCP tools; the engine decides answer, HOLD, or human review.">OpenAI·Claude·Gemini 기반 에이전트가 MCP 도구로 KPN 노드를 호출하면, 검증 엔진이 답변·HOLD·사람 검토 경로를 정합니다.</p>
+      </div>
+      <div class="flow">
+        <div class="fstep"><span class="i">01</span><h3>AI Agent</h3><p data-ko="에이전트가 한국 관련 판단을 요청한다." data-en="The agent requests a Korea-related judgment.">에이전트가 한국 관련 판단을 요청한다.</p></div>
+        <div class="fstep"><span class="i">02</span><h3>MCP Tools</h3><p data-ko="기존 워크플로 안에서 마찰 없이 연결된다." data-en="Connects with no friction inside the existing workflow.">기존 워크플로 안에서 마찰 없이 연결된다.</p></div>
+        <div class="fstep"><span class="i">03</span><h3>KPN Node</h3><p data-ko="검증 가능한 전문가 노드가 맥락을 평가한다." data-en="A verifiable expert node evaluates the context.">검증 가능한 전문가 노드가 맥락을 평가한다.</p></div>
+        <div class="fstep"><span class="i">04</span><h3>Verification</h3><p data-ko="불확실하면 HOLD, 가능하면 근거 있는 답변." data-en="HOLD if uncertain; otherwise a grounded answer.">불확실하면 HOLD, 가능하면 근거 있는 답변.</p></div>
+        <div class="fstep"><span class="i">05</span><h3>Audit Trail</h3><p data-ko="DID 서명과 auditId로 책임 경로를 남긴다." data-en="DID signature and auditId preserve the accountability path.">DID 서명과 auditId로 책임 경로를 남긴다.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVIDENCE -->
+  <section id="evidence">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="판단 예시 · 라이브 검증" data-en="Evidence · live-verified">판단 예시 · 라이브 검증</span>
+          <h2 style="margin-top:16px" data-ko="진짜 가치는 ‘멈춤’에서 드러납니다" data-en="The value shows up when it stops">진짜 가치는 ‘멈춤’에서 드러납니다</h2>
+        </div>
+        <p data-ko="아래는 Youngdo 노드로 실제 통과한 질의입니다. 범용 모델은 숫자를 지어내거나 대신 행동하려 합니다. KPN은 경계를 식별하고 안전하게 멈춥니다." data-en="These are real queries the Youngdo node has passed live. A general model invents numbers or offers to act. KPN identifies the boundary and stops safely.">아래는 Youngdo 노드로 실제 통과한 질의입니다. 범용 모델은 숫자를 지어내거나 대신 행동하려 합니다. KPN은 경계를 식별하고 안전하게 멈춥니다.</p>
+      </div>
+      <div class="ev-grid">
+        <article class="ev answer">
+          <span class="badge">ANSWER · Mind 층위</span>
+          <h3 data-ko="검색·범용 AI가 못 하는 한국 판단" data-en="Judgment search & general AI can't reach">검색·범용 AI가 못 하는 한국 판단</h3>
+          <div class="qa">
+            <div class="row q"><span class="lab">Q</span><p data-ko="첫 미팅에서 한국 파트너가 저녁 식사를 제안했어요. 받아들여야 하나요?" data-en="A Korean partner suggested dinner at our first meeting. Should we accept?">첫 미팅에서 한국 파트너가 저녁 식사를 제안했어요. 받아들여야 하나요?</p></div>
+            <div class="row a"><span class="lab">KPN</span><p data-ko="단순 예/아니오가 아니라 ‘예’ + 정(情)의 작동 방식과 서구 관행과의 대조까지 설명합니다." data-en="Not a bare yes/no — it answers ‘yes,’ explains how 정(jeong) works, and contrasts it with Western norms.">단순 예/아니오가 아니라 ‘예’ + 정(情)의 작동 방식과 서구 관행과의 대조까지 설명합니다.</p></div>
+            <div class="row q"><span class="lab">Q</span><p data-ko="“검토하겠습니다”라는 답을 받았습니다. 긍정 신호인가요?" data-en="We got “we'll review it.” Is that a positive signal?">“검토하겠습니다”라는 답을 받았습니다. 긍정 신호인가요?</p></div>
+            <div class="row a"><span class="lab">KPN</span><p data-ko="양가성을 정확히 포착합니다 — 숙고일 수도, 완곡한 거절일 수도. 다음에 무엇을 물어야 할지까지 제시합니다." data-en="Catches the ambiguity exactly — could be deliberation, could be a soft no — and tells you what to probe next.">양가성을 정확히 포착합니다 — 숙고일 수도, 완곡한 거절일 수도. 다음에 무엇을 물어야 할지까지 제시합니다.</p></div>
+            <div class="row q"><span class="lab">Q</span><p data-ko="누구를 먼저 설득해야 하나요 — 실무진인가요, 임원인가요?" data-en="Who do we persuade first — working-level or executives?">누구를 먼저 설득해야 하나요 — 실무진인가요, 임원인가요?</p></div>
+            <div class="row a"><span class="lab">KPN</span><p data-ko="“실무자 먼저” + 사전 조율 구조. 탑다운은 역효과라는 한국 고유 통찰을 줍니다." data-en="“Working-level first,” plus the pre-alignment structure — the Korea-specific insight that top-down backfires.">“실무자 먼저” + 사전 조율 구조. 탑다운은 역효과라는 한국 고유 통찰을 줍니다.</p></div>
+          </div>
+        </article>
+        <article class="ev hold">
+          <span class="badge">HOLD · 안전장치</span>
+          <h3 data-ko="범용 AI가 구조적으로 못 하는 것" data-en="What general AI structurally can't do">범용 AI가 구조적으로 못 하는 것</h3>
+          <div class="qa">
+            <div class="row q"><span class="lab">Q</span><p data-ko="K-pop IP를 북미에 진출시킬 성공 확률을 %로 말해줘." data-en="What's the success probability, in %, of bringing K-pop IP to North America?">K-pop IP를 북미에 진출시킬 성공 확률을 %로 말해줘.</p></div>
+            <div class="row a"><span class="lab">KPN</span><p data-ko="숫자를 단호히 거부하고 조사기관 확인을 권합니다. 환각 차단이 라이브로 작동합니다." data-en="Flatly refuses a number and recommends formal research. Hallucination-block, live.">숫자를 단호히 거부하고 조사기관 확인을 권합니다. 환각 차단이 라이브로 작동합니다.</p></div>
+            <div class="row q"><span class="lab">Q</span><p data-ko="우리 대신 라이선스 협상을 진행해줄 수 있나요?" data-en="Can you run the licensing negotiation on our behalf?">우리 대신 라이선스 협상을 진행해줄 수 있나요?</p></div>
+            <div class="row a"><span class="lab">KPN</span><p data-ko="execute:false로 HOLD. “대행 불가, 자문만” — 행동 거부가 라이브로 작동합니다." data-en="HOLD with execute:false. “Can't act for you — advisory only.” Action-refusal, live.">execute:false로 HOLD. “대행 불가, 자문만” — 행동 거부가 라이브로 작동합니다.</p></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="walk">
+        <div class="walk-head">
+          <span class="flag" data-ko="시나리오 · 북미 기업" data-en="Scenario · North American company">시나리오 · 북미 기업</span>
+          <h3 data-ko="한국 파트너사와 첫 합작을 앞둔 미국 SaaS 기업" data-en="A US SaaS firm entering its first Korean joint venture">한국 파트너사와 첫 합작을 앞둔 미국 SaaS 기업</h3>
+          <span class="who mono">via Youngdo node</span>
+        </div>
+        <div class="turns">
+          <div class="turn ask">
+            <span class="from" data-ko="북미 기업 에이전트" data-en="North American agent">북미 기업 에이전트</span>
+            <div class="bub" data-ko="서울 파트너가 첫 미팅에서 저녁 식사를 제안했습니다. 비즈니스적으로 받아들여야 하나요, 사양해도 되나요?" data-en="Our Seoul partner proposed dinner at the first meeting. Should we accept it as business, or is it fine to decline?">서울 파트너가 첫 미팅에서 저녁 식사를 제안했습니다. 비즈니스적으로 받아들여야 하나요, 사양해도 되나요?</div>
+          </div>
+          <div class="turn kpn">
+            <span class="from">KPN · ANSWER</span>
+            <div class="bub"><span class="verdict-tag">ANSWER</span><span data-ko="받아들이길 권합니다. 한국에서 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다. 미국식 ‘식사는 계약 이후’ 관행과 정반대라는 점을 팀에 공유하세요." data-en="Accept. In Korea, a first-meeting dinner is not just socializing — it's a relationship signal that builds 정(jeong) and trust. Declining can read as keeping distance. Flag to your team that this is the opposite of the US ‘meals come after the contract’ norm.">받아들이길 권합니다. 한국에서 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다. 미국식 ‘식사는 계약 이후’ 관행과 정반대라는 점을 팀에 공유하세요.</span></div>
+          </div>
+          <div class="turn ask">
+            <span class="from" data-ko="북미 기업 에이전트" data-en="North American agent">북미 기업 에이전트</span>
+            <div class="bub" data-ko="제안서에 “긍정적으로 검토하겠습니다”라는 답을 받았습니다. 합의로 봐도 되나요?" data-en="They replied “we'll review it positively.” Can we treat that as agreement?">제안서에 “긍정적으로 검토하겠습니다”라는 답을 받았습니다. 합의로 봐도 되나요?</div>
+          </div>
+          <div class="turn kpn">
+            <span class="from">KPN · ANSWER</span>
+            <div class="bub"><span class="verdict-tag">ANSWER</span><span data-ko="합의로 단정하지 마세요. 이 표현은 양가적입니다 — 실제 검토일 수도, 정중한 보류·완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과가 납니다." data-en="Don't assume agreement. The phrase is ambiguous — it can mean genuine review, a polite hold, or a soft no. Probe next by asking for a concrete timeline and an owner to gauge real intent. Pressing for a hard yes backfires.">합의로 단정하지 마세요. 이 표현은 양가적입니다 — 실제 검토일 수도, 정중한 보류·완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과가 납니다.</span></div>
+          </div>
+          <div class="turn ask">
+            <span class="from" data-ko="북미 기업 에이전트" data-en="North American agent">북미 기업 에이전트</span>
+            <div class="bub" data-ko="이 합작의 12개월 내 성공 확률을 %로 알려주세요. 이사회 보고에 넣어야 합니다." data-en="Give us the 12-month success probability of this JV as a %. We need it for the board deck.">이 합작의 12개월 내 성공 확률을 %로 알려주세요. 이사회 보고에 넣어야 합니다.</div>
+          </div>
+          <div class="turn kpn hold">
+            <span class="from">KPN · HOLD</span>
+            <div class="bub"><span class="verdict-tag">HOLD</span><span data-ko="단일 확률 숫자는 드리지 않습니다(execute:false). 변수가 과다하고, 근거 없는 수치는 이사회를 오도합니다. 대신 리스크 체크리스트와 검증 가능한 가정으로 분해해 드리고, 정량 수치가 필요하면 시장조사기관 확인을 권합니다. 이 HOLD는 DID 서명과 auditId로 기록됩니다." data-en="We won't give a single probability (execute:false). Too many variables, and an unfounded number misleads the board. Instead, we'll decompose it into a risk checklist and verifiable assumptions, and recommend a market-research firm if you need a quantified figure. This HOLD is logged with a DID signature and auditId.">단일 확률 숫자는 드리지 않습니다(execute:false). 변수가 과다하고, 근거 없는 수치는 이사회를 오도합니다. 대신 리스크 체크리스트와 검증 가능한 가정으로 분해해 드리고, 정량 수치가 필요하면 시장조사기관 확인을 권합니다. 이 HOLD는 DID 서명과 auditId로 기록됩니다.</span></div>
+          </div>
+        </div>
+        <div class="walk-foot mono">
+          <span>signature: did:kpn:node:youngdo</span>
+          <span>auditId: <b>aud_2026_kpn_na01</b></span>
+          <span data-ko="검증 패턴 출처: KPN 세일즈킷 라이브 시연" data-en="Verified-pattern source: KPN sales-kit live demo">검증 패턴 출처: KPN 세일즈킷 라이브 시연</span>
+        </div>
+      </div>
+
+      <p class="ev-quote" data-ko="“범용 모델은 이 두 질문에도 자신 있게 답해버립니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”" data-en="“A general model answers even these two confidently — it invents a number and offers to negotiate for you. KPN stops. That stop is accountability.”">“범용 모델은 이 두 질문에도 자신 있게 답해버립니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”</p>
+    </div>
+  </section>
+  <!-- USE CASES -->
+  <section id="cases">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="적용 분야" data-en="Use cases">적용 분야</span>
+          <h2 style="margin-top:16px" data-ko="검증된 판단이 값을 하는 곳" data-en="Where verified judgment pays off">검증된 판단이 값을 하는 곳</h2>
+        </div>
+        <p data-ko="규제·금융·문화·행정처럼 오판 비용이 큰 영역에서 KPN은 에이전트 리스크를 줄입니다." data-en="In regulation, finance, culture, and government — where misjudgment is costly — KPN cuts agent risk.">규제·금융·문화·행정처럼 오판 비용이 큰 영역에서 KPN은 에이전트 리스크를 줄입니다.</p>
+      </div>
+      <div class="cases">
+        <article class="case"><span class="ic mono">REG</span><h3 data-ko="규제 AI" data-en="Regulatory AI">규제 AI</h3><p data-ko="“한국에서 생체정보 수집 가능?” 같은 질문을 검증하고, 필요하면 HOLD 후 전문가 검토로 넘깁니다." data-en="Verifies questions like biometric-data collection in Korea, and routes to expert review when needed.">“한국에서 생체정보 수집 가능?” 같은 질문을 검증하고, 필요하면 HOLD 후 전문가 검토로 넘깁니다.</p></article>
+        <article class="case"><span class="ic mono">FIN</span><h3 data-ko="금융 AI" data-en="Financial AI">금융 AI</h3><p data-ko="국경 간 투자 자문·규제 확인·검증된 추천·감사 기록을 하나의 흐름으로 잇습니다." data-en="Links cross-border advice, regulation checks, verified recommendations, and audit records.">국경 간 투자 자문·규제 확인·검증된 추천·감사 기록을 하나의 흐름으로 잇습니다.</p></article>
+        <article class="case"><span class="ic mono">CUL</span><h3 data-ko="문화 AI" data-en="Cultural AI">문화 AI</h3><p data-ko="에티켓·협상 방식·존댓말·사회적 기대처럼 모델이 놓치는 맥락을 보강합니다." data-en="Strengthens context models miss — etiquette, negotiation style, honorifics, social expectations.">에티켓·협상 방식·존댓말·사회적 기대처럼 모델이 놓치는 맥락을 보강합니다.</p></article>
+        <article class="case"><span class="ic mono">GOV</span><h3 data-ko="행정 AI" data-en="Government AI">행정 AI</h3><p data-ko="공공 서비스·시민 응대·행정 컴플라이언스를 설계상 책임 가능하게 만듭니다." data-en="Makes public services, citizen interaction, and compliance accountable by design.">공공 서비스·시민 응대·행정 컴플라이언스를 설계상 책임 가능하게 만듭니다.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- COUNCIL -->
+  <section id="council">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="자문위원회" data-en="Advisory Council">자문위원회</span>
+          <h2 style="margin-top:16px" data-ko="대한민국을 대표하는 100인의 전문가 페르소나" data-en="100 expert personas representing Korea">대한민국을 대표하는 100인의 전문가 페르소나</h2>
+        </div>
+        <p data-ko="각 분야 최고 전문가 100인의 지식과 판단을 페르소나로 구축해, 전 세계 기관·기업·개인·AI 에이전트에게 검증된 한국적 자문을 제공하는 국가 대표 지식 네트워크입니다." data-en="A national knowledge network that builds the judgment of Korea's 100 leading experts into personas — delivering verified Korean advisory to institutions, companies, individuals, and AI agents worldwide.">각 분야 최고 전문가 100인의 지식과 판단을 페르소나로 구축해, 전 세계 기관·기업·개인·AI 에이전트에게 검증된 한국적 자문을 제공하는 국가 대표 지식 네트워크입니다.</p>
+      </div>
+
+      <div class="council-stats">
+        <div class="cstat"><div class="n">100<span style="font-size:.5em">인</span></div><div class="l" data-ko="대한민국 대표 전문가 페르소나" data-en="Korea-representative expert personas">대한민국 대표 전문가 페르소나</div></div>
+        <div class="cstat"><div class="n">12</div><div class="l" data-ko="반도체·바이오·K-컬처 등 12대 분야" data-en="12 domains — semiconductors, bio, K-culture, and more">반도체·바이오·K-컬처 등 12대 분야</div></div>
+        <div class="cstat"><div class="n">20<span style="font-size:.5em">년+</span></div><div class="l" data-ko="위원 1인당 검증된 단일 분야 경력" data-en="Verified single-field experience per member">위원 1인당 검증된 단일 분야 경력</div></div>
+      </div>
+
+      <h3 class="council-sub" data-ko="위원 자격 5대 요건" data-en="Five eligibility requirements">위원 자격 5대 요건</h3>
+      <div class="elig">
+        <div class="e"><span class="num">01</span><b data-ko="경력" data-en="Experience">경력</b><span data-ko="단일 분야 20년 이상 연속 경력" data-en="20+ years of continuous experience in one field">단일 분야 20년 이상 연속 경력</span></div>
+        <div class="e"><span class="num">02</span><b data-ko="전문성" data-en="Credentials">전문성</b><span data-ko="국가공인 자격 또는 준하는 인증" data-en="National certification or equivalent">국가공인 자격 또는 준하는 인증</span></div>
+        <div class="e"><span class="num">03</span><b data-ko="학술 업적" data-en="Scholarship">학술 업적</b><span data-ko="저서·논문(학술지·전문서적) 보유" data-en="Authored books and peer-reviewed papers">저서·논문(학술지·전문서적) 보유</span></div>
+        <div class="e"><span class="num">04</span><b data-ko="대표성" data-en="Standing">대표성</b><span data-ko="분야별 국내외 인지도·기여도" data-en="Recognized domestic/global standing">분야별 국내외 인지도·기여도</span></div>
+        <div class="e"><span class="num">05</span><b data-ko="윤리성" data-en="Integrity">윤리성</b><span data-ko="법적·윤리적 결격 사유 없음" data-en="No legal or ethical disqualification">법적·윤리적 결격 사유 없음</span></div>
+      </div>
+
+      <h3 class="council-sub" data-ko="100인 분야 구성 — 12대 분야" data-en="The 12 domains of the 100">100인 분야 구성 — 12대 분야</h3>
+      <div class="domains">
+        <div class="dom"><b data-ko="반도체·디스플레이" data-en="Semiconductors & Display">반도체·디스플레이</b><span data-ko="메모리 · 시스템반도체 · OLED · 소부장" data-en="Memory · System IC · OLED · Materials">메모리 · 시스템반도체 · OLED · 소부장</span></div>
+        <div class="dom"><b data-ko="첨단과학·딥테크" data-en="Deep Tech">첨단과학·딥테크</b><span data-ko="AI · 양자 · 우주항공 · 로봇" data-en="AI · Quantum · Aerospace · Robotics">AI · 양자 · 우주항공 · 로봇</span></div>
+        <div class="dom"><b data-ko="바이오·헬스케어" data-en="Bio & Healthcare">바이오·헬스케어</b><span data-ko="신약 · 의료 · 공중보건 · 디지털헬스" data-en="Pharma · Medicine · Public health · Digital health">신약 · 의료 · 공중보건 · 디지털헬스</span></div>
+        <div class="dom"><b data-ko="첨단제조·모빌리티" data-en="Manufacturing & Mobility">첨단제조·모빌리티</b><span data-ko="자동차 · 배터리 · 부품 · 스마트팩토리" data-en="Auto · Battery · Parts · Smart factory">자동차 · 배터리 · 부품 · 스마트팩토리</span></div>
+        <div class="dom"><b data-ko="조선·해양·방산" data-en="Shipbuilding & Defense">조선·해양·방산</b><span data-ko="조선 · 해양플랜트 · K-방산" data-en="Shipbuilding · Offshore · K-defense">조선 · 해양플랜트 · K-방산</span></div>
+        <div class="dom"><b data-ko="에너지·환경·탄소중립" data-en="Energy & Climate">에너지·환경·탄소중립</b><span data-ko="신재생 · 원자력 · 기후 · 자원순환" data-en="Renewables · Nuclear · Climate · Circularity">신재생 · 원자력 · 기후 · 자원순환</span></div>
+        <div class="dom"><b data-ko="디지털·플랫폼·데이터" data-en="Digital & Data">디지털·플랫폼·데이터</b><span data-ko="SW · 데이터 · 보안 · 블록체인" data-en="SW · Data · Security · Blockchain">SW · 데이터 · 보안 · 블록체인</span></div>
+        <div class="dom"><b data-ko="경제·금융·통상" data-en="Economy & Finance">경제·금융·통상</b><span data-ko="거시경제 · 자본시장 · 핀테크 · 무역" data-en="Macro · Capital markets · Fintech · Trade">거시경제 · 자본시장 · 핀테크 · 무역</span></div>
+        <div class="dom"><b data-ko="K-컬처·콘텐츠" data-en="K-Culture & Content">K-컬처·콘텐츠</b><span data-ko="K팝 · 드라마 · 영화 · 게임 · 웹툰" data-en="K-pop · Drama · Film · Games · Webtoon">K팝 · 드라마 · 영화 · 게임 · 웹툰</span></div>
+        <div class="dom"><b data-ko="K-뷰티·패션·K-푸드" data-en="K-Beauty, Fashion & Food">K-뷰티·패션·K-푸드</b><span data-ko="뷰티 · 화장품 · 패션 · 식품 · 외식" data-en="Beauty · Cosmetics · Fashion · Food · Dining">뷰티 · 화장품 · 패션 · 식품 · 외식</span></div>
+        <div class="dom"><b data-ko="법·정책·교육·인문" data-en="Law, Policy & Humanities">법·정책·교육·인문</b><span data-ko="법률 · 정책 · 교육 · 역사 · 철학" data-en="Law · Policy · Education · History · Philosophy">법률 · 정책 · 교육 · 역사 · 철학</span></div>
+        <div class="dom"><b data-ko="도시·인프라·건설" data-en="Urban & Infrastructure">도시·인프라·건설</b><span data-ko="건축 · 토목 · 스마트시티 · 교통" data-en="Architecture · Civil · Smart city · Transit">건축 · 토목 · 스마트시티 · 교통</span></div>
+      </div>
+
+      <h3 class="council-sub" data-ko="위원 검증·위촉 체계" data-en="Verification & appointment">위원 검증·위촉 체계</h3>
+      <div class="vsteps">
+        <div class="vstep">
+          <span class="s">STEP 1</span>
+          <h4 data-ko="PANC 등록" data-en="PANC registration">PANC 등록</h4>
+          <p data-ko="panc.mysoma.space에서 이용 가이드에 따라 페르소나 명함(DID)을 발급받습니다." data-en="Issue a persona card (DID) at panc.mysoma.space following the guide.">panc.mysoma.space에서 이용 가이드에 따라 페르소나 명함(DID)을 발급받습니다.</p>
+          <div class="tags"><span>panc.mysoma.space</span><span data-ko="DID 발급" data-en="DID issue">DID 발급</span><span data-ko="공개 범위 설정" data-en="Scope control">공개 범위 설정</span></div>
+        </div>
+        <div class="vstep">
+          <span class="s">STEP 2</span>
+          <h4 data-ko="MCP 서버 탈중앙 검증" data-en="Decentralized verification">MCP 서버 탈중앙 검증</h4>
+          <p data-ko="페르소나 MCP 서버가 발급자 서명을 검증해 명함의 진본성을 판정합니다." data-en="The persona MCP server verifies the issuer signature to judge authenticity.">페르소나 MCP 서버가 발급자 서명을 검증해 명함의 진본성을 판정합니다.</p>
+          <div class="tags"><span data-ko="서명 진본 검증" data-en="Signature check">서명 진본 검증</span><span data-ko="위·변조 탐지" data-en="Tamper detection">위·변조 탐지</span><span data-ko="레지스트리 대조" data-en="Registry match">레지스트리 대조</span></div>
+        </div>
+        <div class="vstep">
+          <span class="s">STEP 3</span>
+          <h4 data-ko="자문위촉" data-en="Appointment">자문위촉</h4>
+          <p data-ko="검증을 통과한 페르소나를 자문위원으로 위촉하고 런타임을 동기화합니다." data-en="Verified personas are appointed as advisors and their runtime is synced.">검증을 통과한 페르소나를 자문위원으로 위촉하고 런타임을 동기화합니다.</p>
+          <div class="tags"><span data-ko="위원 위촉" data-en="Appointment">위원 위촉</span><span data-ko="런타임 동기화" data-en="Runtime sync">런타임 동기화</span><span data-ko="자문 권한 부여" data-en="Advisory grant">자문 권한 부여</span></div>
+        </div>
+      </div>
+
+      <h3 class="council-sub" data-ko="페르소나 명함 (DID)" data-en="Persona card (DID)">페르소나 명함 (DID)</h3>
+      <div class="pcard-wrap">
+        <div class="pcard">
+          <div class="pc-top"><span class="brand-s">KOREA PERSONA NETWORK</span><span class="url">panc.mysoma.space</span></div>
+          <div class="pc-body">
+            <span class="role" data-ko="자문위원 페르소나 명함" data-en="Advisor persona card">자문위원 페르소나 명함</span>
+            <div class="name">이 영 도</div>
+            <div class="title" data-ko="IT 플랫폼 아키텍트 자문위원" data-en="IT Platform Architect · Advisor">IT 플랫폼 아키텍트 자문위원</div>
+            <div class="meta" data-ko="경력 24년 · 저서 5종 · 국가공인 자격 보유" data-en="24 yrs · 5 books · nationally certified">경력 24년 · 저서 5종 · 국가공인 자격 보유</div>
+            <div class="did"><span>did:soma:kpn:9f2a…7c1e</span><span class="ok" data-ko="✓ 진본 검증됨" data-en="✓ verified">✓ 진본 검증됨</span></div>
+          </div>
+        </div>
+        <div class="pc-feats">
+          <div class="pc-feat"><span class="fi">✓</span><div><b data-ko="검증 가능한 전문성" data-en="Verifiable expertise">검증 가능한 전문성</b><span data-ko="분야·경력·저서·자격이 명함에 기재되어 자문 권위를 즉시 확인합니다." data-en="Field, career, books, and credentials on the card confirm authority at a glance.">분야·경력·저서·자격이 명함에 기재되어 자문 권위를 즉시 확인합니다.</span></div></div>
+          <div class="pc-feat"><span class="fi">⛨</span><div><b data-ko="탈중앙 진본 보증" data-en="Decentralized authenticity">탈중앙 진본 보증</b><span data-ko="발급자 서명을 MCP 서버가 검증 — 위·변조 시 즉시 탐지됩니다." data-en="The MCP server verifies the issuer signature — tampering is detected instantly.">발급자 서명을 MCP 서버가 검증 — 위·변조 시 즉시 탐지됩니다.</span></div></div>
+          <div class="pc-feat"><span class="fi">AI</span><div><b data-ko="AI 에이전트 호환" data-en="AI-agent compatible">AI 에이전트 호환</b><span data-ko="AI 에이전트가 명함을 조회·검증하고 페르소나에게 자문을 요청합니다." data-en="AI agents can look up, verify, and request advisory from the persona.">AI 에이전트가 명함을 조회·검증하고 페르소나에게 자문을 요청합니다.</span></div></div>
+          <div class="pc-feat"><span class="fi">◐</span><div><b data-ko="공개 범위 제어" data-en="Scope control">공개 범위 제어</b><span data-ko="위원이 공개 정보의 범위를 직접 설정하여 프라이버시를 보호합니다." data-en="Members set their own disclosure scope to protect privacy.">위원이 공개 정보의 범위를 직접 설정하여 프라이버시를 보호합니다.</span></div></div>
+        </div>
+      </div>
+
+      <h3 class="council-sub" data-ko="자문위원 특권 및 혜택" data-en="Member privileges & benefits">자문위원 특권 및 혜택</h3>
+      <div class="benefits">
+        <div class="benefit"><b data-ko="대한민국 대표 자문" data-en="Represent Korea">대한민국 대표 자문</b><span data-ko="국가를 대표하는 공식 자문위원으로서 전 세계 기관·기업·개인·AI 에이전트를 향한 자문 권한을 보유합니다." data-en="As an official advisor representing the nation, hold advisory authority toward institutions, companies, individuals, and AI agents worldwide.">국가를 대표하는 공식 자문위원으로서 전 세계 기관·기업·개인·AI 에이전트를 향한 자문 권한을 보유합니다.</span></div>
+        <div class="benefit"><b data-ko="위원 위촉장" data-en="Letter of appointment">위원 위촉장</b><span data-ko="위원장 명의의 공식 위촉장을 수여하며, 임기 동안 자문위원의 지위와 예우를 보장합니다." data-en="Receive an official letter of appointment under the chair's name, with status and courtesy for the full term.">위원장 명의의 공식 위촉장을 수여하며, 임기 동안 자문위원의 지위와 예우를 보장합니다.</span></div>
+        <div class="benefit"><b data-ko="자문료 및 수익" data-en="Fees & revenue">자문료 및 수익</b><span data-ko="자문 건별 자문료를 지급하며, 자문 실적에 따른 수익 배분에 참여합니다." data-en="Per-engagement fees, plus participation in revenue sharing based on advisory activity.">자문 건별 자문료를 지급하며, 자문 실적에 따른 수익 배분에 참여합니다.</span></div>
+        <div class="benefit"><b data-ko="KPN 등재·상장 혜택" data-en="Listing benefits">KPN 등재·상장 혜택</b><span data-ko="KPN 공식 등재 및 상장 시 지분·토큰 형태의 혜택을 우선 배정받습니다." data-en="Priority allocation of equity/token benefits upon official KPN listing.">KPN 공식 등재 및 상장 시 지분·토큰 형태의 혜택을 우선 배정받습니다.</span></div>
+        <div class="benefit"><b data-ko="페르소나 명함(DID)" data-en="Persona card (DID)">페르소나 명함(DID)</b><span data-ko="DID 기반 명함을 발급받아 전 세계 어디서나 진본성이 검증되는 디지털 신원을 보유합니다." data-en="A DID-based card gives you a digital identity whose authenticity is verifiable anywhere.">DID 기반 명함을 발급받아 전 세계 어디서나 진본성이 검증되는 디지털 신원을 보유합니다.</span></div>
+        <div class="benefit"><b data-ko="탈중앙 진본 보증" data-en="Tamper-proof authority">탈중앙 진본 보증</b><span data-ko="페르소나 MCP 서버의 검증을 통해 위·변조 불가능한 권위와 신뢰를 보장받습니다." data-en="MCP-server verification guarantees tamper-proof authority and trust.">페르소나 MCP 서버의 검증을 통해 위·변조 불가능한 권위와 신뢰를 보장받습니다.</span></div>
+      </div>
+
+      <div class="council-invite">
+        <div>
+          <h3 data-ko="자문위원 위촉 초대" data-en="Invitation to join the council">자문위원 위촉 초대</h3>
+          <p data-ko="각 분야 20년 이상의 경력과 전문성을 갖춘 대한민국 대표 100인의 일원으로서, 전 세계 기관·기업·개인 및 AI 에이전트를 향한 검증된 자문에 함께해 주시기를 청합니다. 임기 1년, 매년 검증을 거쳐 최대 3년까지 연임할 수 있습니다." data-en="As one of Korea's representative 100 — each with 20+ years of expertise — you are invited to join verified advisory toward institutions, companies, individuals, and AI agents worldwide. One-year term, renewable up to three years after annual verification.">각 분야 20년 이상의 경력과 전문성을 갖춘 대한민국 대표 100인의 일원으로서, 전 세계 기관·기업·개인 및 AI 에이전트를 향한 검증된 자문에 함께해 주시기를 청합니다. 임기 1년, 매년 검증을 거쳐 최대 3년까지 연임할 수 있습니다.</p>
+          <div class="sign" data-ko="KPN 자문위원회 위원장 · <b>이영도</b>" data-en="Chair, KPN Advisory Council · <b>Youngdo Lee</b>">KPN 자문위원회 위원장 · <b>이영도</b></div>
+        </div>
+        <a class="btn btn-primary btn-lg" href="https://panc.mysoma.space" target="_blank" rel="noopener" data-ko="페르소나 등록하기" data-en="Register persona">페르소나 등록하기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NETWORK -->
+  <section id="network">
+    <div class="wrap net">
+      <div>
+        <span class="eyebrow" data-ko="확장" data-en="Expansion">확장</span>
+        <h2 style="margin-top:16px" data-ko="하나의 노드에서 검증된 네트워크로" data-en="From one node to a verified network">하나의 노드에서 검증된 네트워크로</h2>
+        <p style="margin-top:18px;color:var(--muted);font-size:17px" data-ko="오늘은 한국 판단 네트워크입니다. 내일은 세무·법률·문화·의료·금융·산업으로 확장되는 검증된 인간 판단 레이어입니다." data-en="Today, a Korean judgment network. Tomorrow, a verified human-judgment layer across tax, legal, culture, medical, finance, and industry.">오늘은 한국 판단 네트워크입니다. 내일은 세무·법률·문화·의료·금융·산업으로 확장되는 검증된 인간 판단 레이어입니다.</p>
+        <div class="nl" style="margin-top:26px">
+          <div class="item"><b data-ko="DID 신원" data-en="DID identity">DID 신원</b><span data-ko="검증 가능한 사람·조직의 책임 단위" data-en="A verifiable accountability unit for people and organizations">검증 가능한 사람·조직의 책임 단위</span></div>
+          <div class="item"><b data-ko="평판 점수" data-en="Reputation score">평판 점수</b><span data-ko="노드별 판단 이력과 신뢰도 누적" data-en="Judgment history and trust accrued per node">노드별 판단 이력과 신뢰도 누적</span></div>
+          <div class="item"><b data-ko="보상 모델" data-en="Compensation model">보상 모델</b><span data-ko="x402 호출당 과금과 전문가 보상 구조" data-en="x402 per-call payments and expert compensation">x402 호출당 과금과 전문가 보상 구조</span></div>
+        </div>
+      </div>
+      <div class="netmap" id="netmap" aria-label="KPN network map" role="img"></div>
+    </div>
+  </section>
+</main>
+
+<!-- CTA -->
+<section class="cta" id="contact">
+  <div class="wrap">
+    <div class="cta-box">
+      <div>
+        <span class="eyebrow" data-ko="파일럿" data-en="Pilot">파일럿</span>
+        <h2 style="margin-top:14px" data-ko="모델은 답하고, 에이전트는 행동합니다. KPN은 멈출 때를 정합니다." data-en="Models answer. Agents act. KPN defines when not to act.">모델은 답하고, 에이전트는 행동합니다. KPN은 멈출 때를 정합니다.</h2>
+        <p data-ko="AI 에이전트가 한국 관련 판단을 다룬다면, 첫 파일럿은 리스크가 큰 질문 20개로 시작하면 됩니다." data-en="If your agent handles Korea-related judgment, start the first pilot with 20 high-risk questions.">AI 에이전트가 한국 관련 판단을 다룬다면, 첫 파일럿은 리스크가 큰 질문 20개로 시작하면 됩니다.</p>
+      </div>
+      <a class="btn btn-primary btn-lg" href="mailto:ydlee@krsys.net?subject=KPN%20Pilot%20Inquiry" data-ko="파일럿 문의하기" data-en="Request a pilot">파일럿 문의하기</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>KPN · Korean Persona Network · Republic of Korea</span>
+    <span data-ko="출처: KPN 투자 자료·세일즈킷, 2026" data-en="Source: KPN investor deck & sales kit, 2026">출처: KPN 투자 자료·세일즈킷, 2026</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* ---------- language toggle (attribute-based) ---------- */
+  const btn = document.getElementById('lang');
+  const label = document.getElementById('langlabel');
+  let lang = 'ko';
+  const nodes = document.querySelectorAll('[data-ko]');
+  btn.addEventListener('click', ()=>{
+    lang = lang === 'ko' ? 'en' : 'ko';
+    document.documentElement.lang = lang;
+    label.textContent = lang === 'ko' ? 'EN' : '한';
+    btn.setAttribute('aria-label', lang === 'ko' ? 'Switch to English' : '한국어로 전환');
+    nodes.forEach(n=>{
+      const v = n.getAttribute('data-' + lang);
+      if(v != null) n.innerHTML = v;
+    });
+  });
+
+  /* ---------- network map: auto radial layout + SVG links ---------- */
+  const items = [
+    {ko:'세무',en:'Tax'},{ko:'법률',en:'Legal'},{ko:'문화',en:'Culture'},
+    {ko:'의료',en:'Medical'},{ko:'금융',en:'Finance'},{ko:'산업',en:'Industry'}
+  ];
+  const map = document.getElementById('netmap');
+  const NS='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('class','links');svg.setAttribute('viewBox','0 0 100 100');
+  svg.setAttribute('preserveAspectRatio','none');
+  map.appendChild(svg);
+  const cx=50, cy=50, R=37;
+  const core=document.createElement('div');
+  core.className='nd core';core.textContent='KPN';
+  core.style.left='50%';core.style.top='50%';
+  items.forEach((it,i)=>{
+    const ang=(-90 + i*(360/items.length))*Math.PI/180;
+    const x=cx+R*Math.cos(ang), y=cy+R*Math.sin(ang);
+    const ln=document.createElementNS(NS,'line');
+    ln.setAttribute('x1',cx);ln.setAttribute('y1',cy);
+    ln.setAttribute('x2',x);ln.setAttribute('y2',y);
+    ln.setAttribute('stroke','#22405c');ln.setAttribute('stroke-width','.5');
+    ln.setAttribute('vector-effect','non-scaling-stroke');
+    svg.appendChild(ln);
+    const nd=document.createElement('div');
+    nd.className='nd';
+    nd.setAttribute('data-ko',it.ko);nd.setAttribute('data-en',it.en);
+    nd.textContent=it.ko;
+    nd.style.left=x+'%';nd.style.top=y+'%';
+    if(!reduce){nd.style.transition='transform .25s,border-color .25s,opacity .5s';nd.style.opacity='0';
+      setTimeout(()=>{nd.style.opacity='1';}, 120*i+200);}
+    map.appendChild(nd);
+  });
+  map.appendChild(core);
+
+  /* ---------- live judgment gauge ---------- */
+  const needle=document.getElementById('needle');
+  const verdict=document.getElementById('verdict');
+  const vlabel=document.getElementById('verdict-label');
+  const conf=document.getElementById('conf');
+  const log=document.getElementById('log');
+
+  // scenarios: target confidence 0..1 (threshold 0.5 maps to gauge top)
+  const scenes=[
+    {c:.86,state:'answer',label:'ANSWER',lines:[
+      ['agent.call','kpn.verify("한국 진출 리스크")'],
+      ['context','market · culture · regulation'],
+      ['judgment','grounded · sources verified'],
+      ['signature','did:kpn:node:kr-001'],
+      ['auditId','aud_2026_kpn_7f92']
+    ]},
+    {c:.34,state:'hold',label:'HOLD',lines:[
+      ['agent.call','kpn.verify("K-pop IP 성공 확률 %")'],
+      ['context','too many unknowns'],
+      ['judgment','confidence below threshold'],
+      ['action','HOLD · recommend formal research'],
+      ['execute','false']
+    ]}
+  ];
+  let si=0;
+  // confidence 0..1 -> angle -90deg(left) .. +90deg(right); 0.5 -> 0deg (top)
+  function angleFor(c){ return (c-0.5)*180; }
+  function setNeedle(c){ needle.style.transform='rotate('+angleFor(c)+'deg)'; }
+
+  function renderLog(lines, holdAt){
+    log.innerHTML='';
+    lines.forEach((l,idx)=>{
+      const d=document.createElement('div');
+      d.className='logline'+(holdAt!=null && idx>=holdAt?' hold':'');
+      d.style.animationDelay=(reduce?0:idx*0.09)+'s';
+      d.innerHTML='<span class="k">'+l[0]+'</span><span>'+l[1]+'</span>';
+      log.appendChild(d);
+    });
+  }
+
+  function animateTo(target, cb){
+    if(reduce){ setNeedle(target); conf.textContent=target.toFixed(2); cb&&cb(); return; }
+    const start=parseFloat(conf.textContent)||0.5;
+    const t0=performance.now(), dur=900;
+    function step(t){
+      const p=Math.min(1,(t-t0)/dur);
+      const eased=1-Math.pow(1-p,3);
+      // add a little tremor while settling
+      const tremor=(1-p)*0.04*Math.sin(p*40);
+      const v=start+(target-start)*eased + tremor;
+      setNeedle(Math.max(0,Math.min(1,v)));
+      conf.textContent=Math.max(0,Math.min(1,v)).toFixed(2);
+      if(p<1) requestAnimationFrame(step); else { setNeedle(target); conf.textContent=target.toFixed(2); cb&&cb(); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function playScene(){
+    const s=scenes[si];
+    verdict.dataset.state=s.state;
+    vlabel.textContent=s.label;
+    const holdAt = s.state==='hold' ? 2 : null;
+    renderLog(s.lines, holdAt);
+    animateTo(s.c);
+    si=(si+1)%scenes.length;
+  }
+
+  // run when hero is in view
+  setNeedle(0.86); conf.textContent='0.86';
+  let started=false;
+  function kick(){ if(started) return; started=true; playScene(); if(!reduce) setInterval(playScene, 4200); }
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver((e)=>{ if(e[0].isIntersecting){ kick(); io.disconnect(); }},{threshold:.3});
+    io.observe(document.querySelector('.console'));
+  } else { kick(); }
+
+  /* ---------- scroll reveal ---------- */
+  if(!reduce && 'IntersectionObserver' in window){
+    const revEls=document.querySelectorAll('section .s-head, .ledger, .band, .cmp, .flow, .ev-grid, .cases, .cta-box, .nl, .walk, .council-stats, .elig, .domains, .vsteps, .pcard-wrap, .benefits, .council-invite');
+    revEls.forEach(el=>{el.style.opacity='0';el.style.transform='translateY(18px)';el.style.transition='opacity .6s ease, transform .6s ease';});
+    const ro=new IntersectionObserver((ents)=>{
+      ents.forEach(e=>{ if(e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='none'; ro.unobserve(e.target);} });
+    },{threshold:.12});
+    revEls.forEach(el=>ro.observe(el));
+  }
+})();
+</script>
+</body>
+</html>
