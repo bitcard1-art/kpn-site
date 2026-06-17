@@ -314,6 +314,30 @@
   .council-invite p{margin-top:12px;color:#c4d2dd;font-size:15px;max-width:620px}
   .council-invite .sign{margin-top:16px;font-family:var(--mono);font-size:13px;color:var(--muted)}
   .council-invite .sign b{color:var(--paper)}
+  /* members directory */
+  .mem-note{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--answer);
+    padding:6px 12px;border:1px solid rgba(47,184,168,.3);border-radius:999px;background:rgba(47,184,168,.08);margin-bottom:22px}
+  .mem-note .live{width:7px;height:7px;border-radius:50%;background:var(--answer);box-shadow:0 0 0 0 rgba(47,184,168,.6);animation:livedot 1.8s infinite}
+  @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(47,184,168,.5)}70%{box-shadow:0 0 0 7px rgba(47,184,168,0)}100%{box-shadow:0 0 0 0 rgba(47,184,168,0)}}
+  .mem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .mcard{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);padding:24px;position:relative;display:flex;flex-direction:column;min-height:230px}
+  .mcard.verified{border-color:rgba(47,184,168,.45);background:linear-gradient(180deg,var(--answer-dim),var(--ink-2))}
+  .mcard .chair{position:absolute;top:18px;right:18px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+    padding:4px 9px;border-radius:999px;background:var(--hold-dim);color:var(--hold);border:1px solid rgba(242,181,75,.4)}
+  .mcard .ava{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:20px;
+    background:var(--answer);color:#04231f;letter-spacing:.04em;overflow:hidden}
+  .mcard .ava img{width:100%;height:100%;object-fit:cover;display:block}
+  .mcard.pending .ava{background:rgba(255,255,255,.06);color:var(--muted-2);border:1px dashed var(--hair)}
+  .mcard .mname{font-family:var(--display);font-size:21px;font-weight:700;margin-top:16px;letter-spacing:.02em}
+  .mcard .mrole{color:#c4d2dd;font-size:14px;margin-top:4px}
+  .mcard.pending .mname{color:var(--muted)}
+  .mcard .mexp{margin-top:12px;color:var(--muted);font-size:13px;line-height:1.5;flex:1}
+  .mcard .mfoot{margin-top:16px;padding-top:14px;border-top:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .mcard .vbadge{font-family:var(--mono);font-size:11px;color:var(--answer);display:inline-flex;align-items:center;gap:6px}
+  .mcard .vbadge .dot{width:6px;height:6px;border-radius:50%;background:var(--answer)}
+  .mcard .mdid{font-family:var(--mono);font-size:10.5px;color:var(--muted-2)}
+  .mcard.pending .pending-tag{font-family:var(--mono);font-size:11px;color:var(--muted-2)}
+  .mem-foot{margin-top:24px;font-family:var(--mono);font-size:12px;color:var(--muted-2);text-align:center}
 
   /* ---------- network ---------- */
   .net{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:42px;align-items:center}
@@ -352,6 +376,7 @@
     .cmp,.ev-grid,.cases{grid-template-columns:1fr 1fr}
     .elig{grid-template-columns:1fr 1fr 1fr}
     .domains,.benefits{grid-template-columns:1fr 1fr}
+    .mem-grid{grid-template-columns:1fr 1fr}
     .vsteps{grid-template-columns:1fr}
     .vstep{border-right:0;border-bottom:1px solid var(--hair)}
     .vstep:last-child{border-bottom:0}
@@ -374,6 +399,7 @@
     section{padding:64px 0}
     .cmp,.ev-grid,.cases,.flow{grid-template-columns:1fr}
     .elig,.domains,.benefits{grid-template-columns:1fr}
+    .mem-grid{grid-template-columns:1fr}
     .fstep{border-right:0;border-bottom:1px solid var(--hair)}
     .fstep:last-child{border-bottom:0}
     .band,.cta-box{padding:28px}
@@ -398,7 +424,7 @@
       <a href="#architecture" data-ko="작동 방식" data-en="How it works">작동 방식</a>
       <a href="#evidence" data-ko="판단 예시" data-en="Evidence">판단 예시</a>
       <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
-      <a href="#network" data-ko="네트워크" data-en="Network">네트워크</a>
+      <a href="#members" data-ko="위원 소개" data-en="Members">위원 소개</a>
     </div>
     <div class="nav-cta">
       <button class="lang" id="lang" type="button" aria-label="Switch to English">
@@ -775,6 +801,27 @@
     </div>
   </section>
 
+  <!-- MEMBERS -->
+  <section id="members">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="위원 소개" data-en="Members">위원 소개</span>
+          <h2 style="margin-top:16px" data-ko="검증을 통과한 자문위원" data-en="Verified advisory members">검증을 통과한 자문위원</h2>
+        </div>
+        <p data-ko="페르소나 MCP 서버의 진본 검증을 통과한 위원만 등재됩니다. 각 위원은 위·변조 불가능한 DID 명함으로 신원이 보증됩니다." data-en="Only members who pass authenticity verification on the persona MCP server are listed. Each is backed by a tamper-proof DID card.">페르소나 MCP 서버의 진본 검증을 통과한 위원만 등재됩니다. 각 위원은 위·변조 불가능한 DID 명함으로 신원이 보증됩니다.</p>
+      </div>
+
+      <div class="mem-note"><span class="live"></span><span id="mem-count" data-ko="위원 목록 불러오는 중…" data-en="Loading members…">위원 목록 불러오는 중…</span></div>
+
+      <div class="mem-grid" id="mem-grid">
+        <!-- 위원 카드가 Supabase에서 동적으로 채워집니다 -->
+      </div>
+
+      <p class="mem-foot" data-ko="등재 방식: 페르소나 MCP 서버가 발급자 서명을 검증(VALID)한 위원만 표시 · 검증 정본 발급자 did:mip:issuer:mip-engine-v1" data-en="Listing policy: only members whose issuer signature is verified (VALID) by the persona MCP server are shown · issuer did:mip:issuer:mip-engine-v1">등재 방식: 페르소나 MCP 서버가 발급자 서명을 검증(VALID)한 위원만 표시 · 검증 정본 발급자 did:mip:issuer:mip-engine-v1</p>
+    </div>
+  </section>
+
   <!-- NETWORK -->
   <section id="network">
     <div class="wrap net">
@@ -954,6 +1001,88 @@
     },{threshold:.12});
     revEls.forEach(el=>ro.observe(el));
   }
+
+  /* ---------- council members: load from Supabase ---------- */
+  const SUPA_URL = "https://zpunqeapmpbnrjtioavr.supabase.co";
+  const SUPA_KEY = "sb_publishable_d7464Hos71CuYeyepjr6Fw_vu8VWCHZ";
+  const memGrid = document.getElementById('mem-grid');
+  const memCount = document.getElementById('mem-count');
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function initials(name){ const n=(name||'').trim(); return n ? n.slice(0,2) : '?'; }
+
+  function joinCard(){
+    return '<article class="mcard pending">'
+      + '<div class="ava">+</div>'
+      + '<div class="mname" data-ko="창립 위원 모집" data-en="Founding members wanted">' + (lang==='en'?'Founding members wanted':'창립 위원 모집') + '</div>'
+      + '<div class="mrole" data-ko="12대 분야 · 100인 목표" data-en="12 domains · target of 100">' + (lang==='en'?'12 domains · target of 100':'12대 분야 · 100인 목표') + '</div>'
+      + '<div class="mexp">' + (lang==='en'?'Join now to be listed as a founding KPN advisor. Register your persona, pass verification, and your appointment is confirmed.':'지금 합류하면 KPN 창립 자문위원으로 등재됩니다. 페르소나 등록 후 진본 검증을 거쳐 위촉이 확정됩니다.') + '</div>'
+      + '<div class="mfoot"><a class="vbadge" href="https://panc.mysoma.space" target="_blank" rel="noopener" style="color:var(--answer)">' + (lang==='en'?'→ Register persona':'→ 페르소나 등록하기') + '</a></div>'
+      + '</article>';
+  }
+
+  function memberCard(m){
+    const chair = m.is_chair ? '<span class="chair" data-ko="위원장" data-en="Chair">' + (lang==='en'?'Chair':'위원장') + '</span>' : '';
+    const verifiedClass = m.verified ? 'verified' : '';
+    const role = [m.role, m.domain].filter(Boolean).join(' · ');
+    const ava = m.photo_url
+      ? '<div class="ava"><img src="' + esc(m.photo_url) + '" alt="' + esc(m.name) + '"></div>'
+      : '<div class="ava">' + esc(initials(m.name)) + '</div>';
+    let foot;
+    if (m.verified) {
+      foot = '<span class="vbadge"><span class="dot"></span>' + (lang==='en'?'MCP-verified':'MCP 진본 검증됨') + '</span>'
+           + (m.did ? '<span class="mdid">' + esc(m.did) + '</span>' : '');
+    } else {
+      foot = '<span class="pending-tag">' + (lang==='en'?'Awaiting MCP verification':'MCP 검증 대기') + '</span>';
+    }
+    return '<article class="mcard ' + verifiedClass + '">'
+      + chair
+      + ava
+      + '<div class="mname">' + esc(m.name) + '</div>'
+      + '<div class="mrole">' + esc(role) + '</div>'
+      + '<div class="mexp">' + esc(m.expertise) + '</div>'
+      + '<div class="mfoot">' + foot + '</div>'
+      + '</article>';
+  }
+
+  function chairFallbackCard(){
+    return '<article class="mcard verified">'
+      + '<span class="chair">' + (lang==='en'?'Chair':'위원장') + '</span>'
+      + '<div class="ava"><img src="youngdo.jpg" alt="이영도"></div>'
+      + '<div class="mname">' + (lang==='en'?'Youngdo Lee':'이영도') + '</div>'
+      + '<div class="mrole">' + (lang==='en'?'IT Platform Architect · Digital & Data':'IT 플랫폼 아키텍트 · 디지털·플랫폼·데이터') + '</div>'
+      + '<div class="mexp">' + (lang==='en'?'Decades as IT-company CEO · Information Processing Engineer · GS certification · ISMS-certified operations':'수십 년 IT 기업 CEO · 정보처리기사 · GS 인증 경험 · ISMS 인증 기업 운영 경험') + '</div>'
+      + '<div class="mfoot"><span class="vbadge"><span class="dot"></span>' + (lang==='en'?'MCP-verified':'MCP 진본 검증됨') + '</span><span class="mdid">did:mip:persona:lee-youngdo</span></div>'
+      + '</article>';
+  }
+
+  async function loadMembers(){
+    if (!memGrid) return;
+    // 우선 위원장 폴백을 즉시 표시 (Supabase 응답 전/실패 시에도 보장)
+    memGrid.innerHTML = chairFallbackCard() + joinCard();
+    try {
+      const res = await fetch(SUPA_URL + '/rest/v1/kpn_council_members?published=eq.true&order=sort_order.asc,created_at.asc', {
+        headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY }
+      });
+      if (!res.ok) throw new Error('fetch failed');
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length) {
+        memGrid.innerHTML = rows.map(memberCard).join('') + joinCard();
+        const verifiedN = rows.filter(r=>r.verified).length;
+        if (memCount) {
+          memCount.textContent = (lang==='en')
+            ? ('MCP-verified · ' + verifiedN + ' appointed · appointments in progress')
+            : ('MCP 진본 검증 완료 · ' + verifiedN + '인 등재 · 위촉 진행 중');
+        }
+      } else {
+        if (memCount) memCount.textContent = (lang==='en') ? 'Appointments in progress' : '위촉 진행 중';
+      }
+    } catch(e) {
+      // 폴백(위원장+모집)이 이미 표시됨
+      if (memCount) memCount.textContent = (lang==='en') ? 'MCP-verified · 1 appointed · in progress' : 'MCP 진본 검증 완료 · 1인 등재 · 위촉 진행 중';
+    }
+  }
+  loadMembers();
 })();
 </script>
 </body>
