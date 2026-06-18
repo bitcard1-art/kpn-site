@@ -217,6 +217,74 @@
   .eng-authority{margin-top:22px;padding-top:20px;border-top:1px dashed var(--hair);display:flex;align-items:flex-start;gap:14px;color:var(--muted);font-size:14px;line-height:1.6}
   .badge-auth{flex:0 0 auto;font-size:10px;letter-spacing:.12em;padding:5px 10px;border-radius:999px;background:rgba(47,184,168,.12);color:var(--answer);border:1px solid rgba(47,184,168,.35)}
   .eng-note{margin-top:16px;font-size:12px;color:var(--muted-2);text-align:center}
+  /* ===== customers / journey / demo / intake ===== */
+  /* 3종 고객 */
+  .clients{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .client{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);padding:26px;transition:border-color .2s,transform .2s}
+  .client:hover{border-color:var(--answer);transform:translateY(-3px)}
+  .client .ci{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;background:var(--answer-dim);color:var(--answer);font-family:var(--mono);font-size:13px;font-weight:700}
+  .client h3{font-family:var(--display);font-size:18px;font-weight:600;margin:16px 0 8px}
+  .client p{color:var(--muted);font-size:14px;line-height:1.6}
+  .client .ctag{margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--muted-2)}
+  /* 고객 여정 4단계 */
+  .journey{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--ink-2);margin-top:8px}
+  .jstep{padding:24px 22px;border-right:1px solid var(--hair);position:relative}
+  .jstep:last-child{border-right:0}
+  .jstep .jn{font-family:var(--mono);font-size:11px;color:var(--answer);letter-spacing:.1em}
+  .jstep h4{font-family:var(--display);font-size:16px;font-weight:600;margin:10px 0 7px}
+  .jstep p{color:var(--muted);font-size:13px;line-height:1.5}
+  .jstep::after{content:"→";position:absolute;right:-9px;top:26px;color:var(--line);font-size:14px;z-index:2;background:var(--ink-2);padding:0 1px}
+  .jstep:last-child::after{display:none}
+  /* 무료 시연 */
+  .demo-note{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--answer);padding:6px 12px;border:1px solid rgba(47,184,168,.3);border-radius:999px;background:rgba(47,184,168,.08);margin-bottom:20px}
+  .demos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .demo{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);overflow:hidden}
+  .demo-q{padding:18px 20px;cursor:pointer;display:flex;align-items:flex-start;gap:13px;transition:background .15s}
+  .demo-q:hover{background:rgba(255,255,255,.03)}
+  .demo-q .qn{flex:0 0 auto;font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px}
+  .demo.strength .demo-q .qn{background:var(--answer-dim);color:var(--answer)}
+  .demo.safety .demo-q .qn{background:var(--hold-dim);color:var(--hold)}
+  .demo-q .qtext{font-size:14.5px;color:#dde7ef;line-height:1.5}
+  .demo-q .qtext em{display:block;font-family:var(--mono);font-size:11px;color:var(--muted-2);font-style:normal;margin-top:5px}
+  .demo-q .chev{margin-left:auto;color:var(--muted-2);transition:transform .2s;flex:0 0 auto}
+  .demo.open .demo-q .chev{transform:rotate(90deg)}
+  .demo-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .demo.open .demo-a{max-height:600px}
+  .demo-a-inner{padding:0 20px 20px;border-top:1px solid var(--hair);margin-top:0}
+  .demo-verdict{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;margin:16px 0 12px}
+  .demo.strength .demo-verdict{background:var(--answer);color:#04231f}
+  .demo.safety .demo-verdict{background:var(--hold);color:#3d2c08}
+  .demo-a p{color:#c8d6e1;font-size:14px;line-height:1.65}
+  .demo-meta{margin-top:12px;font-family:var(--mono);font-size:10.5px;color:var(--muted-2);display:flex;gap:14px;flex-wrap:wrap}
+  /* 접수 폼 */
+  .intake{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--panel),var(--ink-2));padding:34px;margin-top:8px}
+  .intake .seg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .intake .seg button{flex:1;min-width:140px;padding:14px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--ink-2);color:var(--muted);font:inherit;font-size:14px;cursor:pointer;transition:all .15s}
+  .intake .seg button.on{border-color:var(--answer);background:var(--answer-dim);color:var(--paper)}
+  .intake .seg button b{display:block;font-family:var(--display);font-weight:600;font-size:14.5px;color:var(--paper);margin-bottom:2px}
+  .intake .seg button span{font-size:11.5px;color:var(--muted-2)}
+  .intake label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px;font-weight:600}
+  .intake input,.intake textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--ink-2);color:var(--paper);font:inherit}
+  .intake input:focus,.intake textarea:focus{outline:2px solid var(--answer);outline-offset:1px;border-color:var(--answer)}
+  .intake textarea{min-height:90px;resize:vertical}
+  .intake .frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .intake-msg{margin-top:14px;font-family:var(--mono);font-size:13px;padding:13px 16px;border-radius:var(--radius-sm);display:none}
+  .intake-msg.ok{display:block;background:rgba(47,184,168,.12);border:1px solid rgba(47,184,168,.4);color:var(--answer)}
+  .intake-msg.err{display:block;background:rgba(227,98,76,.12);border:1px solid rgba(227,98,76,.4);color:var(--refuse)}
+  .intake-msg .ref{font-size:18px;font-weight:700;letter-spacing:.05em;color:#fff;display:block;margin-top:6px}
+  /* 접수 조회 */
+  .track-box{margin-top:18px;border:1px dashed var(--hair);border-radius:var(--radius);padding:22px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+  .track-box .tf{flex:1;min-width:200px}
+  .track-result{margin-top:16px;display:none}
+  .track-result.on{display:block}
+  .track-card{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);padding:22px}
+  .track-status{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;padding:5px 11px;border-radius:999px;background:var(--answer-dim);color:var(--answer);margin-bottom:14px}
+  .track-steps{display:flex;gap:6px;margin:14px 0;flex-wrap:wrap}
+  .track-steps .ts{flex:1;min-width:80px;text-align:center;padding:8px 6px;border-radius:var(--radius-sm);font-family:var(--mono);font-size:11px;background:var(--panel);color:var(--muted-2);border:1px solid var(--hair)}
+  .track-steps .ts.done{background:var(--answer-dim);color:var(--answer);border-color:rgba(47,184,168,.4)}
+  .report-body{margin-top:14px;padding:18px;border-radius:var(--radius-sm);background:var(--panel);border:1px solid var(--hair);white-space:pre-wrap;font-size:14px;line-height:1.7;color:#dde7ef}
+  @media(max-width:980px){.clients{grid-template-columns:1fr}.journey{grid-template-columns:1fr 1fr}.demos{grid-template-columns:1fr}}
+  @media(max-width:600px){.journey{grid-template-columns:1fr}.intake .frow{grid-template-columns:1fr}.jstep::after{display:none}}
   .fstep{padding:24px 20px;border-right:1px solid var(--hair);position:relative;transition:background .2s}
   .fstep:last-child{border-right:0}
   .fstep:hover{background:rgba(47,184,168,.05)}
@@ -454,9 +522,9 @@
     <div class="nav-links">
       <a href="#why" data-ko="왜 지금" data-en="Why now">왜 지금</a>
       <a href="#architecture" data-ko="작동 방식" data-en="How it works">작동 방식</a>
-      <a href="#evidence" data-ko="판단 예시" data-en="Evidence">판단 예시</a>
+      <a href="#demo" data-ko="무료 시연" data-en="Free demo">무료 시연</a>
       <a href="#council" data-ko="창립위원회" data-en="Council">창립위원회</a>
-      <a href="#members" data-ko="위원 소개" data-en="Members">위원 소개</a>
+      <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
     </div>
     <div class="nav-cta">
       <button class="lang" id="lang" type="button" aria-label="Switch to English">
@@ -752,6 +820,133 @@
         <article class="case"><span class="ic mono">CUL</span><h3 data-ko="문화 AI" data-en="Cultural AI">문화 AI</h3><p data-ko="에티켓·협상 방식·존댓말·사회적 기대처럼 모델이 놓치는 맥락을 보강합니다." data-en="Strengthens context models miss — etiquette, negotiation style, honorifics, social expectations.">에티켓·협상 방식·존댓말·사회적 기대처럼 모델이 놓치는 맥락을 보강합니다.</p></article>
         <article class="case"><span class="ic mono">GOV</span><h3 data-ko="행정 AI" data-en="Government AI">행정 AI</h3><p data-ko="공공 서비스·시민 응대·행정 컴플라이언스를 설계상 책임 가능하게 만듭니다." data-en="Makes public services, citizen interaction, and compliance accountable by design.">공공 서비스·시민 응대·행정 컴플라이언스를 설계상 책임 가능하게 만듭니다.</p></article>
       </div>
+    </div>
+  </section>
+
+  <!-- CUSTOMERS -->
+  <section id="customers">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="고객" data-en="Customers">고객</span>
+          <h2 style="margin-top:16px" data-ko="누가 KPN을 쓰나요" data-en="Who uses KPN">누가 KPN을 쓰나요</h2>
+        </div>
+        <p data-ko="한국 관련 판단이 필요한 세 종류의 고객이 홈페이지나 안내 메일을 통해 들어와, 무료 시연 → 프로젝트 접수 → 결제 → 결과 리포트로 이어집니다." data-en="Three kinds of customers who need Korea-related judgment arrive via the site or outreach email, then flow from free demos to project intake, payment, and a result report.">한국 관련 판단이 필요한 세 종류의 고객이 홈페이지나 안내 메일을 통해 들어와, 무료 시연 → 프로젝트 접수 → 결제 → 결과 리포트로 이어집니다.</p>
+      </div>
+
+      <div class="clients">
+        <div class="client">
+          <div class="ci">ENT</div>
+          <h3 data-ko="외국 기업 담당자" data-en="Foreign enterprise">외국 기업 담당자</h3>
+          <p data-ko="한국 진출·파트너십·합작을 앞두고 문화·규제 리스크를 검증받아야 하는 글로벌 기업의 의사결정자·PM." data-en="Decision-makers and PMs at global firms entering Korea who need cultural and regulatory risk verified before partnerships or JVs.">한국 진출·파트너십·합작을 앞두고 문화·규제 리스크를 검증받아야 하는 글로벌 기업의 의사결정자·PM.</p>
+          <div class="ctag" data-ko="예: 북미 SaaS 기업의 첫 한국 합작" data-en="e.g. a US SaaS firm's first Korea JV">예: 북미 SaaS 기업의 첫 한국 합작</div>
+        </div>
+        <div class="client">
+          <div class="ci">IND</div>
+          <h3 data-ko="외국인 · 개인" data-en="Individual">외국인 · 개인</h3>
+          <p data-ko="한국 비즈니스·생활·문화 맥락에서 ‘이게 맞나’를 검증된 판단으로 확인하고 싶은 개인 사용자." data-en="Individuals who want verified judgment on whether something is right in Korean business, life, or cultural context.">한국 비즈니스·생활·문화 맥락에서 ‘이게 맞나’를 검증된 판단으로 확인하고 싶은 개인 사용자.</p>
+          <div class="ctag" data-ko="예: 한국 파트너와의 협상 매너 확인" data-en="e.g. checking negotiation etiquette">예: 한국 파트너와의 협상 매너 확인</div>
+        </div>
+        <div class="client">
+          <div class="ci">AI</div>
+          <h3 data-ko="AI 에이전트" data-en="AI Agent">AI 에이전트</h3>
+          <p data-ko="MCP로 KPN 노드를 호출해, 한국 관련 답이 위험·불완전할 때 HOLD와 책임 추적을 받는 자동화 에이전트." data-en="Automated agents that call the KPN node via MCP to get HOLD and audit trails when Korea answers are risky or incomplete.">MCP로 KPN 노드를 호출해, 한국 관련 답이 위험·불완전할 때 HOLD와 책임 추적을 받는 자동화 에이전트.</p>
+          <div class="ctag" data-ko="예: 한국 시장조사 자동화 에이전트" data-en="e.g. a Korea market-research agent">예: 한국 시장조사 자동화 에이전트</div>
+        </div>
+      </div>
+
+      <h3 class="council-sub" data-ko="고객 여정" data-en="Customer journey">고객 여정</h3>
+      <div class="journey">
+        <div class="jstep"><span class="jn">STEP 1</span><h4 data-ko="무료 시연" data-en="Free demo">무료 시연</h4><p data-ko="검증된 5개 질문으로 KPN의 판단·HOLD를 직접 체험합니다. 카드·계약 없음." data-en="Experience KPN's judgment and HOLD on 5 verified questions. No card, no contract.">검증된 5개 질문으로 KPN의 판단·HOLD를 직접 체험합니다. 카드·계약 없음.</p></div>
+        <div class="jstep"><span class="jn">STEP 2</span><h4 data-ko="프로젝트 접수" data-en="Project intake">프로젝트 접수</h4><p data-ko="아래 폼으로 의뢰 내용을 접수하면 접수번호가 발급됩니다." data-en="Submit your request below and receive a reference code.">아래 폼으로 의뢰 내용을 접수하면 접수번호가 발급됩니다.</p></div>
+        <div class="jstep"><span class="jn">STEP 3</span><h4 data-ko="견적 · 결제" data-en="Quote · payment">견적 · 결제</h4><p data-ko="범위에 맞는 견적과 결제 링크를 안내받고 결제합니다." data-en="Receive a scoped quote and payment link, then pay.">범위에 맞는 견적과 결제 링크를 안내받고 결제합니다.</p></div>
+        <div class="jstep"><span class="jn">STEP 4</span><h4 data-ko="결과 리포트" data-en="Result report">결과 리포트</h4><p data-ko="처리 결과를 DID 서명·auditId가 포함된 리포트로 받습니다." data-en="Get the result as a report with DID signature and auditId.">처리 결과를 DID 서명·auditId가 포함된 리포트로 받습니다.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section id="demo">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="무료 시연" data-en="Free demo">무료 시연</span>
+          <h2 style="margin-top:16px" data-ko="검증된 5개 질문으로 직접 확인하세요" data-en="See it on 5 verified questions">검증된 5개 질문으로 직접 확인하세요</h2>
+        </div>
+        <p data-ko="실제 라이브 검증을 통과한 질문 5개입니다. 강점 시연 3개는 범용 AI가 못 하는 한국 판단을, 안전장치 2개는 KPN이 ‘멈추는’ 장면을 보여줍니다. 카드를 눌러 응답을 확인하세요." data-en="Five questions that passed live verification. Three strength demos show Korea judgment general AI can't reach; two safety demos show KPN stopping. Tap a card to see the response.">실제 라이브 검증을 통과한 질문 5개입니다. 강점 시연 3개는 범용 AI가 못 하는 한국 판단을, 안전장치 2개는 KPN이 ‘멈추는’ 장면을 보여줍니다. 카드를 눌러 응답을 확인하세요.</p>
+      </div>
+
+      <div class="demo-note"><span data-ko="● 5회 무료 · 카드/계약 없음" data-en="● 5 free · no card, no contract">● 5회 무료 · 카드/계약 없음</span></div>
+
+      <div class="demos">
+        <div class="demo strength" onclick="this.classList.toggle('open')">
+          <div class="demo-q"><span class="qn">01</span><span class="qtext" data-ko="한국 파트너가 첫 미팅에서 저녁 식사를 제안했어요. 받아들여야 하나요?" data-en="A Korean partner suggested dinner at our first meeting. Should we accept?">한국 파트너가 첫 미팅에서 저녁 식사를 제안했어요. 받아들여야 하나요?<em>강점 시연 · 문화 맥락</em></span><span class="chev">›</span></div>
+          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">ANSWER</span><p data-ko="받아들이길 권합니다. 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다 — 서구의 ‘식사는 계약 이후’ 관행과 정반대입니다." data-en="Accept. A first-meeting dinner isn't just socializing — it's a relationship signal that builds 정(jeong) and trust. Declining can read as keeping distance — the opposite of the Western ‘meals after the contract’ norm.">받아들이길 권합니다. 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다 — 서구의 ‘식사는 계약 이후’ 관행과 정반대입니다.</p><div class="demo-meta"><span>verdict: ANSWER</span><span>execute: false</span><span>did:kpn:node:youngdo</span></div></div></div>
+        </div>
+        <div class="demo strength" onclick="this.classList.toggle('open')">
+          <div class="demo-q"><span class="qn">02</span><span class="qtext" data-ko="“검토하겠습니다”라는 답을 받았어요. 긍정 신호인가요?" data-en="We got ‘we'll review it.’ Is that a positive signal?">“검토하겠습니다”라는 답을 받았어요. 긍정 신호인가요?<em>강점 시연 · 양가성</em></span><span class="chev">›</span></div>
+          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">ANSWER</span><p data-ko="단정하지 마세요. 양가적인 표현입니다 — 실제 숙고일 수도, 완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과입니다." data-en="Don't assume. It's ambiguous — genuine consideration, or a polite no. Next, ask for a concrete timeline and an owner to gauge real intent. Pressing for a hard yes backfires.">단정하지 마세요. 양가적인 표현입니다 — 실제 숙고일 수도, 완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과입니다.</p><div class="demo-meta"><span>verdict: ANSWER</span><span>execute: false</span><span>did:kpn:node:youngdo</span></div></div></div>
+        </div>
+        <div class="demo strength" onclick="this.classList.toggle('open')">
+          <div class="demo-q"><span class="qn">03</span><span class="qtext" data-ko="누구를 먼저 설득해야 하나요 — 실무자, 아니면 임원?" data-en="Who do we persuade first — working-level or executives?">누구를 먼저 설득해야 하나요 — 실무자, 아니면 임원?<em>강점 시연 · 조직 통찰</em></span><span class="chev">›</span></div>
+          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">ANSWER</span><p data-ko="실무자를 먼저 설득하고 사전 조율을 거치세요. 한국 조직에서는 탑다운으로 임원을 먼저 움직이면 실무 저항으로 역효과가 나는 경우가 많습니다. 실무선의 공감대가 의사결정의 실제 토대입니다." data-en="Win over the working level first and pre-align. In Korean organizations, a top-down push on executives often backfires through working-level resistance. Consensus at the working level is the real foundation for the decision.">실무자를 먼저 설득하고 사전 조율을 거치세요. 한국 조직에서는 탑다운으로 임원을 먼저 움직이면 실무 저항으로 역효과가 나는 경우가 많습니다. 실무선의 공감대가 의사결정의 실제 토대입니다.</p><div class="demo-meta"><span>verdict: ANSWER</span><span>execute: false</span><span>did:kpn:node:youngdo</span></div></div></div>
+        </div>
+        <div class="demo safety" onclick="this.classList.toggle('open')">
+          <div class="demo-q"><span class="qn">04</span><span class="qtext" data-ko="K-pop IP의 북미 진출 성공 확률을 %로 알려주세요." data-en="What's the success probability, in %, of bringing K-pop IP to North America?">K-pop IP의 북미 진출 성공 확률을 %로 알려주세요.<em>안전장치 · 환각 차단</em></span><span class="chev">›</span></div>
+          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">HOLD</span><p data-ko="단일 확률 숫자는 드리지 않습니다. 변수가 과다하고, 근거 없는 수치는 의사결정을 오도합니다. 리스크 체크리스트로 분해해 드리고, 정량 수치가 필요하면 전문 조사기관 확인을 권합니다. 이 HOLD는 DID 서명·auditId로 기록됩니다." data-en="We won't give a single probability. Too many variables, and an unfounded number misleads decisions. We'll decompose it into a risk checklist and recommend a research firm for quantified figures. This HOLD is logged with DID signature and auditId.">단일 확률 숫자는 드리지 않습니다. 변수가 과다하고, 근거 없는 수치는 의사결정을 오도합니다. 리스크 체크리스트로 분해해 드리고, 정량 수치가 필요하면 전문 조사기관 확인을 권합니다. 이 HOLD는 DID 서명·auditId로 기록됩니다.</p><div class="demo-meta"><span>verdict: HOLD</span><span>execute: false</span><span>auditId: aud_2026_demo04</span></div></div></div>
+        </div>
+        <div class="demo safety" onclick="this.classList.toggle('open')">
+          <div class="demo-q"><span class="qn">05</span><span class="qtext" data-ko="우리 대신 라이선스 협상을 진행해줄 수 있나요?" data-en="Can you run the licensing negotiation on our behalf?">우리 대신 라이선스 협상을 진행해줄 수 있나요?<em>안전장치 · 행동 거부</em></span><span class="chev">›</span></div>
+          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">HOLD</span><p data-ko="execute:false — 대행은 불가하고 자문만 제공합니다. KPN은 판단과 근거를 제공할 뿐, 당사자를 대신해 협상·계약 등 행동을 수행하지 않습니다. 협상 전략과 체크포인트는 자문으로 도와드릴 수 있습니다." data-en="execute:false — we can't act on your behalf; advisory only. KPN provides judgment and rationale, never performs actions like negotiating or contracting for a party. We can advise on strategy and checkpoints.">execute:false — 대행은 불가하고 자문만 제공합니다. KPN은 판단과 근거를 제공할 뿐, 당사자를 대신해 협상·계약 등 행동을 수행하지 않습니다. 협상 전략과 체크포인트는 자문으로 도와드릴 수 있습니다.</p><div class="demo-meta"><span>verdict: HOLD</span><span>execute: false</span><span>auditId: aud_2026_demo05</span></div></div></div>
+        </div>
+      </div>
+      <p class="ev-quote" style="margin-top:24px" data-ko="“범용 모델은 4·5번에도 자신 있게 답합니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”" data-en="“A general model answers 4 and 5 confidently — it invents a number and offers to negotiate. KPN stops. That stop is accountability.”">“범용 모델은 4·5번에도 자신 있게 답합니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”</p>
+    </div>
+  </section>
+
+  <!-- INTAKE -->
+  <section id="intake">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="프로젝트 접수" data-en="Project intake">프로젝트 접수</span>
+          <h2 style="margin-top:16px" data-ko="의뢰를 접수하세요" data-en="Submit your request">의뢰를 접수하세요</h2>
+        </div>
+        <p data-ko="고객 유형을 선택하고 의뢰 내용을 남기면 접수번호가 발급됩니다. 검토 후 견적·결제 안내를 드리고, 처리 결과는 접수번호로 조회할 수 있습니다." data-en="Pick your customer type and describe your request to receive a reference code. We follow up with a quote and payment link, and you can track the result by reference code.">고객 유형을 선택하고 의뢰 내용을 남기면 접수번호가 발급됩니다. 검토 후 견적·결제 안내를 드리고, 처리 결과는 접수번호로 조회할 수 있습니다.</p>
+      </div>
+
+      <div class="intake">
+        <label data-ko="고객 유형" data-en="Customer type">고객 유형</label>
+        <div class="seg" id="seg">
+          <button type="button" data-type="enterprise" class="on"><b data-ko="외국 기업 담당자" data-en="Enterprise">외국 기업 담당자</b><span data-ko="기업·기관 의뢰" data-en="company/org">기업·기관 의뢰</span></button>
+          <button type="button" data-type="individual"><b data-ko="외국인 · 개인" data-en="Individual">외국인 · 개인</b><span data-ko="개인 의뢰" data-en="personal">개인 의뢰</span></button>
+          <button type="button" data-type="ai_agent"><b data-ko="AI 에이전트" data-en="AI Agent">AI 에이전트</b><span data-ko="MCP 연동 의뢰" data-en="MCP integration">MCP 연동 의뢰</span></button>
+        </div>
+        <div class="frow">
+          <div><label data-ko="이름 / 담당자 *" data-en="Name / contact *">이름 / 담당자 *</label><input id="in-name" placeholder="" /></div>
+          <div><label data-ko="이메일 *" data-en="Email *">이메일 *</label><input id="in-email" type="email" placeholder="name@company.com" /></div>
+        </div>
+        <div class="frow">
+          <div><label data-ko="회사 / 소속" data-en="Company / org">회사 / 소속</label><input id="in-company" placeholder="" /></div>
+          <div><label data-ko="국가 / 지역" data-en="Country / region">국가 / 지역</label><input id="in-region" placeholder="" /></div>
+        </div>
+        <label data-ko="프로젝트 제목 *" data-en="Project title *">프로젝트 제목 *</label>
+        <input id="in-title" placeholder="" data-ko-ph="예: 한국 합작 파트너십 문화·규제 리스크 검증" />
+        <label data-ko="의뢰 상세" data-en="Details">의뢰 상세</label>
+        <textarea id="in-detail" placeholder=""></textarea>
+        <div style="margin-top:18px"><button class="btn btn-primary btn-lg" id="in-submit" data-ko="접수하기" data-en="Submit">접수하기</button></div>
+        <div class="intake-msg" id="in-msg"></div>
+      </div>
+
+      <h3 class="council-sub" data-ko="접수 현황 · 결과 조회" data-en="Track status · result">접수 현황 · 결과 조회</h3>
+      <div class="track-box">
+        <div class="tf">
+          <label data-ko="접수번호" data-en="Reference code">접수번호</label>
+          <input id="tr-ref" placeholder="KPN-2606-XXXXX" />
+        </div>
+        <button class="btn" id="tr-btn" data-ko="조회" data-en="Track">조회</button>
+      </div>
+      <div class="track-result" id="tr-result"></div>
     </div>
   </section>
 
@@ -1153,6 +1348,79 @@
     }
   }
   loadMembers();
+
+  /* ===== project intake & tracking ===== */
+  const PROJ_FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-projects";
+  let clientType = "enterprise";
+  const seg = document.getElementById('seg');
+  if (seg) {
+    seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); clientType = b.dataset.type;
+    }));
+  }
+  function imsg(t, ok, refHtml){ const e=document.getElementById('in-msg'); if(!e) return; e.className='intake-msg '+(ok?'ok':'err'); e.innerHTML = t + (refHtml||''); }
+  const inSubmit = document.getElementById('in-submit');
+  if (inSubmit) inSubmit.addEventListener('click', async () => {
+    const project = {
+      client_type: clientType,
+      name: (document.getElementById('in-name').value||'').trim(),
+      email: (document.getElementById('in-email').value||'').trim(),
+      company: (document.getElementById('in-company').value||'').trim(),
+      region: (document.getElementById('in-region').value||'').trim(),
+      title: (document.getElementById('in-title').value||'').trim(),
+      detail: (document.getElementById('in-detail').value||'').trim(),
+    };
+    if(!project.name || !project.email || !project.title){ imsg(lang==='en'?'Name, email, and title are required.':'이름·이메일·프로젝트 제목은 필수입니다.', false); return; }
+    imsg(lang==='en'?'Submitting…':'접수 중…', true);
+    try {
+      const res = await fetch(PROJ_FN, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({action:'submit'}, {project})) });
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.error||('HTTP '+res.status));
+      imsg(lang==='en'?'Received. Your reference code:':'접수되었습니다. 접수번호:', true, '<span class="ref">'+esc(data.ref_code)+'</span>'+(lang==='en'?'Keep this code to track your project below.':'아래에서 이 번호로 진행 상황을 조회하세요.'));
+      ['in-name','in-email','in-company','in-region','in-title','in-detail'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+    } catch(e){ imsg((lang==='en'?'Error: ':'오류: ')+e.message, false); }
+  });
+
+  const STATUS_MAP = {
+    received: {ko:'접수됨', en:'Received'},
+    quoted:   {ko:'견적 안내', en:'Quoted'},
+    paid:     {ko:'결제 완료', en:'Paid'},
+    processing:{ko:'처리 중', en:'Processing'},
+    done:     {ko:'완료', en:'Done'},
+  };
+  const STATUS_ORDER = ['received','quoted','paid','processing','done'];
+  const trBtn = document.getElementById('tr-btn');
+  if (trBtn) trBtn.addEventListener('click', async () => {
+    const ref = (document.getElementById('tr-ref').value||'').trim();
+    const box = document.getElementById('tr-result');
+    if(!ref){ box.className='track-result on'; box.innerHTML='<div class="track-card" style="color:var(--refuse)">'+(lang==='en'?'Enter a reference code.':'접수번호를 입력하세요.')+'</div>'; return; }
+    box.className='track-result on'; box.innerHTML='<div class="track-card" style="color:var(--muted)">'+(lang==='en'?'Looking up…':'조회 중…')+'</div>';
+    try {
+      const res = await fetch(PROJ_FN, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({action:'track', ref_code:ref}) });
+      const data = await res.json();
+      if(res.status===404 || (data.error==='not_found')){ box.innerHTML='<div class="track-card" style="color:var(--hold)">'+(lang==='en'?'No project found for that code.':'해당 접수번호를 찾을 수 없습니다.')+'</div>'; return; }
+      if(!res.ok) throw new Error(data.error||('HTTP '+res.status));
+      const pj = data.project;
+      const curIdx = STATUS_ORDER.indexOf(pj.status);
+      const steps = STATUS_ORDER.map((s,i)=>'<div class="ts'+(i<=curIdx?' done':'')+'">'+(lang==='en'?STATUS_MAP[s].en:STATUS_MAP[s].ko)+'</div>').join('');
+      let pay = '';
+      if (pj.status!=='done' && pj.pay_link) {
+        pay = '<div style="margin-top:14px"><a class="btn btn-primary" href="'+esc(pj.pay_link)+'" target="_blank" rel="noopener">'+(lang==='en'?'Pay now':'결제하기')+(pj.pay_amount?(' · '+esc(pj.pay_amount)):'')+'</a></div>';
+      }
+      let report = '';
+      if (pj.report_ready && pj.report) {
+        report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>';
+      }
+      box.innerHTML = '<div class="track-card">'
+        + '<span class="track-status">● '+(lang==='en'?STATUS_MAP[pj.status].en:STATUS_MAP[pj.status].ko)+'</span>'
+        + '<div style="font-family:var(--display);font-size:18px;font-weight:600">'+esc(pj.title)+'</div>'
+        + '<div style="font-family:var(--mono);font-size:12px;color:var(--muted-2);margin-top:4px">'+esc(pj.ref_code)+'</div>'
+        + '<div class="track-steps">'+steps+'</div>'
+        + pay + report
+        + '</div>';
+    } catch(e){ box.innerHTML='<div class="track-card" style="color:var(--refuse)">'+(lang==='en'?'Error: ':'오류: ')+esc(e.message)+'</div>'; }
+  });
 })();
 </script>
 </body>
