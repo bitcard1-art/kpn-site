@@ -79,6 +79,17 @@
   .nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--muted)}
   .nav-links a{transition:color .18s}
   .nav-links a:hover{color:var(--paper)}
+  .hamb{display:none;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;
+    background:transparent;border:1px solid var(--line);border-radius:9px;cursor:pointer;padding:0}
+  .hamb span{display:block;width:18px;height:2px;background:var(--paper);margin:0 auto;transition:transform .2s,opacity .2s;border-radius:2px}
+  .hamb.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .hamb.open span:nth-child(2){opacity:0}
+  .hamb.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .mobile-menu{display:none;flex-direction:column;border-top:1px solid var(--line);background:var(--ink-2)}
+  .mobile-menu a{padding:15px 22px;border-bottom:1px solid var(--hair);color:var(--paper);font-size:15px}
+  .mobile-menu a:hover{background:rgba(255,255,255,.03)}
+  .mobile-menu .mm-cta{color:var(--answer);font-weight:600}
+  .mobile-menu.open{display:flex}
   .nav-cta{display:flex;align-items:center;gap:10px}
   .lang{
     height:38px;padding:0 13px;border-radius:var(--radius-sm);border:1px solid var(--line);
@@ -467,6 +478,8 @@
   /* ---------- responsive ---------- */
   @media (max-width:980px){
     .nav-links{display:none}
+    .hamb{display:flex}
+    .pilot-cta{display:none}
     .hero-grid,.s-head,.net,.cta-box{grid-template-columns:1fr}
     .hero{padding-top:46px}
     .band{grid-template-columns:1fr;gap:24px}
@@ -530,8 +543,19 @@
       <button class="lang" id="lang" type="button" aria-label="Switch to English">
         <span class="ko-dot"></span><span id="langlabel">EN</span>
       </button>
-      <a class="btn btn-primary" href="#contact" data-ko="파일럿 문의" data-en="Request pilot">파일럿 문의</a>
+      <a class="btn btn-primary pilot-cta" href="#contact" data-ko="파일럿 문의" data-en="Request pilot">파일럿 문의</a>
+      <button class="hamb" id="hamb" type="button" aria-label="메뉴" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#why" data-ko="왜 지금" data-en="Why now">왜 지금</a>
+    <a href="#architecture" data-ko="작동 방식" data-en="How it works">작동 방식</a>
+    <a href="#demo" data-ko="무료 시연" data-en="Free demo">무료 시연</a>
+    <a href="#council" data-ko="창립위원회" data-en="Council">창립위원회</a>
+    <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
+    <a href="#contact" class="mm-cta" data-ko="파일럿 문의" data-en="Request pilot">파일럿 문의</a>
   </div>
 </nav>
 
@@ -1119,6 +1143,22 @@
 <script>
 (function(){
   const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* ---------- mobile hamburger menu ---------- */
+  const hamb = document.getElementById('hamb');
+  const mobileMenu = document.getElementById('mobileMenu');
+  if (hamb && mobileMenu) {
+    hamb.addEventListener('click', ()=>{
+      const open = mobileMenu.classList.toggle('open');
+      hamb.classList.toggle('open', open);
+      hamb.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', ()=>{
+      mobileMenu.classList.remove('open');
+      hamb.classList.remove('open');
+      hamb.setAttribute('aria-expanded', 'false');
+    }));
+  }
 
   /* ---------- language toggle (attribute-based) ---------- */
   const btn = document.getElementById('lang');
