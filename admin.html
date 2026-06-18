@@ -97,6 +97,19 @@
   .dnote{font-size:12px;color:var(--muted-2);margin-top:16px;border-left:2px solid var(--hair);padding-left:14px;line-height:1.6}
   .dnote b{color:var(--hold)}
   @media(max-width:600px){.row{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.bar-row .bn{width:120px}}
+  /* review queue */
+  .qbadge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--hold);color:#231a04;font-family:var(--mono);font-size:10px;font-weight:700;margin-left:5px;vertical-align:middle}
+  .qcard{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:18px;margin-bottom:12px}
+  .qcard .qh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .qcard .qref{font-family:var(--mono);font-size:13px;color:var(--paper);font-weight:600}
+  .qcard .qcust{color:var(--muted-2);font-size:12.5px}
+  .qcard .qtitle{font-size:15px;color:var(--paper);margin:6px 0;font-weight:500}
+  .qcard .qdraft{font-size:13px;color:var(--muted);line-height:1.6;max-height:64px;overflow:hidden;border-left:2px solid var(--hair);padding-left:12px;margin:10px 0}
+  .ttag{font-family:var(--mono);font-size:10.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--hair);color:var(--muted-2)}
+  .ttag.tier{background:rgba(242,181,75,.13);color:var(--hold);border-color:rgba(242,181,75,.3)}
+  .ttag.cat{background:rgba(47,184,168,.1);color:var(--answer);border-color:rgba(47,184,168,.25)}
+  .ttag.ai{background:rgba(91,141,239,.12);color:#7ba3f0;border-color:rgba(91,141,239,.3)}
+  .ttag.noai{background:rgba(227,98,76,.1);color:var(--refuse);border-color:rgba(227,98,76,.3)}
 </style>
 </head>
 <body>
@@ -122,6 +135,7 @@
   <div id="panel" class="hide">
     <div class="tabs">
       <button class="tabbtn on" data-tab="members">위원 관리</button>
+      <button class="tabbtn" data-tab="review">검토 대기 <span id="queue-badge" class="qbadge hide">0</span></button>
       <button class="tabbtn" data-tab="projects">프로젝트 접수</button>
       <button class="tabbtn" data-tab="dash">운영 대시보드</button>
     </div>
@@ -186,6 +200,14 @@
       </div>
     </div>
     </div><!-- /tab-projects -->
+
+    <div class="tabpane hide" id="tab-review">
+    <div class="card">
+      <h2>검토 대기 <span style="font-family:var(--mono);font-size:13px;color:var(--muted-2);font-weight:400">· AI가 분류·초안·견적을 채운 접수 건</span></h2>
+      <p class="sub">접수가 들어오면 자동으로 분류·판단 초안·견적이 채워집니다. 초안을 검토하고 <b style="color:var(--hold)">[확정 공개]</b>를 누르면 고객에게 리포트가 공개됩니다. 우선순위(난이도) 높은 순으로 표시됩니다.</p>
+      <div id="queue-list"><div class="empty">불러오는 중…</div></div>
+    </div>
+    </div><!-- /tab-review -->
 
     <div class="tabpane hide" id="tab-dash">
       <div class="stats">
@@ -257,6 +279,33 @@
   </div>
 </div>
 
+<!-- 검토 대기 모달 (원클릭 공개) -->
+<div id="rmodal" class="hide" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto">
+  <div class="card" style="max-width:680px;width:100%;margin:0">
+    <h2 id="rm-title">판단 검토</h2>
+    <p class="sub" id="rm-ref"></p>
+    <input type="hidden" id="rm-ref-code" />
+    <div id="rm-meta" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
+    <div id="rm-info" style="font-size:13.5px;color:var(--muted);line-height:1.7;border:1px solid var(--hair);border-radius:9px;padding:14px;margin-bottom:8px"></div>
+
+    <label>판단 리포트 <span style="color:var(--muted-2);font-weight:400;font-family:var(--mono);font-size:11px">· AI 초안 — 검토 후 수정 가능</span></label>
+    <textarea id="rm-report" style="min-height:200px" placeholder="AI 판단 초안이 여기 채워집니다."></textarea>
+    <div class="hint">이 내용이 고객에게 그대로 공개됩니다. 필요하면 직접 수정하세요. <b style="color:var(--hold)">최종 책임은 이영도 위원장에게 있습니다.</b></div>
+
+    <div class="row">
+      <div><label>견적 금액 (AI 제안)</label><input id="rm-amount" placeholder="예: $190 / from $490" /></div>
+      <div><label>외부 결제 링크 (선택)</label><input id="rm-paylink" placeholder="https://toss.me/... 또는 PayPal.me" /></div>
+    </div>
+
+    <div style="margin-top:20px" class="actions">
+      <button class="btn" id="rm-approve" style="background:var(--hold);color:#231a04">✓ 확정 공개</button>
+      <button class="btn ghost" id="rm-close">닫기</button>
+      <button class="btn ghost sm" id="rm-retriage" style="margin-left:auto">AI 초안 다시 생성</button>
+    </div>
+    <div class="msg" id="rm-msg"></div>
+  </div>
+</div>
+
 <script>
 const FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-council-admin";
 let PW = "";
@@ -285,6 +334,7 @@ $('login').onclick = async () => {
     show($('panel'), true);
     loadRows();
     loadProjects();
+    loadQueue();
   } catch(e) {
     msg($('gate-msg'), e.message==='unauthorized' ? '비밀번호가 올바르지 않습니다.' : ('오류: '+e.message), false);
   }
@@ -457,7 +507,102 @@ document.querySelectorAll('.tabbtn').forEach(b => b.onclick = () => {
   const t = b.dataset.tab;
   document.querySelectorAll('.tabpane').forEach(pane => pane.classList.toggle('hide', pane.id !== 'tab-'+t));
   if (t === 'dash') loadDashboard();
+  if (t === 'review') loadQueue();
 });
+
+/* ===== 검토 대기 (원클릭 공개) ===== */
+const TRIAGE_FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-triage";
+const TIER_LABEL = {one_question:'One Question $29',quick_read:'Quick Read $79',deep_read:'Deep Read $190',strategic_review:'Strategic Review from $490'};
+let QUEUE = [];
+
+async function tcall(action, body){
+  const res = await fetch(TRIAGE_FN, { method:'POST', headers:{'Content-Type':'application/json','x-admin-password':PW}, body: JSON.stringify(Object.assign({action}, body||{})) });
+  const data = await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.error||('HTTP '+res.status));
+  return data;
+}
+
+async function loadQueue(){
+  const slot = $('queue-list');
+  try {
+    const { queue } = await tcall('queue');
+    QUEUE = queue||[];
+    const badge = $('queue-badge');
+    if(QUEUE.length){ badge.textContent = QUEUE.length; show(badge, true); }
+    else { show(badge, false); }
+    if(!QUEUE.length){ slot.innerHTML='<div class="empty">검토 대기 중인 건이 없습니다. 새 접수가 들어오면 자동으로 여기 표시됩니다.</div>'; return; }
+    slot.innerHTML = QUEUE.map(q => {
+      const tier = (q.triage_meta && q.triage_meta.tier) || q.difficulty || '';
+      const aiUsed = q.triage_meta && q.triage_meta.ai_used;
+      const draft = (q.report_draft||'').slice(0,180);
+      return '<div class="qcard">'
+        + '<div class="qh">'
+        +   '<span class="qref">'+esc(q.ref_code)+'</span>'
+        +   '<span class="qcust">'+esc(q.name)+(q.company?(' · '+esc(q.company)):'')+(q.region?(' · '+esc(q.region)):'')+'</span>'
+        +   (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
+        +   (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
+        +   (aiUsed?'<span class="ttag ai">AI 초안</span>':'<span class="ttag noai">초안 미생성</span>')
+        + '</div>'
+        + '<div class="qtitle">'+esc(q.title)+'</div>'
+        + '<div class="qdraft">'+esc(draft)+(draft.length>=180?'…':'')+'</div>'
+        + '<div class="actions"><button class="btn sm" data-review="'+esc(q.ref_code)+'" style="background:var(--hold);color:#231a04">검토 →</button></div>'
+        + '</div>';
+    }).join('');
+    slot.querySelectorAll('[data-review]').forEach(b=> b.onclick=()=>openReview(b.dataset.review));
+  } catch(e){
+    slot.innerHTML = '<div class="empty" style="color:var(--refuse)">오류: '+esc(e.message)+'</div>';
+  }
+}
+
+function openReview(ref){
+  const q = QUEUE.find(x=>x.ref_code===ref);
+  if(!q) return;
+  const tier = (q.triage_meta && q.triage_meta.tier) || q.difficulty || '';
+  const aiUsed = q.triage_meta && q.triage_meta.ai_used;
+  const rationale = q.triage_meta && q.triage_meta.rationale;
+  $('rm-ref-code').value = q.ref_code;
+  $('rm-ref').textContent = q.ref_code + ' · ' + (CT[q.client_type]||q.client_type);
+  $('rm-meta').innerHTML =
+      (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
+    + (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
+    + (aiUsed?'<span class="ttag ai">AI 초안 생성됨</span>':'<span class="ttag noai">AI 초안 미생성 (API 키 확인)</span>');
+  $('rm-info').innerHTML = '<b>'+esc(q.name)+'</b>'+(q.company?(' · '+esc(q.company)):'')
+    + (q.region?(' · '+esc(q.region)):'')
+    + '<br><br><b>의뢰 제목</b><br>'+esc(q.title)
+    + (rationale?('<br><br><b style="color:var(--hold)">AI 판단 근거</b><br>'+esc(rationale)):'');
+  $('rm-report').value = q.report_draft||'';
+  $('rm-amount').value = q.quote_suggested||'';
+  $('rm-paylink').value = '';
+  $('rm-msg').className='msg';
+  show($('rmodal'), true);
+}
+$('rm-close').onclick = ()=> show($('rmodal'), false);
+
+$('rm-approve').onclick = async () => {
+  const ref = $('rm-ref-code').value;
+  const report = $('rm-report').value.trim();
+  if(!report){ msg($('rm-msg'),'리포트 내용이 비어 있습니다.',false); return; }
+  if(!confirm('이 판단 리포트를 고객에게 공개할까요?\n공개 후 고객이 접수번호로 바로 조회할 수 있습니다.')) return;
+  try {
+    msg($('rm-msg'),'공개 처리 중…',true);
+    await tcall('approve', { ref_code: ref, report, pay_amount: $('rm-amount').value.trim(), pay_link: $('rm-paylink').value.trim() });
+    msg($('rm-msg'),'✓ 공개되었습니다. 고객이 조회할 수 있습니다.',true);
+    setTimeout(()=>{ show($('rmodal'), false); loadQueue(); loadProjects(); }, 800);
+  } catch(e){ msg($('rm-msg'),'오류: '+e.message,false); }
+};
+
+$('rm-retriage').onclick = async () => {
+  const ref = $('rm-ref-code').value;
+  try {
+    msg($('rm-msg'),'AI 초안 다시 생성 중… (몇 초 소요)',true);
+    await tcall('triage', { ref_code: ref });
+    await loadQueue();
+    const q = QUEUE.find(x=>x.ref_code===ref);
+    if(q){ $('rm-report').value=q.report_draft||''; $('rm-amount').value=q.quote_suggested||''; }
+    const aiUsed = q && q.triage_meta && q.triage_meta.ai_used;
+    msg($('rm-msg'), aiUsed?'✓ AI 초안이 새로 생성되었습니다.':'초안 생성 실패 — ANTHROPIC_API_KEY를 확인하세요.', !!aiUsed);
+  } catch(e){ msg($('rm-msg'),'오류: '+e.message,false); }
+};
 
 /* ===== 대시보드 ===== */
 const VMAP = {ANSWER:'a', HOLD:'h'};
