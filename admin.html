@@ -110,6 +110,18 @@
   .ttag.cat{background:rgba(47,184,168,.1);color:var(--answer);border-color:rgba(47,184,168,.25)}
   .ttag.ai{background:rgba(91,141,239,.12);color:#7ba3f0;border-color:rgba(91,141,239,.3)}
   .ttag.noai{background:rgba(227,98,76,.1);color:var(--refuse);border-color:rgba(227,98,76,.3)}
+  .ttag.ready{background:rgba(47,184,168,.14);color:var(--answer);border-color:rgba(47,184,168,.35)}
+  .ttag.review{background:rgba(242,181,75,.14);color:var(--hold);border-color:rgba(242,181,75,.35)}
+  .ttag.ts{background:rgba(91,141,239,.1);color:#7ba3f0;border-color:rgba(91,141,239,.25)}
+  /* 내부 검토 자료(고객 비공개) */
+  .internal{border:1px solid var(--hair);border-radius:9px;padding:14px;margin:10px 0;background:rgba(91,141,239,.04)}
+  .internal h4{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted-2);text-transform:uppercase;margin:0 0 8px}
+  .internal .scores{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px}
+  .internal ul{margin:6px 0;padding-left:18px;font-size:13px;color:var(--paper)}
+  .internal ul .bz{color:var(--muted-2);font-size:12px}
+  .internal details{margin-top:6px;border-top:1px solid var(--hair);padding-top:6px}
+  .internal summary{cursor:pointer;font-size:13px;color:var(--paper);font-weight:500}
+  .internal .raw{white-space:pre-wrap;font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -288,7 +300,9 @@
     <div id="rm-meta" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
     <div id="rm-info" style="font-size:13.5px;color:var(--muted);line-height:1.7;border:1px solid var(--hair);border-radius:9px;padding:14px;margin-bottom:8px"></div>
 
-    <label>판단 리포트 <span style="color:var(--muted-2);font-weight:400;font-family:var(--mono);font-size:11px">· AI 초안 — 검토 후 수정 가능</span></label>
+    <div id="rm-internal" class="internal hide"></div>
+
+    <label>판단 리포트 <span style="color:var(--muted-2);font-weight:400;font-family:var(--mono);font-size:11px">· AI 종합 초안(3부 구조) — 고객 공개본, 검토 후 수정 가능</span></label>
     <textarea id="rm-report" style="min-height:200px" placeholder="AI 판단 초안이 여기 채워집니다."></textarea>
     <div class="hint">이 내용이 고객에게 그대로 공개됩니다. 필요하면 직접 수정하세요. <b style="color:var(--hold)">최종 책임은 이영도 위원장에게 있습니다.</b></div>
 
@@ -533,15 +547,20 @@ async function loadQueue(){
     if(!QUEUE.length){ slot.innerHTML='<div class="empty">검토 대기 중인 건이 없습니다. 새 접수가 들어오면 자동으로 여기 표시됩니다.</div>'; return; }
     slot.innerHTML = QUEUE.map(q => {
       const tier = (q.triage_meta && q.triage_meta.tier) || q.difficulty || '';
-      const aiUsed = q.triage_meta && q.triage_meta.ai_used;
+      const method = (q.triage_meta && q.triage_meta.method) || (q.consensus && q.consensus.method);
+      const aiUsed = method && method!=='degraded';
+      const ready = q.advisory_stage==='ready_to_publish';
+      const stageTag = q.advisory_stage ? '<span class="ttag '+(ready?'ready':'review')+'">'+(ready?'✅ 공개 추천':'⚠ 검토 필요')+'</span>' : '';
+      const tsTag = (q.trust_score!=null) ? '<span class="ttag ts">Trust '+q.trust_score+'</span>' : '';
       const draft = (q.report_draft||'').slice(0,180);
       return '<div class="qcard">'
         + '<div class="qh">'
         +   '<span class="qref">'+esc(q.ref_code)+'</span>'
         +   '<span class="qcust">'+esc(q.name)+(q.company?(' · '+esc(q.company)):'')+(q.region?(' · '+esc(q.region)):'')+'</span>'
+        +   stageTag + tsTag
         +   (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
         +   (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
-        +   (aiUsed?'<span class="ttag ai">AI 초안</span>':'<span class="ttag noai">초안 미생성</span>')
+        +   (aiUsed?'<span class="ttag ai">교차검증됨</span>':'<span class="ttag noai">검증 미완</span>')
         + '</div>'
         + '<div class="qtitle">'+esc(q.title)+'</div>'
         + '<div class="qdraft">'+esc(draft)+(draft.length>=180?'…':'')+'</div>'
@@ -570,6 +589,22 @@ function openReview(ref){
     + (q.region?(' · '+esc(q.region)):'')
     + '<br><br><b>의뢰 제목</b><br>'+esc(q.title)
     + (rationale?('<br><br><b style="color:var(--hold)">AI 판단 근거</b><br>'+esc(rationale)):'');
+  // 내부 검토 자료(고객 비공개) — 교차검증 raw + 위원 원자문. 가격 미노출.
+  const cs = q.consensus || {};
+  const pers = (q.advisory_payload && q.advisory_payload.personas) || [];
+  const ready = q.advisory_stage==='ready_to_publish';
+  const intern = $('rm-internal');
+  if (cs.A!=null || pers.length) {
+    let h = '<h4>내부 검토 자료 · 고객 비공개</h4>';
+    h += '<div class="scores"><b style="color:'+(ready?'var(--answer)':'var(--hold)')+'">'+(ready?'✅ 공개 추천':'⚠ 검토 필요')+'</b> · Trust <b>'+(q.trust_score!=null?q.trust_score:'—')+'</b>/100';
+    if (cs.A!=null) h += ' · 합의 '+cs.A+' / 교차검증 '+cs.C+' / 근거 '+cs.E;
+    h += '</div>';
+    if (cs.rebuttals && cs.rebuttals.length) h += '<div><b style="font-size:12.5px">교차검증 반박</b><ul>'+cs.rebuttals.map(r=>'<li>'+esc(r.point||r)+(r&&r.basis?(' <span class="bz">— '+esc(r.basis)+'</span>'):'')+'</li>').join('')+'</ul></div>';
+    if (cs.flags && cs.flags.length) h += '<div style="font-size:12.5px;color:var(--muted)"><b>검토 지점</b>: '+cs.flags.map(esc).join(' · ')+'</div>';
+    if (pers.length) h += '<div style="margin-top:8px"><b style="font-size:12.5px">위원 원자문(원문)</b>'+pers.map(pp=>'<details><summary>'+esc(pp.name)+' · verdict '+esc(pp.verdict||'')+'</summary><div class="raw">'+esc(pp.advice||'(없음)')+'</div></details>').join('')+'</div>';
+    intern.innerHTML = h;
+    show(intern, true);
+  } else { show(intern, false); }
   $('rm-report').value = q.report_draft||'';
   $('rm-amount').value = q.quote_suggested||'';
   $('rm-paylink').value = '';
