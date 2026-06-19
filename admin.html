@@ -110,18 +110,63 @@
   .ttag.cat{background:rgba(47,184,168,.1);color:var(--answer);border-color:rgba(47,184,168,.25)}
   .ttag.ai{background:rgba(91,141,239,.12);color:#7ba3f0;border-color:rgba(91,141,239,.3)}
   .ttag.noai{background:rgba(227,98,76,.1);color:var(--refuse);border-color:rgba(227,98,76,.3)}
-  .ttag.ready{background:rgba(47,184,168,.14);color:var(--answer);border-color:rgba(47,184,168,.35)}
-  .ttag.review{background:rgba(242,181,75,.14);color:var(--hold);border-color:rgba(242,181,75,.35)}
-  .ttag.ts{background:rgba(91,141,239,.1);color:#7ba3f0;border-color:rgba(91,141,239,.25)}
-  /* 내부 검토 자료(고객 비공개) */
-  .internal{border:1px solid var(--hair);border-radius:9px;padding:14px;margin:10px 0;background:rgba(91,141,239,.04)}
-  .internal h4{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted-2);text-transform:uppercase;margin:0 0 8px}
-  .internal .scores{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px}
-  .internal ul{margin:6px 0;padding-left:18px;font-size:13px;color:var(--paper)}
-  .internal ul .bz{color:var(--muted-2);font-size:12px}
-  .internal details{margin-top:6px;border-top:1px solid var(--hair);padding-top:6px}
-  .internal summary{cursor:pointer;font-size:13px;color:var(--paper);font-weight:500}
-  .internal .raw{white-space:pre-wrap;font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.6}
+  /* ===== 검토 모달 개선 ===== */
+  .rm-shell{display:flex;flex-direction:column;max-height:calc(100vh - 64px)}
+  .rm-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;
+    padding:24px 28px;border-bottom:1px solid var(--line);background:var(--ink-2);flex-shrink:0}
+  .rm-body{padding:22px 28px;overflow-y:auto;flex:1}
+  .rm-foot{display:flex;align-items:center;gap:10px;padding:16px 28px;
+    border-top:1px solid var(--line);background:var(--ink-2);flex-shrink:0}
+  .rm-info{font-size:14px;color:var(--muted);line-height:1.8;border:1px solid var(--hair);
+    border-radius:10px;padding:16px 18px;margin-bottom:18px;background:var(--ink)}
+  .rm-info b{color:var(--paper)}
+  .rm-section-label{display:flex;justify-content:space-between;align-items:baseline;
+    margin:6px 0 8px;font-size:14px;font-weight:700;color:var(--paper)}
+  .rm-tag-cust{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--answer);
+    background:rgba(47,184,168,.14);padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:.04em}
+
+  /* 신뢰도 패널 */
+  .rm-trust{border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:20px;
+    background:linear-gradient(160deg,rgba(242,181,75,.05),var(--ink))}
+  .rm-trust.ok{background:linear-gradient(160deg,rgba(47,184,168,.06),var(--ink))}
+  .rm-trust-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+  .rm-badge{font-family:var(--mono);font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;letter-spacing:.03em}
+  .rm-badge.review{background:rgba(242,181,75,.16);color:var(--hold);border:1px solid rgba(242,181,75,.4)}
+  .rm-badge.ready{background:rgba(47,184,168,.16);color:var(--answer);border:1px solid rgba(47,184,168,.4)}
+  .rm-gauge{flex:1;min-width:180px}
+  .rm-gauge-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+  .rm-gauge-score{font-family:var(--display);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+  .rm-gauge-label{font-family:var(--mono);font-size:11px;color:var(--muted-2);letter-spacing:.05em}
+  .rm-gauge-bar{height:8px;border-radius:6px;background:var(--panel);overflow:hidden}
+  .rm-gauge-fill{height:100%;border-radius:6px;transition:width .4s ease}
+  .rm-acemini{display:flex;gap:18px;flex-wrap:wrap;margin-top:4px}
+  .rm-ace{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .rm-ace b{color:var(--paper);font-variant-numeric:tabular-nums}
+  .rm-block{margin-top:14px}
+  .rm-block-h{font-size:12px;font-weight:700;color:var(--paper);margin-bottom:8px;
+    display:flex;align-items:center;gap:7px}
+  .rm-block-h .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .rm-rebut{border-left:3px solid var(--refuse);background:rgba(227,98,76,.06);
+    border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:8px;font-size:13px;line-height:1.65}
+  .rm-rebut .pt{font-weight:600;color:var(--paper)}
+  .rm-rebut .bs{color:var(--muted)}
+  .rm-flags{display:flex;flex-direction:column;gap:6px}
+  .rm-flag{font-size:12.5px;color:var(--muted);padding-left:16px;position:relative;line-height:1.6}
+  .rm-flag::before{content:"⚠";position:absolute;left:0;color:var(--hold);font-size:11px}
+
+  /* 위원 원자문 */
+  .rm-personas{margin-top:20px;border-top:1px dashed var(--line);padding-top:18px}
+  .rm-personas-h{font-size:13px;font-weight:700;color:var(--paper);margin-bottom:4px}
+  .rm-personas-sub{font-family:var(--mono);font-size:11px;color:var(--muted-2);margin-bottom:12px}
+  .rm-persona{border:1px solid var(--hair);border-radius:10px;margin-bottom:10px;overflow:hidden;background:var(--ink)}
+  .rm-persona summary{cursor:pointer;padding:12px 16px;font-size:13.5px;font-weight:600;color:var(--paper);
+    display:flex;align-items:center;gap:10px;list-style:none}
+  .rm-persona summary::-webkit-details-marker{display:none}
+  .rm-persona summary .vd{font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:999px;
+    background:rgba(242,181,75,.14);color:var(--hold);margin-left:auto}
+  .rm-persona summary .chev{transition:transform .2s;color:var(--muted-2)}
+  .rm-persona[open] summary .chev{transform:rotate(90deg)}
+  .rm-persona-body{padding:0 16px 14px;font-size:13px;color:var(--muted);line-height:1.7;white-space:pre-wrap}
 </style>
 </head>
 <body>
@@ -292,31 +337,54 @@
 </div>
 
 <!-- 검토 대기 모달 (원클릭 공개) -->
-<div id="rmodal" class="hide" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto">
-  <div class="card" style="max-width:680px;width:100%;margin:0">
-    <h2 id="rm-title">판단 검토</h2>
-    <p class="sub" id="rm-ref"></p>
-    <input type="hidden" id="rm-ref-code" />
-    <div id="rm-meta" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
-    <div id="rm-info" style="font-size:13.5px;color:var(--muted);line-height:1.7;border:1px solid var(--hair);border-radius:9px;padding:14px;margin-bottom:8px"></div>
+<div id="rmodal" class="hide" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:50;align-items:flex-start;justify-content:center;padding:32px 16px;overflow:auto">
+  <div class="card rm-shell" style="max-width:960px;width:100%;margin:0;padding:0;overflow:hidden">
 
-    <div id="rm-internal" class="internal hide"></div>
-
-    <label>판단 리포트 <span style="color:var(--muted-2);font-weight:400;font-family:var(--mono);font-size:11px">· AI 종합 초안(3부 구조) — 고객 공개본, 검토 후 수정 가능</span></label>
-    <textarea id="rm-report" style="min-height:200px" placeholder="AI 판단 초안이 여기 채워집니다."></textarea>
-    <div class="hint">이 내용이 고객에게 그대로 공개됩니다. 필요하면 직접 수정하세요. <b style="color:var(--hold)">최종 책임은 이영도 위원장에게 있습니다.</b></div>
-
-    <div class="row">
-      <div><label>견적 금액 (AI 제안)</label><input id="rm-amount" placeholder="예: $190 / from $490" /></div>
-      <div><label>외부 결제 링크 (선택)</label><input id="rm-paylink" placeholder="https://toss.me/... 또는 PayPal.me" /></div>
+    <!-- 헤더 -->
+    <div class="rm-head">
+      <div>
+        <h2 id="rm-title" style="font-size:24px">판단 검토</h2>
+        <p class="sub" id="rm-ref" style="margin:6px 0 0;font-family:var(--mono);font-size:13px"></p>
+      </div>
+      <button class="btn ghost sm" id="rm-close" style="height:38px">닫기 ✕</button>
     </div>
 
-    <div style="margin-top:20px" class="actions">
-      <button class="btn" id="rm-approve" style="background:var(--hold);color:#231a04">✓ 확정 공개</button>
-      <button class="btn ghost" id="rm-close">닫기</button>
-      <button class="btn ghost sm" id="rm-retriage" style="margin-left:auto">AI 초안 다시 생성</button>
+    <div class="rm-body">
+      <input type="hidden" id="rm-ref-code" />
+      <div id="rm-meta" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+
+      <!-- 의뢰 정보 -->
+      <div id="rm-info" class="rm-info"></div>
+
+      <!-- 교차검증 신뢰도 패널 -->
+      <div id="rm-trust" class="rm-trust hide"></div>
+
+      <!-- 판단 리포트 (고객 공개본) -->
+      <div class="rm-section-label">
+        <span>판단 리포트 <span class="rm-tag-cust">고객 공개본</span></span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted-2)">AI 초안 · 검토 후 수정 가능</span>
+      </div>
+      <textarea id="rm-report" style="min-height:280px;font-size:14.5px;line-height:1.75" placeholder="AI 판단 초안이 여기 채워집니다."></textarea>
+      <div class="hint">이 내용이 고객에게 그대로 공개됩니다. 필요하면 직접 수정하세요. <b style="color:var(--hold)">최종 책임은 이영도 위원장에게 있습니다.</b></div>
+
+      <!-- 위원 원자문 (내부 전용) -->
+      <div id="rm-personas" class="rm-personas hide"></div>
+
+      <div class="row" style="margin-top:18px">
+        <div><label>견적 금액 (AI 제안)</label><input id="rm-amount" placeholder="예: $190 / from $490" /></div>
+        <div><label>외부 결제 링크 (선택)</label><input id="rm-paylink" placeholder="https://toss.me/... 또는 PayPal.me" /></div>
+      </div>
     </div>
-    <div class="msg" id="rm-msg"></div>
+
+    <!-- 하단 고정 액션바 -->
+    <div class="rm-foot">
+      <button class="btn ghost sm" id="rm-retriage">↻ AI 초안 다시 생성</button>
+      <div style="margin-left:auto;display:flex;gap:10px">
+        <button class="btn ghost" id="rm-close2">닫기</button>
+        <button class="btn" id="rm-approve" style="background:var(--hold);color:#231a04">✓ 확정 공개</button>
+      </div>
+    </div>
+    <div class="msg" id="rm-msg" style="margin:0 28px 20px"></div>
   </div>
 </div>
 
@@ -325,7 +393,7 @@ const FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-council-ad
 let PW = "";
 
 const $ = id => document.getElementById(id);
-function show(el,on){ el.classList.toggle('hide', !on); if(el.id==='pmodal') el.style.display = on ? 'flex' : 'none'; }
+function show(el,on){ el.classList.toggle('hide', !on); if(el.id==='pmodal'||el.id==='rmodal') el.style.display = on ? 'flex' : 'none'; }
 function msg(el, text, ok){ el.textContent = text; el.className = 'msg ' + (ok?'ok':'err'); }
 
 async function call(action, body){
@@ -547,20 +615,15 @@ async function loadQueue(){
     if(!QUEUE.length){ slot.innerHTML='<div class="empty">검토 대기 중인 건이 없습니다. 새 접수가 들어오면 자동으로 여기 표시됩니다.</div>'; return; }
     slot.innerHTML = QUEUE.map(q => {
       const tier = (q.triage_meta && q.triage_meta.tier) || q.difficulty || '';
-      const method = (q.triage_meta && q.triage_meta.method) || (q.consensus && q.consensus.method);
-      const aiUsed = method && method!=='degraded';
-      const ready = q.advisory_stage==='ready_to_publish';
-      const stageTag = q.advisory_stage ? '<span class="ttag '+(ready?'ready':'review')+'">'+(ready?'✅ 공개 추천':'⚠ 검토 필요')+'</span>' : '';
-      const tsTag = (q.trust_score!=null) ? '<span class="ttag ts">Trust '+q.trust_score+'</span>' : '';
+      const aiUsed = q.triage_meta && q.triage_meta.ai_used;
       const draft = (q.report_draft||'').slice(0,180);
       return '<div class="qcard">'
         + '<div class="qh">'
         +   '<span class="qref">'+esc(q.ref_code)+'</span>'
         +   '<span class="qcust">'+esc(q.name)+(q.company?(' · '+esc(q.company)):'')+(q.region?(' · '+esc(q.region)):'')+'</span>'
-        +   stageTag + tsTag
         +   (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
         +   (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
-        +   (aiUsed?'<span class="ttag ai">교차검증됨</span>':'<span class="ttag noai">검증 미완</span>')
+        +   (aiUsed?'<span class="ttag ai">AI 초안</span>':'<span class="ttag noai">초안 미생성</span>')
         + '</div>'
         + '<div class="qtitle">'+esc(q.title)+'</div>'
         + '<div class="qdraft">'+esc(draft)+(draft.length>=180?'…':'')+'</div>'
@@ -589,29 +652,90 @@ function openReview(ref){
     + (q.region?(' · '+esc(q.region)):'')
     + '<br><br><b>의뢰 제목</b><br>'+esc(q.title)
     + (rationale?('<br><br><b style="color:var(--hold)">AI 판단 근거</b><br>'+esc(rationale)):'');
-  // 내부 검토 자료(고객 비공개) — 교차검증 raw + 위원 원자문. 가격 미노출.
-  const cs = q.consensus || {};
-  const pers = (q.advisory_payload && q.advisory_payload.personas) || [];
-  const ready = q.advisory_stage==='ready_to_publish';
-  const intern = $('rm-internal');
-  if (cs.A!=null || pers.length) {
-    let h = '<h4>내부 검토 자료 · 고객 비공개</h4>';
-    h += '<div class="scores"><b style="color:'+(ready?'var(--answer)':'var(--hold)')+'">'+(ready?'✅ 공개 추천':'⚠ 검토 필요')+'</b> · Trust <b>'+(q.trust_score!=null?q.trust_score:'—')+'</b>/100';
-    if (cs.A!=null) h += ' · 합의 '+cs.A+' / 교차검증 '+cs.C+' / 근거 '+cs.E;
-    h += '</div>';
-    if (cs.rebuttals && cs.rebuttals.length) h += '<div><b style="font-size:12.5px">교차검증 반박</b><ul>'+cs.rebuttals.map(r=>'<li>'+esc(r.point||r)+(r&&r.basis?(' <span class="bz">— '+esc(r.basis)+'</span>'):'')+'</li>').join('')+'</ul></div>';
-    if (cs.flags && cs.flags.length) h += '<div style="font-size:12.5px;color:var(--muted)"><b>검토 지점</b>: '+cs.flags.map(esc).join(' · ')+'</div>';
-    if (pers.length) h += '<div style="margin-top:8px"><b style="font-size:12.5px">위원 원자문(원문)</b>'+pers.map(pp=>'<details><summary>'+esc(pp.name)+' · verdict '+esc(pp.verdict||'')+'</summary><div class="raw">'+esc(pp.advice||'(없음)')+'</div></details>').join('')+'</div>';
-    intern.innerHTML = h;
-    show(intern, true);
-  } else { show(intern, false); }
+  renderTrust(q);
   $('rm-report').value = q.report_draft||'';
   $('rm-amount').value = q.quote_suggested||'';
   $('rm-paylink').value = '';
   $('rm-msg').className='msg';
   show($('rmodal'), true);
 }
+
+/* 교차검증 신뢰도 패널 + 위원 원자문 렌더 (필드명 유연 흡수) */
+function renderTrust(q){
+  const panel = $('rm-trust');
+  const cons = q.consensus || (q.advisory_payload && q.advisory_payload.consensus) || {};
+  const stage = q.advisory_stage || cons.stage || '';
+  const score = (q.trust_score!=null ? q.trust_score : (cons.trust_score!=null ? cons.trust_score : cons.score));
+  const A = pick(cons,['agreement','A','persona_agreement']);
+  const C = pick(cons,['cross_check','C','concord','cross']);
+  const E = pick(cons,['evidence','E','evidence_specificity']);
+  const rebuttals = cons.rebuttals || cons.rebuttal || [];
+  const flags = cons.flags || cons.review_points || [];
+
+  const hasAny = (score!=null) || rebuttals.length || flags.length || stage;
+  if(!hasAny){ show(panel,false); }
+  else {
+    show(panel,true);
+    const isReady = /ready/i.test(stage);
+    panel.className = 'rm-trust' + (isReady?' ok':'');
+    const sc = score!=null ? Math.round(score) : null;
+    const barColor = sc==null?'var(--muted-2)' : sc>=80?'var(--answer)' : sc>=60?'var(--hold)':'var(--refuse)';
+    let html = '<div class="rm-trust-top">';
+    html += '<span class="rm-badge '+(isReady?'ready':'review')+'">'+(isReady?'✅ 공개 추천':'⚠ 검토 필요')+'</span>';
+    if(sc!=null){
+      html += '<div class="rm-gauge">'
+        + '<div class="rm-gauge-head"><span class="rm-gauge-score" style="color:'+barColor+'">'+sc+'<span style="font-size:13px;color:var(--muted-2)">/100</span></span>'
+        + '<span class="rm-gauge-label">Trust Score</span></div>'
+        + '<div class="rm-gauge-bar"><div class="rm-gauge-fill" style="width:'+sc+'%;background:'+barColor+'"></div></div>'
+        + '<div class="rm-acemini">'
+        +   (A!=null?'<span class="rm-ace">합의 <b>'+fnum(A)+'</b></span>':'')
+        +   (C!=null?'<span class="rm-ace">교차검증 <b>'+fnum(C)+'</b></span>':'')
+        +   (E!=null?'<span class="rm-ace">근거 <b>'+fnum(E)+'</b></span>':'')
+        + '</div></div>';
+    }
+    html += '</div>';
+
+    if(rebuttals.length){
+      html += '<div class="rm-block"><div class="rm-block-h"><span class="dot" style="background:var(--refuse)"></span>교차검증 반박 ('+rebuttals.length+')</div>';
+      html += rebuttals.map(r=>{
+        const pt = typeof r==='string'? r : (r.point||r.title||r.claim||'');
+        const bs = typeof r==='string'? '' : (r.basis||r.detail||r.reason||r.body||'');
+        return '<div class="rm-rebut"><span class="pt">'+esc(pt)+'</span>'+(bs?(' <span class="bs">— '+esc(bs)+'</span>'):'')+'</div>';
+      }).join('');
+      html += '</div>';
+    }
+    if(flags.length){
+      html += '<div class="rm-block"><div class="rm-block-h"><span class="dot" style="background:var(--hold)"></span>검토 지점</div><div class="rm-flags">';
+      html += flags.map(f=>'<div class="rm-flag">'+esc(typeof f==='string'?f:(f.text||f.point||''))+'</div>').join('');
+      html += '</div></div>';
+    }
+    panel.innerHTML = html;
+  }
+
+  // 위원 원자문
+  const pbox = $('rm-personas');
+  const personas = (q.advisory_payload && q.advisory_payload.personas) || cons.personas || q.personas || [];
+  if(!personas.length){ show(pbox,false); }
+  else {
+    show(pbox,true);
+    let h = '<div class="rm-personas-h">위원 원자문 <span style="font-family:var(--mono);font-size:10px;color:var(--answer);background:rgba(47,184,168,.14);padding:2px 8px;border-radius:999px;margin-left:4px">내부 전용</span></div>';
+    h += '<div class="rm-personas-sub">교차검증 전, 각 위원이 제출한 원본 판단입니다. 고객에게는 공개되지 않습니다.</div>';
+    h += personas.map(p=>{
+      const name = p.name || p.persona || p.did || '위원';
+      const vd = p.verdict || '';
+      const adv = p.advice || p.full_advice || p.raw || p.verdict_text || '';
+      return '<details class="rm-persona"><summary><span class="chev">▶</span>'+esc(name)
+        + (vd?('<span class="vd">verdict '+esc(vd)+'</span>'):'')
+        + '</summary><div class="rm-persona-body">'+esc(adv||'(원자문 본문 없음)')+'</div></details>';
+    }).join('');
+    pbox.innerHTML = h;
+  }
+}
+function pick(o,keys){ for(const k of keys){ if(o&&o[k]!=null) return o[k]; } return null; }
+function fnum(v){ const n=parseFloat(v); return isNaN(n)?esc(String(v)):(n<=1? n.toFixed(2): n.toFixed(0)); }
+
 $('rm-close').onclick = ()=> show($('rmodal'), false);
+$('rm-close2').onclick = ()=> show($('rmodal'), false);
 
 $('rm-approve').onclick = async () => {
   const ref = $('rm-ref-code').value;
