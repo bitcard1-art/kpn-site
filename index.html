@@ -1538,6 +1538,8 @@
       let report = '';
       if (pj.report_ready && pj.report) {
         report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>';
+      } else if (!isDone(pj.status) && (pj.status==='processing' || pj.status==='received' || pj.status==='triaged')) {
+        report = '<div style="margin-top:16px;padding:16px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:14px;line-height:1.65">⏳ '+(lang==='en'?'Preparing a verified judgment. Our council personas are analyzing your case; the report appears here after the chair reviews and approves it.':'검증된 판단을 준비 중입니다. 자문위원 페르소나가 사안을 분석하고 있으며, 위원장 검토·확정 후 이곳에 리포트가 표시됩니다.')+'</div>';
       }
       box.innerHTML = '<div class="track-card">'
         + '<span class="track-status">● '+(lang==='en'?safeStatus(pj.status).en:safeStatus(pj.status).ko)+'</span>'
@@ -1561,6 +1563,8 @@
     let report = '';
     if (pj.report_ready && pj.report) {
       report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>';
+    } else if (!isDone(pj.status) && (pj.status==='processing' || pj.status==='received' || pj.status==='triaged')) {
+      report = '<div style="margin-top:16px;padding:16px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:14px;line-height:1.65">⏳ '+(lang==='en'?'Preparing a verified judgment. Our council personas are analyzing your case; the report appears here after the chair reviews and approves it.':'검증된 판단을 준비 중입니다. 자문위원 페르소나가 사안을 분석하고 있으며, 위원장 검토·확정 후 이곳에 리포트가 표시됩니다.')+'</div>';
     }
     return '<div class="track-card" style="margin-bottom:12px">'
       + '<span class="track-status">● '+(lang==='en'?safeStatus(pj.status).en:safeStatus(pj.status).ko)+'</span>'
