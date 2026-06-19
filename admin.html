@@ -625,6 +625,17 @@ async function tcall(action, body){
   return data;
 }
 
+// 초안 생성 상태 — 워커는 ai_used를 안 쓰고 triage_meta.method/consensus.method('worker_v1' | 'degraded')와
+// report_draft를 채운다. report_draft 유무 + method로 판정(옛 ai_used 의존 버그 수정).
+function draftState(q){
+  const method = (q.triage_meta && q.triage_meta.method) || (q.consensus && q.consensus.method) || '';
+  const hasDraft = !!(q.report_draft && String(q.report_draft).trim());
+  const degraded = /degraded/i.test(method);
+  if (hasDraft && !degraded) return { cls:'ai', short:'AI 초안 생성됨', full:'AI 초안 생성됨' };
+  if (hasDraft && degraded)  return { cls:'noai', short:'초안(폴백)', full:'초안 폴백 — 생성 일부 실패(재생성 권장)' };
+  return { cls:'noai', short:'초안 미생성', full:'AI 초안 미생성 (재생성 필요)' };
+}
+
 async function loadQueue(){
   const slot = $('queue-list');
   try {
@@ -636,7 +647,7 @@ async function loadQueue(){
     if(!QUEUE.length){ slot.innerHTML='<div class="empty">검토 대기 중인 건이 없습니다. 새 접수가 들어오면 자동으로 여기 표시됩니다.</div>'; return; }
     slot.innerHTML = QUEUE.map(q => {
       const tier = (q.triage_meta && q.triage_meta.tier) || q.difficulty || '';
-      const aiUsed = q.triage_meta && q.triage_meta.ai_used;
+      const ds = draftState(q);
       const draft = (q.report_draft||'').slice(0,180);
       return '<div class="qcard">'
         + '<div class="qh">'
@@ -644,7 +655,7 @@ async function loadQueue(){
         +   '<span class="qcust">'+esc(q.name)+(q.company?(' · '+esc(q.company)):'')+(q.region?(' · '+esc(q.region)):'')+'</span>'
         +   (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
         +   (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
-        +   (aiUsed?'<span class="ttag ai">AI 초안</span>':'<span class="ttag noai">초안 미생성</span>')
+        +   '<span class="ttag '+ds.cls+'">'+ds.short+'</span>'
         + '</div>'
         + '<div class="qtitle">'+esc(q.title)+'</div>'
         + '<div class="qdraft">'+esc(draft)+(draft.length>=180?'…':'')+'</div>'
@@ -661,14 +672,14 @@ function openReview(ref){
   const q = QUEUE.find(x=>x.ref_code===ref);
   if(!q) return;
   const tier = (q.triage_meta && q.triage_meta.tier) || q.difficulty || '';
-  const aiUsed = q.triage_meta && q.triage_meta.ai_used;
+  const ds = draftState(q);
   const rationale = q.triage_meta && q.triage_meta.rationale;
   $('rm-ref-code').value = q.ref_code;
   $('rm-ref').textContent = q.ref_code + ' · ' + (CT[q.client_type]||q.client_type);
   $('rm-meta').innerHTML =
       (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
     + (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
-    + (aiUsed?'<span class="ttag ai">AI 초안 생성됨</span>':'<span class="ttag noai">AI 초안 미생성 (API 키 확인)</span>');
+    + '<span class="ttag '+ds.cls+'">'+ds.full+'</span>';
   $('rm-info').innerHTML = '<b>'+esc(q.name)+'</b>'+(q.company?(' · '+esc(q.company)):'')
     + (q.region?(' · '+esc(q.region)):'')
     + '<br><br><b>의뢰 제목</b><br>'+esc(q.title)
@@ -790,13 +801,10 @@ $('rm-approve').onclick = async () => {
 $('rm-retriage').onclick = async () => {
   const ref = $('rm-ref-code').value;
   try {
-    msg($('rm-msg'),'AI 초안 다시 생성 중… (몇 초 소요)',true);
+    // v15: triage는 enqueue만(queued) — 워커가 비동기로 web_search 골든샘플 생성(1~2분).
     await tcall('triage', { ref_code: ref });
+    msg($('rm-msg'),'↻ 재생성 요청됨 — 자문위원 워커가 처리 중입니다(약 1~2분). 큐에서 사라졌다가 완료되면 다시 나타납니다. 잠시 후 [목록 새로고침]을 누르세요.',true);
     await loadQueue();
-    const q = QUEUE.find(x=>x.ref_code===ref);
-    if(q){ $('rm-report').value=q.report_draft||''; $('rm-amount').value=q.quote_suggested||''; }
-    const aiUsed = q && q.triage_meta && q.triage_meta.ai_used;
-    msg($('rm-msg'), aiUsed?'✓ AI 초안이 새로 생성되었습니다.':'초안 생성 실패 — ANTHROPIC_API_KEY를 확인하세요.', !!aiUsed);
   } catch(e){ msg($('rm-msg'),'오류: '+e.message,false); }
 };
 
