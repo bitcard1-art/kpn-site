@@ -370,6 +370,23 @@
       <!-- 위원 원자문 (내부 전용) -->
       <div id="rm-personas" class="rm-personas hide"></div>
 
+      <!-- 고객 발송 PDF 미리보기 -->
+      <div class="rm-section-label" style="margin-top:20px">
+        <span>고객 발송본 PDF <span class="rm-tag-cust">최종 확인</span></span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted-2)">고객이 받게 될 실제 문서</span>
+      </div>
+      <div id="rm-pdf-wrap" style="border:1px solid var(--line);border-radius:10px;overflow:hidden;background:rgba(0,0,0,.18)">
+        <div style="display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap">
+          <button class="btn ghost sm" id="rm-pdf-load" type="button" style="height:34px">⟳ PDF 미리보기 불러오기</button>
+          <a class="btn ghost sm" id="rm-pdf-open" href="#" target="_blank" rel="noopener" style="height:34px;display:none">↗ 새 탭에서 열기</a>
+          <a class="btn ghost sm" id="rm-pdf-dl" href="#" download style="height:34px;display:none">↓ 다운로드</a>
+          <span id="rm-pdf-hint" style="font-family:var(--mono);font-size:11px;color:var(--muted-2);margin-left:auto"></span>
+        </div>
+        <iframe id="rm-pdf-frame" title="자문 결과지 PDF 미리보기" style="display:none;width:100%;height:480px;border:0;background:#fff"></iframe>
+        <div id="rm-pdf-empty" style="padding:22px 16px;color:var(--muted-2);font-size:13px">승인 전, 고객이 실제로 받을 PDF를 여기서 직접 확인하세요. 한글이 제대로 렌더되는지 눈으로 검수한 뒤 공개·발송하시길 권합니다.</div>
+      </div>
+      <div class="hint" style="margin-top:8px">미리보기가 비어 있거나 한글이 깨져 보이면 공개하지 마세요. PDF 생성·폰트 배포 상태를 먼저 확인하세요.</div>
+
       <div class="row" style="margin-top:18px">
         <div><label>견적 금액 (AI 제안)</label><input id="rm-amount" placeholder="예: $190 / from $490" /></div>
         <div><label>외부 결제 링크 (선택)</label><input id="rm-paylink" placeholder="https://toss.me/... 또는 PayPal.me" /></div>
@@ -379,8 +396,9 @@
     <!-- 하단 고정 액션바 -->
     <div class="rm-foot">
       <button class="btn ghost sm" id="rm-retriage">↻ AI 초안 다시 생성</button>
-      <div style="margin-left:auto;display:flex;gap:10px">
+      <div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">
         <button class="btn ghost" id="rm-close2">닫기</button>
+        <button class="btn ghost" id="rm-send" style="border-color:var(--answer);color:var(--answer)">✉ 고객에게 발송</button>
         <button class="btn" id="rm-approve" style="background:var(--hold);color:#231a04">✓ 확정 공개</button>
       </div>
     </div>
@@ -390,6 +408,9 @@
 
 <script>
 const FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-council-admin";
+// 자문 결과지 PDF (persona-mcp-server) — 한글 폰트 임베드본
+const REPORT_BASE = "https://persona-mcp-server.onrender.com/report";
+const reportPdfUrl = ref => `${REPORT_BASE}/${encodeURIComponent(ref)}/pdf`;
 let PW = "";
 
 const $ = id => document.getElementById(id);
@@ -657,7 +678,23 @@ function openReview(ref){
   $('rm-amount').value = q.quote_suggested||'';
   $('rm-paylink').value = '';
   $('rm-msg').className='msg';
+  // 발송용 고객 정보 보관
+  RM_CTX = { ref: q.ref_code, email: q.email||'', name: q.name||'', title: q.title||'' };
+  resetPdfPreview();
   show($('rmodal'), true);
+}
+
+// 현재 검토 중인 건의 컨텍스트(발송에 사용)
+let RM_CTX = { ref:'', email:'', name:'', title:'' };
+
+// PDF 미리보기 초기 상태로
+function resetPdfPreview(){
+  const frame=$('rm-pdf-frame'), open=$('rm-pdf-open'), dl=$('rm-pdf-dl'), empty=$('rm-pdf-empty'), hint=$('rm-pdf-hint');
+  if(frame){ frame.style.display='none'; frame.src='about:blank'; }
+  if(open){ open.style.display='none'; }
+  if(dl){ dl.style.display='none'; }
+  if(empty){ empty.style.display='block'; }
+  if(hint){ hint.textContent=''; }
 }
 
 /* 교차검증 신뢰도 패널 + 위원 원자문 렌더 (필드명 유연 흡수) */
@@ -734,8 +771,8 @@ function renderTrust(q){
 function pick(o,keys){ for(const k of keys){ if(o&&o[k]!=null) return o[k]; } return null; }
 function fnum(v){ const n=parseFloat(v); return isNaN(n)?esc(String(v)):(n<=1? n.toFixed(2): n.toFixed(0)); }
 
-$('rm-close').onclick = ()=> show($('rmodal'), false);
-$('rm-close2').onclick = ()=> show($('rmodal'), false);
+$('rm-close').onclick = ()=> { resetPdfPreview(); show($('rmodal'), false); };
+$('rm-close2').onclick = ()=> { resetPdfPreview(); show($('rmodal'), false); };
 
 $('rm-approve').onclick = async () => {
   const ref = $('rm-ref-code').value;
@@ -761,6 +798,58 @@ $('rm-retriage').onclick = async () => {
     const aiUsed = q && q.triage_meta && q.triage_meta.ai_used;
     msg($('rm-msg'), aiUsed?'✓ AI 초안이 새로 생성되었습니다.':'초안 생성 실패 — ANTHROPIC_API_KEY를 확인하세요.', !!aiUsed);
   } catch(e){ msg($('rm-msg'),'오류: '+e.message,false); }
+};
+
+/* ===== 고객 발송본 PDF 미리보기 ===== */
+$('rm-pdf-load').onclick = () => {
+  const ref = $('rm-ref-code').value;
+  if(!ref){ msg($('rm-msg'),'접수번호가 없습니다.',false); return; }
+  const url = reportPdfUrl(ref);
+  const frame=$('rm-pdf-frame'), open=$('rm-pdf-open'), dl=$('rm-pdf-dl'), empty=$('rm-pdf-empty'), hint=$('rm-pdf-hint');
+  // 캐시 우회용 타임스탬프
+  const bust = url + (url.includes('?')?'&':'?') + 't=' + Date.now();
+  hint.textContent = '불러오는 중…';
+  empty.style.display='none';
+  frame.style.display='block';
+  frame.src = bust;
+  frame.onload = () => { hint.textContent = '미리보기 로드됨 · 한글 렌더 직접 확인'; };
+  frame.onerror = () => { hint.textContent = 'PDF를 불러오지 못했습니다.'; };
+  open.href = url; open.style.display='inline-flex';
+  dl.href = url;   dl.style.display='inline-flex';
+};
+
+/* ===== 고객에게 발송 =====
+   1순위: 백엔드 send 액션(서버가 메일 전송 + 발송기록).
+   폴백: 백엔드에 send가 없으면 mailto로 메일 클라이언트를 열어 수동 발송. */
+$('rm-send').onclick = async () => {
+  const ref = $('rm-ref-code').value;
+  const report = $('rm-report').value.trim();
+  if(!ref){ msg($('rm-msg'),'접수번호가 없습니다.',false); return; }
+  if(!report){ msg($('rm-msg'),'리포트 내용이 비어 있습니다. 먼저 작성·확정하세요.',false); return; }
+  const to = RM_CTX.email;
+  if(!to){ msg($('rm-msg'),'고객 이메일이 없습니다. 접수 정보를 확인하세요.',false); return; }
+  if(!confirm('고객('+to+')에게 자문 결과지를 발송할까요?\n발송 전 PDF 미리보기로 한글·내용을 확인했는지 점검하세요.')) return;
+  msg($('rm-msg'),'발송 처리 중…',true);
+  try {
+    // 1) 백엔드 send 시도
+    await tcall('send', { ref_code: ref, email: to });
+    msg($('rm-msg'),'✓ 고객에게 발송되었습니다. ('+to+')',true);
+  } catch(e){
+    // 2) 폴백: mailto (PDF 링크 동봉)
+    const subject = `[KPN] 자문 결과지 · ${ref}`;
+    const body =
+`${RM_CTX.name ? RM_CTX.name+'님, ' : ''}안녕하세요. KPN 자문 결과지를 보내드립니다.
+
+· 접수번호: ${ref}
+· 결과지(PDF): ${reportPdfUrl(ref)}
+
+내용 확인 후 문의사항이 있으시면 회신 부탁드립니다.
+감사합니다.
+— KPN`;
+    const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+    msg($('rm-msg'),'백엔드 자동발송이 없어 메일 작성창을 열었습니다. 내용 확인 후 직접 보내세요.',true);
+  }
 };
 
 /* ===== 대시보드 ===== */
