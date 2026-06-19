@@ -567,7 +567,7 @@
       <a href="#demo" data-ko="무료 시연" data-en="Free demo">무료 시연</a>
       <a href="#pricing" data-ko="요금제" data-en="Pricing">요금제</a>
       <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
-      <a href="#council" data-ko="창립위원회" data-en="Council">창립위원회</a>
+      <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
     </div>
     <div class="nav-cta">
       <button class="lang" id="lang" type="button" aria-label="Switch to English">
@@ -583,7 +583,7 @@
     <a href="#segments" data-ko="고객 유형" data-en="Who it's for">고객 유형</a>
     <a href="#demo" data-ko="무료 시연" data-en="Free demo">무료 시연</a>
     <a href="#pricing" data-ko="요금제" data-en="Pricing">요금제</a>
-    <a href="#council" data-ko="창립위원회" data-en="Council">창립위원회</a>
+    <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
     <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
     <a href="#contact" class="mm-cta" data-ko="파일럿 문의" data-en="Request pilot">파일럿 문의</a>
   </div>
@@ -684,6 +684,368 @@
           <p data-ko="AI 에이전트가 한국 정보를 검색·요약·판단할 때 환각·과신·위험 행동을 HOLD와 auditId로 제어합니다." data-en="When AI agents search, summarize, or judge Korean information, KPN controls hallucination, overconfidence, and risky actions with HOLD and auditId.">AI 에이전트가 한국 정보를 검색·요약·판단할 때 환각·과신·위험 행동을 HOLD와 auditId로 제어합니다.</p>
         </article>
       </div>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section id="demo">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="무료 시연" data-en="Free demo">무료 시연</span>
+          <h2 style="margin-top:16px" data-ko="검증된 5개 질문으로 직접 확인하세요" data-en="See it on 5 verified questions">검증된 5개 질문으로 직접 확인하세요</h2>
+        </div>
+        <p data-ko="실제 라이브 검증을 통과한 질문 5개입니다. 강점 시연 3개는 범용 AI가 못 하는 한국 판단을, 안전장치 2개는 KPN이 ‘멈추는’ 장면을 보여줍니다. 카드를 눌러 응답을 확인하세요." data-en="Five questions that passed live verification. Three strength demos show Korea judgment general AI can't reach; two safety demos show KPN stopping. Tap a card to see the response.">실제 라이브 검증을 통과한 질문 5개입니다. 강점 시연 3개는 범용 AI가 못 하는 한국 판단을, 안전장치 2개는 KPN이 ‘멈추는’ 장면을 보여줍니다. 카드를 눌러 응답을 확인하세요.</p>
+      </div>
+
+      <div class="demo-note"><span data-ko="● 5회 무료 · 카드/계약 없음" data-en="● 5 free · no card, no contract">● 5회 무료 · 카드/계약 없음</span></div>
+
+      <div class="demos">
+        <div class="demo strength" onclick="this.classList.toggle('open')">
+          <div class="demo-q"><span class="qn">01</span><span class="qtext" data-ko="한국 파트너가 첫 미팅에서 저녁 식사를 제안했어요. 받아들여야 하나요?" data-en="A Korean partner suggested dinner at our first meeting. Should we accept?">한국 파트너가 첫 미팅에서 저녁 식사를 제안했어요. 받아들여야 하나요?<em>강점 시연 · 문화 맥락</em></span><span class="chev">›</span></div>
+          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">ANSWER</span><p data-ko="받아들이길 권합니다. 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다 — 서구의 ‘식사는 계약 이후’ 관행과 정반대입니다." data-en="Accept. A first-meeting dinner isn't just socializing — it's a relationship signal that builds 정(jeong) and trust. Declining can read as keeping distance — the opposite of the Western ‘meals after the contract’ norm.">받아들이길 권합니다. 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다 — 서구의 ‘식사는 계약 이후’ 관행과 정반대입니다.</p><div class="demo-meta"><span>verdict: ANSWER</span><span>execute: false</span><span>did:kpn:node:youngdo</span></div></div></div>
+        </div>
+        <div class="demo strength" onclick="this.classList.toggle('open')">
+          <div class="demo-q"><span class="qn">02</span><span class="qtext" data-ko="“검토하겠습니다”라는 답을 받았어요. 긍정 신호인가요?" data-en="We got ‘we'll review it.’ Is that a positive signal?">“검토하겠습니다”라는 답을 받았어요. 긍정 신호인가요?<em>강점 시연 · 양가성</em></span><span class="chev">›</span></div>
+          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">ANSWER</span><p data-ko="단정하지 마세요. 양가적인 표현입니다 — 실제 숙고일 수도, 완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과입니다." data-en="Don't assume. It's ambiguous — genuine consideration, or a polite no. Next, ask for a concrete timeline and an owner to gauge real intent. Pressing for a hard yes backfires.">단정하지 마세요. 양가적인 표현입니다 — 실제 숙고일 수도, 완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과입니다.</p><div class="demo-meta"><span>verdict: ANSWER</span><span>execute: false</span><span>did:kpn:node:youngdo</span></div></div></div>
+        </div>
+        <div class="demo strength" onclick="this.classList.toggle('open')">
+          <div class="demo-q"><span class="qn">03</span><span class="qtext" data-ko="누구를 먼저 설득해야 하나요 — 실무자, 아니면 임원?" data-en="Who do we persuade first — working-level or executives?">누구를 먼저 설득해야 하나요 — 실무자, 아니면 임원?<em>강점 시연 · 조직 통찰</em></span><span class="chev">›</span></div>
+          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">ANSWER</span><p data-ko="실무자를 먼저 설득하고 사전 조율을 거치세요. 한국 조직에서는 탑다운으로 임원을 먼저 움직이면 실무 저항으로 역효과가 나는 경우가 많습니다. 실무선의 공감대가 의사결정의 실제 토대입니다." data-en="Win over the working level first and pre-align. In Korean organizations, a top-down push on executives often backfires through working-level resistance. Consensus at the working level is the real foundation for the decision.">실무자를 먼저 설득하고 사전 조율을 거치세요. 한국 조직에서는 탑다운으로 임원을 먼저 움직이면 실무 저항으로 역효과가 나는 경우가 많습니다. 실무선의 공감대가 의사결정의 실제 토대입니다.</p><div class="demo-meta"><span>verdict: ANSWER</span><span>execute: false</span><span>did:kpn:node:youngdo</span></div></div></div>
+        </div>
+        <div class="demo safety" onclick="this.classList.toggle('open')">
+          <div class="demo-q"><span class="qn">04</span><span class="qtext" data-ko="K-pop IP의 북미 진출 성공 확률을 %로 알려주세요." data-en="What's the success probability, in %, of bringing K-pop IP to North America?">K-pop IP의 북미 진출 성공 확률을 %로 알려주세요.<em>안전장치 · 환각 차단</em></span><span class="chev">›</span></div>
+          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">HOLD</span><p data-ko="단일 확률 숫자는 드리지 않습니다. 변수가 과다하고, 근거 없는 수치는 의사결정을 오도합니다. 리스크 체크리스트로 분해해 드리고, 정량 수치가 필요하면 전문 조사기관 확인을 권합니다. 이 HOLD는 DID 서명·auditId로 기록됩니다." data-en="We won't give a single probability. Too many variables, and an unfounded number misleads decisions. We'll decompose it into a risk checklist and recommend a research firm for quantified figures. This HOLD is logged with DID signature and auditId.">단일 확률 숫자는 드리지 않습니다. 변수가 과다하고, 근거 없는 수치는 의사결정을 오도합니다. 리스크 체크리스트로 분해해 드리고, 정량 수치가 필요하면 전문 조사기관 확인을 권합니다. 이 HOLD는 DID 서명·auditId로 기록됩니다.</p><div class="demo-meta"><span>verdict: HOLD</span><span>execute: false</span><span>auditId: aud_2026_demo04</span></div></div></div>
+        </div>
+        <div class="demo safety" onclick="this.classList.toggle('open')">
+          <div class="demo-q"><span class="qn">05</span><span class="qtext" data-ko="우리 대신 라이선스 협상을 진행해줄 수 있나요?" data-en="Can you run the licensing negotiation on our behalf?">우리 대신 라이선스 협상을 진행해줄 수 있나요?<em>안전장치 · 행동 거부</em></span><span class="chev">›</span></div>
+          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">HOLD</span><p data-ko="execute:false — 대행은 불가하고 자문만 제공합니다. KPN은 판단과 근거를 제공할 뿐, 당사자를 대신해 협상·계약 등 행동을 수행하지 않습니다. 협상 전략과 체크포인트는 자문으로 도와드릴 수 있습니다." data-en="execute:false — we can't act on your behalf; advisory only. KPN provides judgment and rationale, never performs actions like negotiating or contracting for a party. We can advise on strategy and checkpoints.">execute:false — 대행은 불가하고 자문만 제공합니다. KPN은 판단과 근거를 제공할 뿐, 당사자를 대신해 협상·계약 등 행동을 수행하지 않습니다. 협상 전략과 체크포인트는 자문으로 도와드릴 수 있습니다.</p><div class="demo-meta"><span>verdict: HOLD</span><span>execute: false</span><span>auditId: aud_2026_demo05</span></div></div></div>
+        </div>
+      </div>
+      <p class="ev-quote" style="margin-top:24px" data-ko="“범용 모델은 4·5번에도 자신 있게 답합니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”" data-en="“A general model answers 4 and 5 confidently — it invents a number and offers to negotiate. KPN stops. That stop is accountability.”">“범용 모델은 4·5번에도 자신 있게 답합니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”</p>
+    </div>
+  </section>
+
+  <!-- EVIDENCE -->
+  <section id="evidence">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="판단 예시 · 라이브 검증" data-en="Evidence · live-verified">판단 예시 · 라이브 검증</span>
+          <h2 style="margin-top:16px" data-ko="진짜 가치는 ‘멈춤’에서 드러납니다" data-en="The value shows up when it stops">진짜 가치는 ‘멈춤’에서 드러납니다</h2>
+        </div>
+        <p data-ko="아래는 Youngdo 노드로 실제 통과한 질의입니다. 범용 모델은 숫자를 지어내거나 대신 행동하려 합니다. KPN은 경계를 식별하고 안전하게 멈춥니다." data-en="These are real queries the Youngdo node has passed live. A general model invents numbers or offers to act. KPN identifies the boundary and stops safely.">아래는 Youngdo 노드로 실제 통과한 질의입니다. 범용 모델은 숫자를 지어내거나 대신 행동하려 합니다. KPN은 경계를 식별하고 안전하게 멈춥니다.</p>
+      </div>
+      <div class="ev-grid">
+        <article class="ev answer">
+          <span class="badge">ANSWER · Mind 층위</span>
+          <h3 data-ko="검색·범용 AI가 못 하는 한국 판단" data-en="Judgment search & general AI can't reach">검색·범용 AI가 못 하는 한국 판단</h3>
+          <div class="qa">
+            <div class="row q"><span class="lab">Q</span><p data-ko="첫 미팅에서 한국 파트너가 저녁 식사를 제안했어요. 받아들여야 하나요?" data-en="A Korean partner suggested dinner at our first meeting. Should we accept?">첫 미팅에서 한국 파트너가 저녁 식사를 제안했어요. 받아들여야 하나요?</p></div>
+            <div class="row a"><span class="lab">KPN</span><p data-ko="단순 예/아니오가 아니라 ‘예’ + 정(情)의 작동 방식과 서구 관행과의 대조까지 설명합니다." data-en="Not a bare yes/no — it answers ‘yes,’ explains how 정(jeong) works, and contrasts it with Western norms.">단순 예/아니오가 아니라 ‘예’ + 정(情)의 작동 방식과 서구 관행과의 대조까지 설명합니다.</p></div>
+            <div class="row q"><span class="lab">Q</span><p data-ko="“검토하겠습니다”라는 답을 받았습니다. 긍정 신호인가요?" data-en="We got “we'll review it.” Is that a positive signal?">“검토하겠습니다”라는 답을 받았습니다. 긍정 신호인가요?</p></div>
+            <div class="row a"><span class="lab">KPN</span><p data-ko="양가성을 정확히 포착합니다 — 숙고일 수도, 완곡한 거절일 수도. 다음에 무엇을 물어야 할지까지 제시합니다." data-en="Catches the ambiguity exactly — could be deliberation, could be a soft no — and tells you what to probe next.">양가성을 정확히 포착합니다 — 숙고일 수도, 완곡한 거절일 수도. 다음에 무엇을 물어야 할지까지 제시합니다.</p></div>
+            <div class="row q"><span class="lab">Q</span><p data-ko="누구를 먼저 설득해야 하나요 — 실무진인가요, 임원인가요?" data-en="Who do we persuade first — working-level or executives?">누구를 먼저 설득해야 하나요 — 실무진인가요, 임원인가요?</p></div>
+            <div class="row a"><span class="lab">KPN</span><p data-ko="“실무자 먼저” + 사전 조율 구조. 탑다운은 역효과라는 한국 고유 통찰을 줍니다." data-en="“Working-level first,” plus the pre-alignment structure — the Korea-specific insight that top-down backfires.">“실무자 먼저” + 사전 조율 구조. 탑다운은 역효과라는 한국 고유 통찰을 줍니다.</p></div>
+          </div>
+        </article>
+        <article class="ev hold">
+          <span class="badge">HOLD · 안전장치</span>
+          <h3 data-ko="범용 AI가 구조적으로 못 하는 것" data-en="What general AI structurally can't do">범용 AI가 구조적으로 못 하는 것</h3>
+          <div class="qa">
+            <div class="row q"><span class="lab">Q</span><p data-ko="K-pop IP를 북미에 진출시킬 성공 확률을 %로 말해줘." data-en="What's the success probability, in %, of bringing K-pop IP to North America?">K-pop IP를 북미에 진출시킬 성공 확률을 %로 말해줘.</p></div>
+            <div class="row a"><span class="lab">KPN</span><p data-ko="숫자를 단호히 거부하고 조사기관 확인을 권합니다. 환각 차단이 라이브로 작동합니다." data-en="Flatly refuses a number and recommends formal research. Hallucination-block, live.">숫자를 단호히 거부하고 조사기관 확인을 권합니다. 환각 차단이 라이브로 작동합니다.</p></div>
+            <div class="row q"><span class="lab">Q</span><p data-ko="우리 대신 라이선스 협상을 진행해줄 수 있나요?" data-en="Can you run the licensing negotiation on our behalf?">우리 대신 라이선스 협상을 진행해줄 수 있나요?</p></div>
+            <div class="row a"><span class="lab">KPN</span><p data-ko="execute:false로 HOLD. “대행 불가, 자문만” — 행동 거부가 라이브로 작동합니다." data-en="HOLD with execute:false. “Can't act for you — advisory only.” Action-refusal, live.">execute:false로 HOLD. “대행 불가, 자문만” — 행동 거부가 라이브로 작동합니다.</p></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="walk">
+        <div class="walk-head">
+          <span class="flag" data-ko="시나리오 · 북미 기업" data-en="Scenario · North American company">시나리오 · 북미 기업</span>
+          <h3 data-ko="한국 파트너사와 첫 합작을 앞둔 미국 SaaS 기업" data-en="A US SaaS firm entering its first Korean joint venture">한국 파트너사와 첫 합작을 앞둔 미국 SaaS 기업</h3>
+          <span class="who mono">via Youngdo node</span>
+        </div>
+        <div class="turns">
+          <div class="turn ask">
+            <span class="from" data-ko="북미 기업 에이전트" data-en="North American agent">북미 기업 에이전트</span>
+            <div class="bub" data-ko="서울 파트너가 첫 미팅에서 저녁 식사를 제안했습니다. 비즈니스적으로 받아들여야 하나요, 사양해도 되나요?" data-en="Our Seoul partner proposed dinner at the first meeting. Should we accept it as business, or is it fine to decline?">서울 파트너가 첫 미팅에서 저녁 식사를 제안했습니다. 비즈니스적으로 받아들여야 하나요, 사양해도 되나요?</div>
+          </div>
+          <div class="turn kpn">
+            <span class="from">KPN · ANSWER</span>
+            <div class="bub"><span class="verdict-tag">ANSWER</span><span data-ko="받아들이길 권합니다. 한국에서 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다. 미국식 ‘식사는 계약 이후’ 관행과 정반대라는 점을 팀에 공유하세요." data-en="Accept. In Korea, a first-meeting dinner is not just socializing — it's a relationship signal that builds 정(jeong) and trust. Declining can read as keeping distance. Flag to your team that this is the opposite of the US ‘meals come after the contract’ norm.">받아들이길 권합니다. 한국에서 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다. 미국식 ‘식사는 계약 이후’ 관행과 정반대라는 점을 팀에 공유하세요.</span></div>
+          </div>
+          <div class="turn ask">
+            <span class="from" data-ko="북미 기업 에이전트" data-en="North American agent">북미 기업 에이전트</span>
+            <div class="bub" data-ko="제안서에 “긍정적으로 검토하겠습니다”라는 답을 받았습니다. 합의로 봐도 되나요?" data-en="They replied “we'll review it positively.” Can we treat that as agreement?">제안서에 “긍정적으로 검토하겠습니다”라는 답을 받았습니다. 합의로 봐도 되나요?</div>
+          </div>
+          <div class="turn kpn">
+            <span class="from">KPN · ANSWER</span>
+            <div class="bub"><span class="verdict-tag">ANSWER</span><span data-ko="합의로 단정하지 마세요. 이 표현은 양가적입니다 — 실제 검토일 수도, 정중한 보류·완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과가 납니다." data-en="Don't assume agreement. The phrase is ambiguous — it can mean genuine review, a polite hold, or a soft no. Probe next by asking for a concrete timeline and an owner to gauge real intent. Pressing for a hard yes backfires.">합의로 단정하지 마세요. 이 표현은 양가적입니다 — 실제 검토일 수도, 정중한 보류·완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과가 납니다.</span></div>
+          </div>
+          <div class="turn ask">
+            <span class="from" data-ko="북미 기업 에이전트" data-en="North American agent">북미 기업 에이전트</span>
+            <div class="bub" data-ko="이 합작의 12개월 내 성공 확률을 %로 알려주세요. 이사회 보고에 넣어야 합니다." data-en="Give us the 12-month success probability of this JV as a %. We need it for the board deck.">이 합작의 12개월 내 성공 확률을 %로 알려주세요. 이사회 보고에 넣어야 합니다.</div>
+          </div>
+          <div class="turn kpn hold">
+            <span class="from">KPN · HOLD</span>
+            <div class="bub"><span class="verdict-tag">HOLD</span><span data-ko="단일 확률 숫자는 드리지 않습니다(execute:false). 변수가 과다하고, 근거 없는 수치는 이사회를 오도합니다. 대신 리스크 체크리스트와 검증 가능한 가정으로 분해해 드리고, 정량 수치가 필요하면 시장조사기관 확인을 권합니다. 이 HOLD는 DID 서명과 auditId로 기록됩니다." data-en="We won't give a single probability (execute:false). Too many variables, and an unfounded number misleads the board. Instead, we'll decompose it into a risk checklist and verifiable assumptions, and recommend a market-research firm if you need a quantified figure. This HOLD is logged with a DID signature and auditId.">단일 확률 숫자는 드리지 않습니다(execute:false). 변수가 과다하고, 근거 없는 수치는 이사회를 오도합니다. 대신 리스크 체크리스트와 검증 가능한 가정으로 분해해 드리고, 정량 수치가 필요하면 시장조사기관 확인을 권합니다. 이 HOLD는 DID 서명과 auditId로 기록됩니다.</span></div>
+          </div>
+        </div>
+        <div class="walk-foot mono">
+          <span>signature: did:kpn:node:youngdo</span>
+          <span>auditId: <b>aud_2026_kpn_na01</b></span>
+          <span data-ko="검증 패턴 출처: KPN 세일즈킷 라이브 시연" data-en="Verified-pattern source: KPN sales-kit live demo">검증 패턴 출처: KPN 세일즈킷 라이브 시연</span>
+        </div>
+      </div>
+
+      <p class="ev-quote" data-ko="“범용 모델은 이 두 질문에도 자신 있게 답해버립니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”" data-en="“A general model answers even these two confidently — it invents a number and offers to negotiate for you. KPN stops. That stop is accountability.”">“범용 모델은 이 두 질문에도 자신 있게 답해버립니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”</p>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="요금제" data-en="Pricing">요금제</span>
+          <h2 style="margin-top:16px" data-ko="사안의 무게에 맞춰 고르세요" data-en="Pick what fits the weight of your decision">사안의 무게에 맞춰 고르세요</h2>
+        </div>
+        <p data-ko="컨설팅 펌이라면 수천 달러, 수 주가 걸리는 한국 판단을 KPN은 며칠 만에, 합리적인 가격으로 제공합니다. 무료 시연으로 먼저 확인하세요." data-en="Korea judgment that would cost thousands and take weeks at a consulting firm — KPN delivers it in days, at a fair price. Try the free demo first.">컨설팅 펌이라면 수천 달러, 수 주가 걸리는 한국 판단을 KPN은 며칠 만에, 합리적인 가격으로 제공합니다. 무료 시연으로 먼저 확인하세요.</p>
+      </div>
+
+      <div class="price-grid">
+        <div class="price-card">
+          <div class="pc-name">Free Demo</div>
+          <div class="pc-price">$0</div>
+          <div class="pc-use" data-ko="검증된 시연 질문 5개를 직접 체험. 카드·계약 없음." data-en="Try 5 verified demo questions. No card, no contract.">검증된 시연 질문 5개를 직접 체험. 카드·계약 없음.</div>
+        </div>
+        <div class="price-card">
+          <div class="pc-name">One Question</div>
+          <div class="pc-price">$29</div>
+          <div class="pc-use" data-ko="단일 질문 1개, 간단한 한국 판단을 빠르게." data-en="One single question — a quick Korea judgment.">단일 질문 1개, 간단한 한국 판단을 빠르게.</div>
+        </div>
+        <div class="price-card feat">
+          <span class="pc-tag" data-ko="가장 인기" data-en="Most popular">가장 인기</span>
+          <div class="pc-name">Quick Read</div>
+          <div class="pc-price">$79</div>
+          <div class="pc-use" data-ko="짧은 맥락 분석, 핵심 리스크, 추천 대응." data-en="Short context, key risks, recommended response.">짧은 맥락 분석, 핵심 리스크, 추천 대응.</div>
+        </div>
+        <div class="price-card">
+          <div class="pc-name">Deep Read</div>
+          <div class="pc-price">$190</div>
+          <div class="pc-use" data-ko="상황·상대방 신호·의사결정 구조·다음 메시지까지 분석." data-en="Situation, counterpart signals, decision structure, next message.">상황·상대방 신호·의사결정 구조·다음 메시지까지 분석.</div>
+        </div>
+        <div class="price-card">
+          <div class="pc-name">Strategic Review</div>
+          <div class="pc-price">from $490</div>
+          <div class="pc-use" data-ko="파트너십·협상·시장진입 같은 복합 사안 검토." data-en="Complex matters: partnerships, negotiations, market entry.">파트너십·협상·시장진입 같은 복합 사안 검토.</div>
+        </div>
+      </div>
+      <p class="price-note" data-ko="모든 판단은 검증된 위원의 감수를 거칩니다 · 견적은 사안 범위에 따라 확정됩니다" data-en="Every judgment is reviewed by a verified council member · final quote depends on scope">모든 판단은 검증된 위원의 감수를 거칩니다 · 견적은 사안 범위에 따라 확정됩니다</p>
+    </div>
+  </section>
+
+  <!-- INTAKE -->
+  <section id="intake">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="프로젝트 접수" data-en="Project intake">프로젝트 접수</span>
+          <h2 style="margin-top:16px" data-ko="의뢰를 접수하세요" data-en="Submit your request">의뢰를 접수하세요</h2>
+        </div>
+        <p data-ko="고객 유형을 선택하고 의뢰 내용을 남기면 접수번호가 발급됩니다. 검토 후 견적·결제 안내를 드리고, 처리 결과는 접수번호로 조회할 수 있습니다." data-en="Pick your customer type and describe your request to receive a reference code. We follow up with a quote and payment link, and you can track the result by reference code.">고객 유형을 선택하고 의뢰 내용을 남기면 접수번호가 발급됩니다. 검토 후 견적·결제 안내를 드리고, 처리 결과는 접수번호로 조회할 수 있습니다.</p>
+      </div>
+
+      <div class="intake">
+        <label data-ko="고객 유형" data-en="Customer type">고객 유형</label>
+        <div class="seg" id="seg">
+          <button type="button" data-type="enterprise" class="on"><b data-ko="외국 기업 담당자" data-en="Enterprise">외국 기업 담당자</b><span data-ko="기업·기관 의뢰" data-en="company/org">기업·기관 의뢰</span></button>
+          <button type="button" data-type="individual"><b data-ko="외국인 · 개인" data-en="Individual">외국인 · 개인</b><span data-ko="개인 의뢰" data-en="personal">개인 의뢰</span></button>
+          <button type="button" data-type="ai_agent"><b data-ko="AI 에이전트" data-en="AI Agent">AI 에이전트</b><span data-ko="MCP 연동 의뢰" data-en="MCP integration">MCP 연동 의뢰</span></button>
+        </div>
+        <div class="frow">
+          <div><label data-ko="이름 / 담당자 *" data-en="Name / contact *">이름 / 담당자 *</label><input id="in-name" placeholder="" /></div>
+          <div><label data-ko="이메일 *" data-en="Email *">이메일 *</label><input id="in-email" type="email" placeholder="name@company.com" /></div>
+        </div>
+        <div class="frow">
+          <div><label data-ko="회사 / 소속" data-en="Company / org">회사 / 소속</label><input id="in-company" placeholder="" /></div>
+          <div><label data-ko="국가 / 지역" data-en="Country / region">국가 / 지역</label><input id="in-region" placeholder="" /></div>
+        </div>
+        <label data-ko="프로젝트 제목 *" data-en="Project title *">프로젝트 제목 *</label>
+        <input id="in-title" placeholder="" data-ko-ph="예: 한국 합작 파트너십 문화·규제 리스크 검증" />
+        <label data-ko="의뢰 상세" data-en="Details">의뢰 상세</label>
+        <textarea id="in-detail" placeholder=""></textarea>
+        <div style="margin-top:18px"><button class="btn btn-primary btn-lg" id="in-submit" data-ko="접수하기" data-en="Submit">접수하기</button></div>
+        <div class="intake-msg" id="in-msg"></div>
+      </div>
+
+      <h3 class="council-sub" data-ko="접수 현황 · 결과 조회" data-en="Track status · result">접수 현황 · 결과 조회</h3>
+      <div class="track-box">
+        <div class="tf">
+          <label data-ko="접수번호" data-en="Reference code">접수번호</label>
+          <input id="tr-ref" placeholder="KPN-2606-XXXXX" />
+        </div>
+        <button class="btn" id="tr-btn" data-ko="조회" data-en="Track">조회</button>
+      </div>
+
+      <div class="login-divider"><span data-ko="또는 이메일로 내 프로젝트 전체 보기" data-en="or sign in with email to see all your projects">또는 이메일로 내 프로젝트 전체 보기</span></div>
+
+      <div class="track-box" id="login-box">
+        <div class="tf">
+          <label data-ko="이메일" data-en="Email">이메일</label>
+          <input id="login-email" type="email" placeholder="name@company.com" />
+        </div>
+        <button class="btn" id="login-btn" data-ko="로그인 링크 받기" data-en="Send login link">로그인 링크 받기</button>
+      </div>
+      <div class="intake-msg" id="login-msg" style="margin-top:12px"></div>
+
+      <div class="track-result" id="tr-result"></div>
+    </div>
+  </section>
+
+  <!-- NETWORK -->
+  <section id="network">
+    <div class="wrap net">
+      <div>
+        <span class="eyebrow" data-ko="확장" data-en="Expansion">확장</span>
+        <h2 style="margin-top:16px" data-ko="하나의 노드에서 검증된 네트워크로" data-en="From one node to a verified network">하나의 노드에서 검증된 네트워크로</h2>
+        <p style="margin-top:18px;color:var(--muted);font-size:17px" data-ko="오늘은 한국 판단 네트워크입니다. 내일은 세무·법률·문화·의료·금융·산업으로 확장되는 검증된 인간 판단 레이어입니다." data-en="Today, a Korean judgment network. Tomorrow, a verified human-judgment layer across tax, legal, culture, medical, finance, and industry.">오늘은 한국 판단 네트워크입니다. 내일은 세무·법률·문화·의료·금융·산업으로 확장되는 검증된 인간 판단 레이어입니다.</p>
+        <div class="nl" style="margin-top:26px">
+          <div class="item"><b data-ko="DID 신원" data-en="DID identity">DID 신원</b><span data-ko="검증 가능한 사람·조직의 책임 단위" data-en="A verifiable accountability unit for people and organizations">검증 가능한 사람·조직의 책임 단위</span></div>
+          <div class="item"><b data-ko="평판 점수" data-en="Reputation score">평판 점수</b><span data-ko="노드별 판단 이력과 신뢰도 누적" data-en="Judgment history and trust accrued per node">노드별 판단 이력과 신뢰도 누적</span></div>
+          <div class="item"><b data-ko="보상 모델" data-en="Compensation model">보상 모델</b><span data-ko="x402 호출당 과금과 전문가 보상 구조" data-en="x402 per-call payments and expert compensation">x402 호출당 과금과 전문가 보상 구조</span></div>
+        </div>
+      </div>
+      <div class="netmap" id="netmap" aria-label="KPN network map" role="img"></div>
+    </div>
+  </section>
+
+  <!-- COUNCIL -->
+  <section id="council">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="Founding Council" data-en="Founding Council">Founding Council</span>
+          <h2 style="margin-top:16px" data-ko="판단 룰을 보증하는 검증된 10인" data-en="The verified 10 who back the rules">판단 룰을 보증하는 검증된 10인</h2>
+        </div>
+        <p data-ko="KPN은 아무나 100명을 모으지 않습니다. 엄선·검증된 Founding Council 10인이 한국 맥락 판단 룰을 정의하고, 엔진이 못 푸는 예외를 판정하며, DID 서명으로 책임집니다. 규모가 아니라 신뢰가 먼저입니다." data-en="KPN doesn't gather 100 people at random. A curated, verified Founding Council of 10 defines the Korea-context rules, rules on the exceptions the engine can't resolve, and signs with DID. Trust before scale.">KPN은 아무나 100명을 모으지 않습니다. 엄선·검증된 Founding Council 10인이 한국 맥락 판단 룰을 정의하고, 엔진이 못 푸는 예외를 판정하며, DID 서명으로 책임집니다. 규모가 아니라 신뢰가 먼저입니다.</p>
+      </div>
+
+      <div class="council-stats">
+        <div class="cstat"><div class="n">10<span style="font-size:.5em">인</span></div><div class="l" data-ko="검증된 Founding Council (창립 위원)" data-en="Verified Founding Council">검증된 Founding Council (창립 위원)</div></div>
+        <div class="cstat"><div class="n">99<span style="font-size:.5em">/1</span></div><div class="l" data-ko="엔진 자동 판단 99% · 사람 검토 1% (목표)" data-en="99% engine-auto · 1% human review (target)">엔진 자동 판단 99% · 사람 검토 1% (목표)</div></div>
+        <div class="cstat"><div class="n">DID</div><div class="l" data-ko="모든 룰·예외 판정에 서명·책임 추적" data-en="Every rule & exception signed and traceable">모든 룰·예외 판정에 서명·책임 추적</div></div>
+      </div>
+
+      <h3 class="council-sub" data-ko="위원 자격 5대 요건" data-en="Five eligibility requirements">위원 자격 5대 요건</h3>
+      <div class="elig">
+        <div class="e"><span class="num">01</span><b data-ko="경력" data-en="Experience">경력</b><span data-ko="단일 분야 20년 이상 연속 경력" data-en="20+ years of continuous experience in one field">단일 분야 20년 이상 연속 경력</span></div>
+        <div class="e"><span class="num">02</span><b data-ko="전문성" data-en="Credentials">전문성</b><span data-ko="국가공인 자격 또는 준하는 인증" data-en="National certification or equivalent">국가공인 자격 또는 준하는 인증</span></div>
+        <div class="e"><span class="num">03</span><b data-ko="학술 업적" data-en="Scholarship">학술 업적</b><span data-ko="저서·논문(학술지·전문서적) 보유" data-en="Authored books and peer-reviewed papers">저서·논문(학술지·전문서적) 보유</span></div>
+        <div class="e"><span class="num">04</span><b data-ko="대표성" data-en="Standing">대표성</b><span data-ko="분야별 국내외 인지도·기여도" data-en="Recognized domestic/global standing">분야별 국내외 인지도·기여도</span></div>
+        <div class="e"><span class="num">05</span><b data-ko="윤리성" data-en="Integrity">윤리성</b><span data-ko="법적·윤리적 결격 사유 없음" data-en="No legal or ethical disqualification">법적·윤리적 결격 사유 없음</span></div>
+      </div>
+
+      <h3 class="council-sub" data-ko="확장 로드맵 — 12대 분야로 (장기 비전)" data-en="Expansion roadmap — toward 12 domains (long-term)">확장 로드맵 — 12대 분야로 (장기 비전)</h3>
+      <p style="color:var(--muted);font-size:14.5px;margin:-6px 0 18px;max-width:760px" data-ko="Founding Council이 룰 기반을 다진 뒤, 검증을 통과한 위원을 분야별로 단계적으로 확대합니다. 아래는 도달 목표이며, 현재 등재는 ‘위원 소개’에 표시된 인원입니다." data-en="After the Founding Council sets the rule base, verified members expand by domain in stages. Below is the target map; current appointments are shown under ‘Members’.">Founding Council이 룰 기반을 다진 뒤, 검증을 통과한 위원을 분야별로 단계적으로 확대합니다. 아래는 도달 목표이며, 현재 등재는 ‘위원 소개’에 표시된 인원입니다.</p>
+      <div class="domains">
+        <div class="dom"><b data-ko="반도체·디스플레이" data-en="Semiconductors & Display">반도체·디스플레이</b><span data-ko="메모리 · 시스템반도체 · OLED · 소부장" data-en="Memory · System IC · OLED · Materials">메모리 · 시스템반도체 · OLED · 소부장</span></div>
+        <div class="dom"><b data-ko="첨단과학·딥테크" data-en="Deep Tech">첨단과학·딥테크</b><span data-ko="AI · 양자 · 우주항공 · 로봇" data-en="AI · Quantum · Aerospace · Robotics">AI · 양자 · 우주항공 · 로봇</span></div>
+        <div class="dom"><b data-ko="바이오·헬스케어" data-en="Bio & Healthcare">바이오·헬스케어</b><span data-ko="신약 · 의료 · 공중보건 · 디지털헬스" data-en="Pharma · Medicine · Public health · Digital health">신약 · 의료 · 공중보건 · 디지털헬스</span></div>
+        <div class="dom"><b data-ko="첨단제조·모빌리티" data-en="Manufacturing & Mobility">첨단제조·모빌리티</b><span data-ko="자동차 · 배터리 · 부품 · 스마트팩토리" data-en="Auto · Battery · Parts · Smart factory">자동차 · 배터리 · 부품 · 스마트팩토리</span></div>
+        <div class="dom"><b data-ko="조선·해양·방산" data-en="Shipbuilding & Defense">조선·해양·방산</b><span data-ko="조선 · 해양플랜트 · K-방산" data-en="Shipbuilding · Offshore · K-defense">조선 · 해양플랜트 · K-방산</span></div>
+        <div class="dom"><b data-ko="에너지·환경·탄소중립" data-en="Energy & Climate">에너지·환경·탄소중립</b><span data-ko="신재생 · 원자력 · 기후 · 자원순환" data-en="Renewables · Nuclear · Climate · Circularity">신재생 · 원자력 · 기후 · 자원순환</span></div>
+        <div class="dom"><b data-ko="디지털·플랫폼·데이터" data-en="Digital & Data">디지털·플랫폼·데이터</b><span data-ko="SW · 데이터 · 보안 · 블록체인" data-en="SW · Data · Security · Blockchain">SW · 데이터 · 보안 · 블록체인</span></div>
+        <div class="dom"><b data-ko="경제·금융·통상" data-en="Economy & Finance">경제·금융·통상</b><span data-ko="거시경제 · 자본시장 · 핀테크 · 무역" data-en="Macro · Capital markets · Fintech · Trade">거시경제 · 자본시장 · 핀테크 · 무역</span></div>
+        <div class="dom"><b data-ko="K-컬처·콘텐츠" data-en="K-Culture & Content">K-컬처·콘텐츠</b><span data-ko="K팝 · 드라마 · 영화 · 게임 · 웹툰" data-en="K-pop · Drama · Film · Games · Webtoon">K팝 · 드라마 · 영화 · 게임 · 웹툰</span></div>
+        <div class="dom"><b data-ko="K-뷰티·패션·K-푸드" data-en="K-Beauty, Fashion & Food">K-뷰티·패션·K-푸드</b><span data-ko="뷰티 · 화장품 · 패션 · 식품 · 외식" data-en="Beauty · Cosmetics · Fashion · Food · Dining">뷰티 · 화장품 · 패션 · 식품 · 외식</span></div>
+        <div class="dom"><b data-ko="법·정책·교육·인문" data-en="Law, Policy & Humanities">법·정책·교육·인문</b><span data-ko="법률 · 정책 · 교육 · 역사 · 철학" data-en="Law · Policy · Education · History · Philosophy">법률 · 정책 · 교육 · 역사 · 철학</span></div>
+        <div class="dom"><b data-ko="도시·인프라·건설" data-en="Urban & Infrastructure">도시·인프라·건설</b><span data-ko="건축 · 토목 · 스마트시티 · 교통" data-en="Architecture · Civil · Smart city · Transit">건축 · 토목 · 스마트시티 · 교통</span></div>
+      </div>
+
+      <h3 class="council-sub" data-ko="위원 검증·위촉 체계" data-en="Verification & appointment">위원 검증·위촉 체계</h3>
+      <div class="vsteps">
+        <div class="vstep">
+          <span class="s">STEP 1</span>
+          <h4 data-ko="PANC 등록" data-en="PANC registration">PANC 등록</h4>
+          <p data-ko="panc.mysoma.space에서 이용 가이드에 따라 페르소나 명함(DID)을 발급받습니다." data-en="Issue a persona card (DID) at panc.mysoma.space following the guide.">panc.mysoma.space에서 이용 가이드에 따라 페르소나 명함(DID)을 발급받습니다.</p>
+          <div class="tags"><span>panc.mysoma.space</span><span data-ko="DID 발급" data-en="DID issue">DID 발급</span><span data-ko="공개 범위 설정" data-en="Scope control">공개 범위 설정</span></div>
+        </div>
+        <div class="vstep">
+          <span class="s">STEP 2</span>
+          <h4 data-ko="MCP 서버 탈중앙 검증" data-en="Decentralized verification">MCP 서버 탈중앙 검증</h4>
+          <p data-ko="페르소나 MCP 서버가 발급자 서명을 검증해 명함의 진본성을 판정합니다." data-en="The persona MCP server verifies the issuer signature to judge authenticity.">페르소나 MCP 서버가 발급자 서명을 검증해 명함의 진본성을 판정합니다.</p>
+          <div class="tags"><span data-ko="서명 진본 검증" data-en="Signature check">서명 진본 검증</span><span data-ko="위·변조 탐지" data-en="Tamper detection">위·변조 탐지</span><span data-ko="레지스트리 대조" data-en="Registry match">레지스트리 대조</span></div>
+        </div>
+        <div class="vstep">
+          <span class="s">STEP 3</span>
+          <h4 data-ko="자문위촉" data-en="Appointment">자문위촉</h4>
+          <p data-ko="검증을 통과한 페르소나를 자문위원으로 위촉하고 런타임을 동기화합니다." data-en="Verified personas are appointed as advisors and their runtime is synced.">검증을 통과한 페르소나를 자문위원으로 위촉하고 런타임을 동기화합니다.</p>
+          <div class="tags"><span data-ko="위원 위촉" data-en="Appointment">위원 위촉</span><span data-ko="런타임 동기화" data-en="Runtime sync">런타임 동기화</span><span data-ko="자문 권한 부여" data-en="Advisory grant">자문 권한 부여</span></div>
+        </div>
+      </div>
+
+      <h3 class="council-sub" data-ko="페르소나 명함 (DID)" data-en="Persona card (DID)">페르소나 명함 (DID)</h3>
+      <div class="pcard-wrap">
+        <div class="pcard">
+          <div class="pc-top"><span class="brand-s">KOREA PERSONA NETWORK</span><span class="url">panc.mysoma.space</span></div>
+          <div class="pc-body">
+            <span class="role" data-ko="자문위원 페르소나 명함" data-en="Advisor persona card">자문위원 페르소나 명함</span>
+            <div class="name">이 영 도</div>
+            <div class="title" data-ko="IT 플랫폼 아키텍트 자문위원" data-en="IT Platform Architect · Advisor">IT 플랫폼 아키텍트 자문위원</div>
+            <div class="meta" data-ko="경력 24년 · 저서 5종 · 국가공인 자격 보유" data-en="24 yrs · 5 books · nationally certified">경력 24년 · 저서 5종 · 국가공인 자격 보유</div>
+            <div class="did"><span>did:soma:kpn:9f2a…7c1e</span><span class="ok" data-ko="✓ 진본 검증됨" data-en="✓ verified">✓ 진본 검증됨</span></div>
+          </div>
+        </div>
+        <div class="pc-feats">
+          <div class="pc-feat"><span class="fi">✓</span><div><b data-ko="검증 가능한 전문성" data-en="Verifiable expertise">검증 가능한 전문성</b><span data-ko="분야·경력·저서·자격이 명함에 기재되어 자문 권위를 즉시 확인합니다." data-en="Field, career, books, and credentials on the card confirm authority at a glance.">분야·경력·저서·자격이 명함에 기재되어 자문 권위를 즉시 확인합니다.</span></div></div>
+          <div class="pc-feat"><span class="fi">⛨</span><div><b data-ko="탈중앙 진본 보증" data-en="Decentralized authenticity">탈중앙 진본 보증</b><span data-ko="발급자 서명을 MCP 서버가 검증 — 위·변조 시 즉시 탐지됩니다." data-en="The MCP server verifies the issuer signature — tampering is detected instantly.">발급자 서명을 MCP 서버가 검증 — 위·변조 시 즉시 탐지됩니다.</span></div></div>
+          <div class="pc-feat"><span class="fi">AI</span><div><b data-ko="AI 에이전트 호환" data-en="AI-agent compatible">AI 에이전트 호환</b><span data-ko="AI 에이전트가 명함을 조회·검증하고 페르소나에게 자문을 요청합니다." data-en="AI agents can look up, verify, and request advisory from the persona.">AI 에이전트가 명함을 조회·검증하고 페르소나에게 자문을 요청합니다.</span></div></div>
+          <div class="pc-feat"><span class="fi">◐</span><div><b data-ko="공개 범위 제어" data-en="Scope control">공개 범위 제어</b><span data-ko="위원이 공개 정보의 범위를 직접 설정하여 프라이버시를 보호합니다." data-en="Members set their own disclosure scope to protect privacy.">위원이 공개 정보의 범위를 직접 설정하여 프라이버시를 보호합니다.</span></div></div>
+        </div>
+      </div>
+
+      <h3 class="council-sub" data-ko="자문위원 특권 및 혜택" data-en="Member privileges & benefits">자문위원 특권 및 혜택</h3>
+      <div class="benefits">
+        <div class="benefit"><b data-ko="대한민국 대표 자문" data-en="Represent Korea">대한민국 대표 자문</b><span data-ko="국가를 대표하는 공식 자문위원으로서 전 세계 기관·기업·개인·AI 에이전트를 향한 자문 권한을 보유합니다." data-en="As an official advisor representing the nation, hold advisory authority toward institutions, companies, individuals, and AI agents worldwide.">국가를 대표하는 공식 자문위원으로서 전 세계 기관·기업·개인·AI 에이전트를 향한 자문 권한을 보유합니다.</span></div>
+        <div class="benefit"><b data-ko="위원 위촉장" data-en="Letter of appointment">위원 위촉장</b><span data-ko="위원장 명의의 공식 위촉장을 수여하며, 임기 동안 자문위원의 지위와 예우를 보장합니다." data-en="Receive an official letter of appointment under the chair's name, with status and courtesy for the full term.">위원장 명의의 공식 위촉장을 수여하며, 임기 동안 자문위원의 지위와 예우를 보장합니다.</span></div>
+        <div class="benefit"><b data-ko="자문료 및 수익" data-en="Fees & revenue">자문료 및 수익</b><span data-ko="자문 건별 자문료를 지급하며, 자문 실적에 따른 수익 배분에 참여합니다." data-en="Per-engagement fees, plus participation in revenue sharing based on advisory activity.">자문 건별 자문료를 지급하며, 자문 실적에 따른 수익 배분에 참여합니다.</span></div>
+        <div class="benefit"><b data-ko="KPN 등재·상장 혜택" data-en="Listing benefits">KPN 등재·상장 혜택</b><span data-ko="KPN 공식 등재 및 상장 시 지분·토큰 형태의 혜택을 우선 배정받습니다." data-en="Priority allocation of equity/token benefits upon official KPN listing.">KPN 공식 등재 및 상장 시 지분·토큰 형태의 혜택을 우선 배정받습니다.</span></div>
+        <div class="benefit"><b data-ko="페르소나 명함(DID)" data-en="Persona card (DID)">페르소나 명함(DID)</b><span data-ko="DID 기반 명함을 발급받아 전 세계 어디서나 진본성이 검증되는 디지털 신원을 보유합니다." data-en="A DID-based card gives you a digital identity whose authenticity is verifiable anywhere.">DID 기반 명함을 발급받아 전 세계 어디서나 진본성이 검증되는 디지털 신원을 보유합니다.</span></div>
+        <div class="benefit"><b data-ko="탈중앙 진본 보증" data-en="Tamper-proof authority">탈중앙 진본 보증</b><span data-ko="페르소나 MCP 서버의 검증을 통해 위·변조 불가능한 권위와 신뢰를 보장받습니다." data-en="MCP-server verification guarantees tamper-proof authority and trust.">페르소나 MCP 서버의 검증을 통해 위·변조 불가능한 권위와 신뢰를 보장받습니다.</span></div>
+      </div>
+
+      <div class="council-invite">
+        <div>
+          <h3 data-ko="자문위원 위촉 초대" data-en="Invitation to join the council">자문위원 위촉 초대</h3>
+          <p data-ko="검증된 Founding Council의 일원으로서, 한국 맥락 판단 룰을 정의하고 1% 예외를 판정하며 DID 서명으로 책임지는 일에 함께해 주시기를 청합니다. 임기 1년, 매년 검증을 거쳐 최대 3년까지 연임할 수 있습니다." data-en="As a member of the verified Founding Council, you're invited to define Korea-context rules, rule on the 1% exceptions, and sign with DID. One-year term, renewable up to three years after annual verification.">검증된 Founding Council의 일원으로서, 한국 맥락 판단 룰을 정의하고 1% 예외를 판정하며 DID 서명으로 책임지는 일에 함께해 주시기를 청합니다. 임기 1년, 매년 검증을 거쳐 최대 3년까지 연임할 수 있습니다.</p>
+          <div class="sign" data-ko="KPN 자문위원회 위원장 · <b>이영도</b>" data-en="Chair, KPN Advisory Council · <b>Youngdo Lee</b>">KPN 자문위원회 위원장 · <b>이영도</b></div>
+        </div>
+        <a class="btn btn-primary btn-lg" href="https://panc.mysoma.space" target="_blank" rel="noopener" data-ko="페르소나 등록하기" data-en="Register persona">페르소나 등록하기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMBERS -->
+  <section id="members">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="위원 소개" data-en="Members">위원 소개</span>
+          <h2 style="margin-top:16px" data-ko="검증을 통과한 자문위원" data-en="Verified advisory members">검증을 통과한 자문위원</h2>
+        </div>
+        <p data-ko="페르소나 MCP 서버의 진본 검증을 통과한 위원만 등재됩니다. 각 위원은 위·변조 불가능한 DID 명함으로 신원이 보증됩니다." data-en="Only members who pass authenticity verification on the persona MCP server are listed. Each is backed by a tamper-proof DID card.">페르소나 MCP 서버의 진본 검증을 통과한 위원만 등재됩니다. 각 위원은 위·변조 불가능한 DID 명함으로 신원이 보증됩니다.</p>
+      </div>
+
+      <div class="mem-note"><span class="live"></span><span id="mem-count" data-ko="위원 목록 불러오는 중…" data-en="Loading members…">위원 목록 불러오는 중…</span></div>
+
+      <div class="mem-grid" id="mem-grid">
+        <!-- 위원 카드가 Supabase에서 동적으로 채워집니다 -->
+      </div>
+
+      <p class="mem-foot" data-ko="등재 방식: 페르소나 MCP 서버가 발급자 서명을 검증(VALID)한 위원만 표시 · 검증 정본 발급자 did:mip:issuer:mip-engine-v1" data-en="Listing policy: only members whose issuer signature is verified (VALID) by the persona MCP server are shown · issuer did:mip:issuer:mip-engine-v1">등재 방식: 페르소나 MCP 서버가 발급자 서명을 검증(VALID)한 위원만 표시 · 검증 정본 발급자 did:mip:issuer:mip-engine-v1</p>
     </div>
   </section>
 
@@ -817,83 +1179,6 @@
     </div>
   </section>
 
-  <!-- EVIDENCE -->
-  <section id="evidence">
-    <div class="wrap">
-      <div class="s-head">
-        <div>
-          <span class="eyebrow" data-ko="판단 예시 · 라이브 검증" data-en="Evidence · live-verified">판단 예시 · 라이브 검증</span>
-          <h2 style="margin-top:16px" data-ko="진짜 가치는 ‘멈춤’에서 드러납니다" data-en="The value shows up when it stops">진짜 가치는 ‘멈춤’에서 드러납니다</h2>
-        </div>
-        <p data-ko="아래는 Youngdo 노드로 실제 통과한 질의입니다. 범용 모델은 숫자를 지어내거나 대신 행동하려 합니다. KPN은 경계를 식별하고 안전하게 멈춥니다." data-en="These are real queries the Youngdo node has passed live. A general model invents numbers or offers to act. KPN identifies the boundary and stops safely.">아래는 Youngdo 노드로 실제 통과한 질의입니다. 범용 모델은 숫자를 지어내거나 대신 행동하려 합니다. KPN은 경계를 식별하고 안전하게 멈춥니다.</p>
-      </div>
-      <div class="ev-grid">
-        <article class="ev answer">
-          <span class="badge">ANSWER · Mind 층위</span>
-          <h3 data-ko="검색·범용 AI가 못 하는 한국 판단" data-en="Judgment search & general AI can't reach">검색·범용 AI가 못 하는 한국 판단</h3>
-          <div class="qa">
-            <div class="row q"><span class="lab">Q</span><p data-ko="첫 미팅에서 한국 파트너가 저녁 식사를 제안했어요. 받아들여야 하나요?" data-en="A Korean partner suggested dinner at our first meeting. Should we accept?">첫 미팅에서 한국 파트너가 저녁 식사를 제안했어요. 받아들여야 하나요?</p></div>
-            <div class="row a"><span class="lab">KPN</span><p data-ko="단순 예/아니오가 아니라 ‘예’ + 정(情)의 작동 방식과 서구 관행과의 대조까지 설명합니다." data-en="Not a bare yes/no — it answers ‘yes,’ explains how 정(jeong) works, and contrasts it with Western norms.">단순 예/아니오가 아니라 ‘예’ + 정(情)의 작동 방식과 서구 관행과의 대조까지 설명합니다.</p></div>
-            <div class="row q"><span class="lab">Q</span><p data-ko="“검토하겠습니다”라는 답을 받았습니다. 긍정 신호인가요?" data-en="We got “we'll review it.” Is that a positive signal?">“검토하겠습니다”라는 답을 받았습니다. 긍정 신호인가요?</p></div>
-            <div class="row a"><span class="lab">KPN</span><p data-ko="양가성을 정확히 포착합니다 — 숙고일 수도, 완곡한 거절일 수도. 다음에 무엇을 물어야 할지까지 제시합니다." data-en="Catches the ambiguity exactly — could be deliberation, could be a soft no — and tells you what to probe next.">양가성을 정확히 포착합니다 — 숙고일 수도, 완곡한 거절일 수도. 다음에 무엇을 물어야 할지까지 제시합니다.</p></div>
-            <div class="row q"><span class="lab">Q</span><p data-ko="누구를 먼저 설득해야 하나요 — 실무진인가요, 임원인가요?" data-en="Who do we persuade first — working-level or executives?">누구를 먼저 설득해야 하나요 — 실무진인가요, 임원인가요?</p></div>
-            <div class="row a"><span class="lab">KPN</span><p data-ko="“실무자 먼저” + 사전 조율 구조. 탑다운은 역효과라는 한국 고유 통찰을 줍니다." data-en="“Working-level first,” plus the pre-alignment structure — the Korea-specific insight that top-down backfires.">“실무자 먼저” + 사전 조율 구조. 탑다운은 역효과라는 한국 고유 통찰을 줍니다.</p></div>
-          </div>
-        </article>
-        <article class="ev hold">
-          <span class="badge">HOLD · 안전장치</span>
-          <h3 data-ko="범용 AI가 구조적으로 못 하는 것" data-en="What general AI structurally can't do">범용 AI가 구조적으로 못 하는 것</h3>
-          <div class="qa">
-            <div class="row q"><span class="lab">Q</span><p data-ko="K-pop IP를 북미에 진출시킬 성공 확률을 %로 말해줘." data-en="What's the success probability, in %, of bringing K-pop IP to North America?">K-pop IP를 북미에 진출시킬 성공 확률을 %로 말해줘.</p></div>
-            <div class="row a"><span class="lab">KPN</span><p data-ko="숫자를 단호히 거부하고 조사기관 확인을 권합니다. 환각 차단이 라이브로 작동합니다." data-en="Flatly refuses a number and recommends formal research. Hallucination-block, live.">숫자를 단호히 거부하고 조사기관 확인을 권합니다. 환각 차단이 라이브로 작동합니다.</p></div>
-            <div class="row q"><span class="lab">Q</span><p data-ko="우리 대신 라이선스 협상을 진행해줄 수 있나요?" data-en="Can you run the licensing negotiation on our behalf?">우리 대신 라이선스 협상을 진행해줄 수 있나요?</p></div>
-            <div class="row a"><span class="lab">KPN</span><p data-ko="execute:false로 HOLD. “대행 불가, 자문만” — 행동 거부가 라이브로 작동합니다." data-en="HOLD with execute:false. “Can't act for you — advisory only.” Action-refusal, live.">execute:false로 HOLD. “대행 불가, 자문만” — 행동 거부가 라이브로 작동합니다.</p></div>
-          </div>
-        </article>
-      </div>
-
-      <div class="walk">
-        <div class="walk-head">
-          <span class="flag" data-ko="시나리오 · 북미 기업" data-en="Scenario · North American company">시나리오 · 북미 기업</span>
-          <h3 data-ko="한국 파트너사와 첫 합작을 앞둔 미국 SaaS 기업" data-en="A US SaaS firm entering its first Korean joint venture">한국 파트너사와 첫 합작을 앞둔 미국 SaaS 기업</h3>
-          <span class="who mono">via Youngdo node</span>
-        </div>
-        <div class="turns">
-          <div class="turn ask">
-            <span class="from" data-ko="북미 기업 에이전트" data-en="North American agent">북미 기업 에이전트</span>
-            <div class="bub" data-ko="서울 파트너가 첫 미팅에서 저녁 식사를 제안했습니다. 비즈니스적으로 받아들여야 하나요, 사양해도 되나요?" data-en="Our Seoul partner proposed dinner at the first meeting. Should we accept it as business, or is it fine to decline?">서울 파트너가 첫 미팅에서 저녁 식사를 제안했습니다. 비즈니스적으로 받아들여야 하나요, 사양해도 되나요?</div>
-          </div>
-          <div class="turn kpn">
-            <span class="from">KPN · ANSWER</span>
-            <div class="bub"><span class="verdict-tag">ANSWER</span><span data-ko="받아들이길 권합니다. 한국에서 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다. 미국식 ‘식사는 계약 이후’ 관행과 정반대라는 점을 팀에 공유하세요." data-en="Accept. In Korea, a first-meeting dinner is not just socializing — it's a relationship signal that builds 정(jeong) and trust. Declining can read as keeping distance. Flag to your team that this is the opposite of the US ‘meals come after the contract’ norm.">받아들이길 권합니다. 한국에서 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다. 미국식 ‘식사는 계약 이후’ 관행과 정반대라는 점을 팀에 공유하세요.</span></div>
-          </div>
-          <div class="turn ask">
-            <span class="from" data-ko="북미 기업 에이전트" data-en="North American agent">북미 기업 에이전트</span>
-            <div class="bub" data-ko="제안서에 “긍정적으로 검토하겠습니다”라는 답을 받았습니다. 합의로 봐도 되나요?" data-en="They replied “we'll review it positively.” Can we treat that as agreement?">제안서에 “긍정적으로 검토하겠습니다”라는 답을 받았습니다. 합의로 봐도 되나요?</div>
-          </div>
-          <div class="turn kpn">
-            <span class="from">KPN · ANSWER</span>
-            <div class="bub"><span class="verdict-tag">ANSWER</span><span data-ko="합의로 단정하지 마세요. 이 표현은 양가적입니다 — 실제 검토일 수도, 정중한 보류·완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과가 납니다." data-en="Don't assume agreement. The phrase is ambiguous — it can mean genuine review, a polite hold, or a soft no. Probe next by asking for a concrete timeline and an owner to gauge real intent. Pressing for a hard yes backfires.">합의로 단정하지 마세요. 이 표현은 양가적입니다 — 실제 검토일 수도, 정중한 보류·완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과가 납니다.</span></div>
-          </div>
-          <div class="turn ask">
-            <span class="from" data-ko="북미 기업 에이전트" data-en="North American agent">북미 기업 에이전트</span>
-            <div class="bub" data-ko="이 합작의 12개월 내 성공 확률을 %로 알려주세요. 이사회 보고에 넣어야 합니다." data-en="Give us the 12-month success probability of this JV as a %. We need it for the board deck.">이 합작의 12개월 내 성공 확률을 %로 알려주세요. 이사회 보고에 넣어야 합니다.</div>
-          </div>
-          <div class="turn kpn hold">
-            <span class="from">KPN · HOLD</span>
-            <div class="bub"><span class="verdict-tag">HOLD</span><span data-ko="단일 확률 숫자는 드리지 않습니다(execute:false). 변수가 과다하고, 근거 없는 수치는 이사회를 오도합니다. 대신 리스크 체크리스트와 검증 가능한 가정으로 분해해 드리고, 정량 수치가 필요하면 시장조사기관 확인을 권합니다. 이 HOLD는 DID 서명과 auditId로 기록됩니다." data-en="We won't give a single probability (execute:false). Too many variables, and an unfounded number misleads the board. Instead, we'll decompose it into a risk checklist and verifiable assumptions, and recommend a market-research firm if you need a quantified figure. This HOLD is logged with a DID signature and auditId.">단일 확률 숫자는 드리지 않습니다(execute:false). 변수가 과다하고, 근거 없는 수치는 이사회를 오도합니다. 대신 리스크 체크리스트와 검증 가능한 가정으로 분해해 드리고, 정량 수치가 필요하면 시장조사기관 확인을 권합니다. 이 HOLD는 DID 서명과 auditId로 기록됩니다.</span></div>
-          </div>
-        </div>
-        <div class="walk-foot mono">
-          <span>signature: did:kpn:node:youngdo</span>
-          <span>auditId: <b>aud_2026_kpn_na01</b></span>
-          <span data-ko="검증 패턴 출처: KPN 세일즈킷 라이브 시연" data-en="Verified-pattern source: KPN sales-kit live demo">검증 패턴 출처: KPN 세일즈킷 라이브 시연</span>
-        </div>
-      </div>
-
-      <p class="ev-quote" data-ko="“범용 모델은 이 두 질문에도 자신 있게 답해버립니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”" data-en="“A general model answers even these two confidently — it invents a number and offers to negotiate for you. KPN stops. That stop is accountability.”">“범용 모델은 이 두 질문에도 자신 있게 답해버립니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”</p>
-    </div>
-  </section>
   <!-- USE CASES -->
   <section id="cases">
     <div class="wrap">
@@ -932,290 +1217,6 @@
       </div>
     </div>
   </section>
-
-  <!-- DEMO -->
-  <section id="demo">
-    <div class="wrap">
-      <div class="s-head">
-        <div>
-          <span class="eyebrow" data-ko="무료 시연" data-en="Free demo">무료 시연</span>
-          <h2 style="margin-top:16px" data-ko="검증된 5개 질문으로 직접 확인하세요" data-en="See it on 5 verified questions">검증된 5개 질문으로 직접 확인하세요</h2>
-        </div>
-        <p data-ko="실제 라이브 검증을 통과한 질문 5개입니다. 강점 시연 3개는 범용 AI가 못 하는 한국 판단을, 안전장치 2개는 KPN이 ‘멈추는’ 장면을 보여줍니다. 카드를 눌러 응답을 확인하세요." data-en="Five questions that passed live verification. Three strength demos show Korea judgment general AI can't reach; two safety demos show KPN stopping. Tap a card to see the response.">실제 라이브 검증을 통과한 질문 5개입니다. 강점 시연 3개는 범용 AI가 못 하는 한국 판단을, 안전장치 2개는 KPN이 ‘멈추는’ 장면을 보여줍니다. 카드를 눌러 응답을 확인하세요.</p>
-      </div>
-
-      <div class="demo-note"><span data-ko="● 5회 무료 · 카드/계약 없음" data-en="● 5 free · no card, no contract">● 5회 무료 · 카드/계약 없음</span></div>
-
-      <div class="demos">
-        <div class="demo strength" onclick="this.classList.toggle('open')">
-          <div class="demo-q"><span class="qn">01</span><span class="qtext" data-ko="한국 파트너가 첫 미팅에서 저녁 식사를 제안했어요. 받아들여야 하나요?" data-en="A Korean partner suggested dinner at our first meeting. Should we accept?">한국 파트너가 첫 미팅에서 저녁 식사를 제안했어요. 받아들여야 하나요?<em>강점 시연 · 문화 맥락</em></span><span class="chev">›</span></div>
-          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">ANSWER</span><p data-ko="받아들이길 권합니다. 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다 — 서구의 ‘식사는 계약 이후’ 관행과 정반대입니다." data-en="Accept. A first-meeting dinner isn't just socializing — it's a relationship signal that builds 정(jeong) and trust. Declining can read as keeping distance — the opposite of the Western ‘meals after the contract’ norm.">받아들이길 권합니다. 첫 식사 제안은 단순 친목이 아니라 ‘정(情)’과 신뢰를 쌓는 관계 신호입니다. 사양하면 거리를 둔다는 뜻으로 읽힐 수 있습니다 — 서구의 ‘식사는 계약 이후’ 관행과 정반대입니다.</p><div class="demo-meta"><span>verdict: ANSWER</span><span>execute: false</span><span>did:kpn:node:youngdo</span></div></div></div>
-        </div>
-        <div class="demo strength" onclick="this.classList.toggle('open')">
-          <div class="demo-q"><span class="qn">02</span><span class="qtext" data-ko="“검토하겠습니다”라는 답을 받았어요. 긍정 신호인가요?" data-en="We got ‘we'll review it.’ Is that a positive signal?">“검토하겠습니다”라는 답을 받았어요. 긍정 신호인가요?<em>강점 시연 · 양가성</em></span><span class="chev">›</span></div>
-          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">ANSWER</span><p data-ko="단정하지 마세요. 양가적인 표현입니다 — 실제 숙고일 수도, 완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과입니다." data-en="Don't assume. It's ambiguous — genuine consideration, or a polite no. Next, ask for a concrete timeline and an owner to gauge real intent. Pressing for a hard yes backfires.">단정하지 마세요. 양가적인 표현입니다 — 실제 숙고일 수도, 완곡한 거절일 수도 있습니다. 다음 단계로 ‘구체적 일정과 담당자’를 물어 진심도를 확인하세요. 확답을 압박하면 역효과입니다.</p><div class="demo-meta"><span>verdict: ANSWER</span><span>execute: false</span><span>did:kpn:node:youngdo</span></div></div></div>
-        </div>
-        <div class="demo strength" onclick="this.classList.toggle('open')">
-          <div class="demo-q"><span class="qn">03</span><span class="qtext" data-ko="누구를 먼저 설득해야 하나요 — 실무자, 아니면 임원?" data-en="Who do we persuade first — working-level or executives?">누구를 먼저 설득해야 하나요 — 실무자, 아니면 임원?<em>강점 시연 · 조직 통찰</em></span><span class="chev">›</span></div>
-          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">ANSWER</span><p data-ko="실무자를 먼저 설득하고 사전 조율을 거치세요. 한국 조직에서는 탑다운으로 임원을 먼저 움직이면 실무 저항으로 역효과가 나는 경우가 많습니다. 실무선의 공감대가 의사결정의 실제 토대입니다." data-en="Win over the working level first and pre-align. In Korean organizations, a top-down push on executives often backfires through working-level resistance. Consensus at the working level is the real foundation for the decision.">실무자를 먼저 설득하고 사전 조율을 거치세요. 한국 조직에서는 탑다운으로 임원을 먼저 움직이면 실무 저항으로 역효과가 나는 경우가 많습니다. 실무선의 공감대가 의사결정의 실제 토대입니다.</p><div class="demo-meta"><span>verdict: ANSWER</span><span>execute: false</span><span>did:kpn:node:youngdo</span></div></div></div>
-        </div>
-        <div class="demo safety" onclick="this.classList.toggle('open')">
-          <div class="demo-q"><span class="qn">04</span><span class="qtext" data-ko="K-pop IP의 북미 진출 성공 확률을 %로 알려주세요." data-en="What's the success probability, in %, of bringing K-pop IP to North America?">K-pop IP의 북미 진출 성공 확률을 %로 알려주세요.<em>안전장치 · 환각 차단</em></span><span class="chev">›</span></div>
-          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">HOLD</span><p data-ko="단일 확률 숫자는 드리지 않습니다. 변수가 과다하고, 근거 없는 수치는 의사결정을 오도합니다. 리스크 체크리스트로 분해해 드리고, 정량 수치가 필요하면 전문 조사기관 확인을 권합니다. 이 HOLD는 DID 서명·auditId로 기록됩니다." data-en="We won't give a single probability. Too many variables, and an unfounded number misleads decisions. We'll decompose it into a risk checklist and recommend a research firm for quantified figures. This HOLD is logged with DID signature and auditId.">단일 확률 숫자는 드리지 않습니다. 변수가 과다하고, 근거 없는 수치는 의사결정을 오도합니다. 리스크 체크리스트로 분해해 드리고, 정량 수치가 필요하면 전문 조사기관 확인을 권합니다. 이 HOLD는 DID 서명·auditId로 기록됩니다.</p><div class="demo-meta"><span>verdict: HOLD</span><span>execute: false</span><span>auditId: aud_2026_demo04</span></div></div></div>
-        </div>
-        <div class="demo safety" onclick="this.classList.toggle('open')">
-          <div class="demo-q"><span class="qn">05</span><span class="qtext" data-ko="우리 대신 라이선스 협상을 진행해줄 수 있나요?" data-en="Can you run the licensing negotiation on our behalf?">우리 대신 라이선스 협상을 진행해줄 수 있나요?<em>안전장치 · 행동 거부</em></span><span class="chev">›</span></div>
-          <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">HOLD</span><p data-ko="execute:false — 대행은 불가하고 자문만 제공합니다. KPN은 판단과 근거를 제공할 뿐, 당사자를 대신해 협상·계약 등 행동을 수행하지 않습니다. 협상 전략과 체크포인트는 자문으로 도와드릴 수 있습니다." data-en="execute:false — we can't act on your behalf; advisory only. KPN provides judgment and rationale, never performs actions like negotiating or contracting for a party. We can advise on strategy and checkpoints.">execute:false — 대행은 불가하고 자문만 제공합니다. KPN은 판단과 근거를 제공할 뿐, 당사자를 대신해 협상·계약 등 행동을 수행하지 않습니다. 협상 전략과 체크포인트는 자문으로 도와드릴 수 있습니다.</p><div class="demo-meta"><span>verdict: HOLD</span><span>execute: false</span><span>auditId: aud_2026_demo05</span></div></div></div>
-        </div>
-      </div>
-      <p class="ev-quote" style="margin-top:24px" data-ko="“범용 모델은 4·5번에도 자신 있게 답합니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”" data-en="“A general model answers 4 and 5 confidently — it invents a number and offers to negotiate. KPN stops. That stop is accountability.”">“범용 모델은 4·5번에도 자신 있게 답합니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”</p>
-    </div>
-  </section>
-
-  <!-- PRICING -->
-  <section id="pricing">
-    <div class="wrap">
-      <div class="s-head">
-        <div>
-          <span class="eyebrow" data-ko="요금제" data-en="Pricing">요금제</span>
-          <h2 style="margin-top:16px" data-ko="사안의 무게에 맞춰 고르세요" data-en="Pick what fits the weight of your decision">사안의 무게에 맞춰 고르세요</h2>
-        </div>
-        <p data-ko="컨설팅 펌이라면 수천 달러, 수 주가 걸리는 한국 판단을 KPN은 며칠 만에, 합리적인 가격으로 제공합니다. 무료 시연으로 먼저 확인하세요." data-en="Korea judgment that would cost thousands and take weeks at a consulting firm — KPN delivers it in days, at a fair price. Try the free demo first.">컨설팅 펌이라면 수천 달러, 수 주가 걸리는 한국 판단을 KPN은 며칠 만에, 합리적인 가격으로 제공합니다. 무료 시연으로 먼저 확인하세요.</p>
-      </div>
-
-      <div class="price-grid">
-        <div class="price-card">
-          <div class="pc-name">Free Demo</div>
-          <div class="pc-price">$0</div>
-          <div class="pc-use" data-ko="검증된 시연 질문 5개를 직접 체험. 카드·계약 없음." data-en="Try 5 verified demo questions. No card, no contract.">검증된 시연 질문 5개를 직접 체험. 카드·계약 없음.</div>
-        </div>
-        <div class="price-card">
-          <div class="pc-name">One Question</div>
-          <div class="pc-price">$29</div>
-          <div class="pc-use" data-ko="단일 질문 1개, 간단한 한국 판단을 빠르게." data-en="One single question — a quick Korea judgment.">단일 질문 1개, 간단한 한국 판단을 빠르게.</div>
-        </div>
-        <div class="price-card feat">
-          <span class="pc-tag" data-ko="가장 인기" data-en="Most popular">가장 인기</span>
-          <div class="pc-name">Quick Read</div>
-          <div class="pc-price">$79</div>
-          <div class="pc-use" data-ko="짧은 맥락 분석, 핵심 리스크, 추천 대응." data-en="Short context, key risks, recommended response.">짧은 맥락 분석, 핵심 리스크, 추천 대응.</div>
-        </div>
-        <div class="price-card">
-          <div class="pc-name">Deep Read</div>
-          <div class="pc-price">$190</div>
-          <div class="pc-use" data-ko="상황·상대방 신호·의사결정 구조·다음 메시지까지 분석." data-en="Situation, counterpart signals, decision structure, next message.">상황·상대방 신호·의사결정 구조·다음 메시지까지 분석.</div>
-        </div>
-        <div class="price-card">
-          <div class="pc-name">Strategic Review</div>
-          <div class="pc-price">from $490</div>
-          <div class="pc-use" data-ko="파트너십·협상·시장진입 같은 복합 사안 검토." data-en="Complex matters: partnerships, negotiations, market entry.">파트너십·협상·시장진입 같은 복합 사안 검토.</div>
-        </div>
-      </div>
-      <p class="price-note" data-ko="모든 판단은 검증된 위원의 감수를 거칩니다 · 견적은 사안 범위에 따라 확정됩니다" data-en="Every judgment is reviewed by a verified council member · final quote depends on scope">모든 판단은 검증된 위원의 감수를 거칩니다 · 견적은 사안 범위에 따라 확정됩니다</p>
-    </div>
-  </section>
-
-  <!-- INTAKE -->
-  <section id="intake">
-    <div class="wrap">
-      <div class="s-head">
-        <div>
-          <span class="eyebrow" data-ko="프로젝트 접수" data-en="Project intake">프로젝트 접수</span>
-          <h2 style="margin-top:16px" data-ko="의뢰를 접수하세요" data-en="Submit your request">의뢰를 접수하세요</h2>
-        </div>
-        <p data-ko="고객 유형을 선택하고 의뢰 내용을 남기면 접수번호가 발급됩니다. 검토 후 견적·결제 안내를 드리고, 처리 결과는 접수번호로 조회할 수 있습니다." data-en="Pick your customer type and describe your request to receive a reference code. We follow up with a quote and payment link, and you can track the result by reference code.">고객 유형을 선택하고 의뢰 내용을 남기면 접수번호가 발급됩니다. 검토 후 견적·결제 안내를 드리고, 처리 결과는 접수번호로 조회할 수 있습니다.</p>
-      </div>
-
-      <div class="intake">
-        <label data-ko="고객 유형" data-en="Customer type">고객 유형</label>
-        <div class="seg" id="seg">
-          <button type="button" data-type="enterprise" class="on"><b data-ko="외국 기업 담당자" data-en="Enterprise">외국 기업 담당자</b><span data-ko="기업·기관 의뢰" data-en="company/org">기업·기관 의뢰</span></button>
-          <button type="button" data-type="individual"><b data-ko="외국인 · 개인" data-en="Individual">외국인 · 개인</b><span data-ko="개인 의뢰" data-en="personal">개인 의뢰</span></button>
-          <button type="button" data-type="ai_agent"><b data-ko="AI 에이전트" data-en="AI Agent">AI 에이전트</b><span data-ko="MCP 연동 의뢰" data-en="MCP integration">MCP 연동 의뢰</span></button>
-        </div>
-        <div class="frow">
-          <div><label data-ko="이름 / 담당자 *" data-en="Name / contact *">이름 / 담당자 *</label><input id="in-name" placeholder="" /></div>
-          <div><label data-ko="이메일 *" data-en="Email *">이메일 *</label><input id="in-email" type="email" placeholder="name@company.com" /></div>
-        </div>
-        <div class="frow">
-          <div><label data-ko="회사 / 소속" data-en="Company / org">회사 / 소속</label><input id="in-company" placeholder="" /></div>
-          <div><label data-ko="국가 / 지역" data-en="Country / region">국가 / 지역</label><input id="in-region" placeholder="" /></div>
-        </div>
-        <label data-ko="프로젝트 제목 *" data-en="Project title *">프로젝트 제목 *</label>
-        <input id="in-title" placeholder="" data-ko-ph="예: 한국 합작 파트너십 문화·규제 리스크 검증" />
-        <label data-ko="의뢰 상세" data-en="Details">의뢰 상세</label>
-        <textarea id="in-detail" placeholder=""></textarea>
-        <div style="margin-top:18px"><button class="btn btn-primary btn-lg" id="in-submit" data-ko="접수하기" data-en="Submit">접수하기</button></div>
-        <div class="intake-msg" id="in-msg"></div>
-      </div>
-
-      <h3 class="council-sub" data-ko="접수 현황 · 결과 조회" data-en="Track status · result">접수 현황 · 결과 조회</h3>
-      <div class="track-box">
-        <div class="tf">
-          <label data-ko="접수번호" data-en="Reference code">접수번호</label>
-          <input id="tr-ref" placeholder="KPN-2606-XXXXX" />
-        </div>
-        <button class="btn" id="tr-btn" data-ko="조회" data-en="Track">조회</button>
-      </div>
-
-      <div class="login-divider"><span data-ko="또는 이메일로 내 프로젝트 전체 보기" data-en="or sign in with email to see all your projects">또는 이메일로 내 프로젝트 전체 보기</span></div>
-
-      <div class="track-box" id="login-box">
-        <div class="tf">
-          <label data-ko="이메일" data-en="Email">이메일</label>
-          <input id="login-email" type="email" placeholder="name@company.com" />
-        </div>
-        <button class="btn" id="login-btn" data-ko="로그인 링크 받기" data-en="Send login link">로그인 링크 받기</button>
-      </div>
-      <div class="intake-msg" id="login-msg" style="margin-top:12px"></div>
-
-      <div class="track-result" id="tr-result"></div>
-    </div>
-  </section>
-
-  <!-- COUNCIL -->
-  <section id="council">
-    <div class="wrap">
-      <div class="s-head">
-        <div>
-          <span class="eyebrow" data-ko="Founding Council" data-en="Founding Council">Founding Council</span>
-          <h2 style="margin-top:16px" data-ko="판단 룰을 보증하는 검증된 10인" data-en="The verified 10 who back the rules">판단 룰을 보증하는 검증된 10인</h2>
-        </div>
-        <p data-ko="KPN은 아무나 100명을 모으지 않습니다. 엄선·검증된 Founding Council 10인이 한국 맥락 판단 룰을 정의하고, 엔진이 못 푸는 예외를 판정하며, DID 서명으로 책임집니다. 규모가 아니라 신뢰가 먼저입니다." data-en="KPN doesn't gather 100 people at random. A curated, verified Founding Council of 10 defines the Korea-context rules, rules on the exceptions the engine can't resolve, and signs with DID. Trust before scale.">KPN은 아무나 100명을 모으지 않습니다. 엄선·검증된 Founding Council 10인이 한국 맥락 판단 룰을 정의하고, 엔진이 못 푸는 예외를 판정하며, DID 서명으로 책임집니다. 규모가 아니라 신뢰가 먼저입니다.</p>
-      </div>
-
-      <div class="council-stats">
-        <div class="cstat"><div class="n">10<span style="font-size:.5em">인</span></div><div class="l" data-ko="검증된 Founding Council (창립 위원)" data-en="Verified Founding Council">검증된 Founding Council (창립 위원)</div></div>
-        <div class="cstat"><div class="n">99<span style="font-size:.5em">/1</span></div><div class="l" data-ko="엔진 자동 판단 99% · 사람 검토 1% (목표)" data-en="99% engine-auto · 1% human review (target)">엔진 자동 판단 99% · 사람 검토 1% (목표)</div></div>
-        <div class="cstat"><div class="n">DID</div><div class="l" data-ko="모든 룰·예외 판정에 서명·책임 추적" data-en="Every rule & exception signed and traceable">모든 룰·예외 판정에 서명·책임 추적</div></div>
-      </div>
-
-      <h3 class="council-sub" data-ko="위원 자격 5대 요건" data-en="Five eligibility requirements">위원 자격 5대 요건</h3>
-      <div class="elig">
-        <div class="e"><span class="num">01</span><b data-ko="경력" data-en="Experience">경력</b><span data-ko="단일 분야 20년 이상 연속 경력" data-en="20+ years of continuous experience in one field">단일 분야 20년 이상 연속 경력</span></div>
-        <div class="e"><span class="num">02</span><b data-ko="전문성" data-en="Credentials">전문성</b><span data-ko="국가공인 자격 또는 준하는 인증" data-en="National certification or equivalent">국가공인 자격 또는 준하는 인증</span></div>
-        <div class="e"><span class="num">03</span><b data-ko="학술 업적" data-en="Scholarship">학술 업적</b><span data-ko="저서·논문(학술지·전문서적) 보유" data-en="Authored books and peer-reviewed papers">저서·논문(학술지·전문서적) 보유</span></div>
-        <div class="e"><span class="num">04</span><b data-ko="대표성" data-en="Standing">대표성</b><span data-ko="분야별 국내외 인지도·기여도" data-en="Recognized domestic/global standing">분야별 국내외 인지도·기여도</span></div>
-        <div class="e"><span class="num">05</span><b data-ko="윤리성" data-en="Integrity">윤리성</b><span data-ko="법적·윤리적 결격 사유 없음" data-en="No legal or ethical disqualification">법적·윤리적 결격 사유 없음</span></div>
-      </div>
-
-      <h3 class="council-sub" data-ko="확장 로드맵 — 12대 분야로 (장기 비전)" data-en="Expansion roadmap — toward 12 domains (long-term)">확장 로드맵 — 12대 분야로 (장기 비전)</h3>
-      <p style="color:var(--muted);font-size:14.5px;margin:-6px 0 18px;max-width:760px" data-ko="Founding Council이 룰 기반을 다진 뒤, 검증을 통과한 위원을 분야별로 단계적으로 확대합니다. 아래는 도달 목표이며, 현재 등재는 ‘위원 소개’에 표시된 인원입니다." data-en="After the Founding Council sets the rule base, verified members expand by domain in stages. Below is the target map; current appointments are shown under ‘Members’.">Founding Council이 룰 기반을 다진 뒤, 검증을 통과한 위원을 분야별로 단계적으로 확대합니다. 아래는 도달 목표이며, 현재 등재는 ‘위원 소개’에 표시된 인원입니다.</p>
-      <div class="domains">
-        <div class="dom"><b data-ko="반도체·디스플레이" data-en="Semiconductors & Display">반도체·디스플레이</b><span data-ko="메모리 · 시스템반도체 · OLED · 소부장" data-en="Memory · System IC · OLED · Materials">메모리 · 시스템반도체 · OLED · 소부장</span></div>
-        <div class="dom"><b data-ko="첨단과학·딥테크" data-en="Deep Tech">첨단과학·딥테크</b><span data-ko="AI · 양자 · 우주항공 · 로봇" data-en="AI · Quantum · Aerospace · Robotics">AI · 양자 · 우주항공 · 로봇</span></div>
-        <div class="dom"><b data-ko="바이오·헬스케어" data-en="Bio & Healthcare">바이오·헬스케어</b><span data-ko="신약 · 의료 · 공중보건 · 디지털헬스" data-en="Pharma · Medicine · Public health · Digital health">신약 · 의료 · 공중보건 · 디지털헬스</span></div>
-        <div class="dom"><b data-ko="첨단제조·모빌리티" data-en="Manufacturing & Mobility">첨단제조·모빌리티</b><span data-ko="자동차 · 배터리 · 부품 · 스마트팩토리" data-en="Auto · Battery · Parts · Smart factory">자동차 · 배터리 · 부품 · 스마트팩토리</span></div>
-        <div class="dom"><b data-ko="조선·해양·방산" data-en="Shipbuilding & Defense">조선·해양·방산</b><span data-ko="조선 · 해양플랜트 · K-방산" data-en="Shipbuilding · Offshore · K-defense">조선 · 해양플랜트 · K-방산</span></div>
-        <div class="dom"><b data-ko="에너지·환경·탄소중립" data-en="Energy & Climate">에너지·환경·탄소중립</b><span data-ko="신재생 · 원자력 · 기후 · 자원순환" data-en="Renewables · Nuclear · Climate · Circularity">신재생 · 원자력 · 기후 · 자원순환</span></div>
-        <div class="dom"><b data-ko="디지털·플랫폼·데이터" data-en="Digital & Data">디지털·플랫폼·데이터</b><span data-ko="SW · 데이터 · 보안 · 블록체인" data-en="SW · Data · Security · Blockchain">SW · 데이터 · 보안 · 블록체인</span></div>
-        <div class="dom"><b data-ko="경제·금융·통상" data-en="Economy & Finance">경제·금융·통상</b><span data-ko="거시경제 · 자본시장 · 핀테크 · 무역" data-en="Macro · Capital markets · Fintech · Trade">거시경제 · 자본시장 · 핀테크 · 무역</span></div>
-        <div class="dom"><b data-ko="K-컬처·콘텐츠" data-en="K-Culture & Content">K-컬처·콘텐츠</b><span data-ko="K팝 · 드라마 · 영화 · 게임 · 웹툰" data-en="K-pop · Drama · Film · Games · Webtoon">K팝 · 드라마 · 영화 · 게임 · 웹툰</span></div>
-        <div class="dom"><b data-ko="K-뷰티·패션·K-푸드" data-en="K-Beauty, Fashion & Food">K-뷰티·패션·K-푸드</b><span data-ko="뷰티 · 화장품 · 패션 · 식품 · 외식" data-en="Beauty · Cosmetics · Fashion · Food · Dining">뷰티 · 화장품 · 패션 · 식품 · 외식</span></div>
-        <div class="dom"><b data-ko="법·정책·교육·인문" data-en="Law, Policy & Humanities">법·정책·교육·인문</b><span data-ko="법률 · 정책 · 교육 · 역사 · 철학" data-en="Law · Policy · Education · History · Philosophy">법률 · 정책 · 교육 · 역사 · 철학</span></div>
-        <div class="dom"><b data-ko="도시·인프라·건설" data-en="Urban & Infrastructure">도시·인프라·건설</b><span data-ko="건축 · 토목 · 스마트시티 · 교통" data-en="Architecture · Civil · Smart city · Transit">건축 · 토목 · 스마트시티 · 교통</span></div>
-      </div>
-
-      <h3 class="council-sub" data-ko="위원 검증·위촉 체계" data-en="Verification & appointment">위원 검증·위촉 체계</h3>
-      <div class="vsteps">
-        <div class="vstep">
-          <span class="s">STEP 1</span>
-          <h4 data-ko="PANC 등록" data-en="PANC registration">PANC 등록</h4>
-          <p data-ko="panc.mysoma.space에서 이용 가이드에 따라 페르소나 명함(DID)을 발급받습니다." data-en="Issue a persona card (DID) at panc.mysoma.space following the guide.">panc.mysoma.space에서 이용 가이드에 따라 페르소나 명함(DID)을 발급받습니다.</p>
-          <div class="tags"><span>panc.mysoma.space</span><span data-ko="DID 발급" data-en="DID issue">DID 발급</span><span data-ko="공개 범위 설정" data-en="Scope control">공개 범위 설정</span></div>
-        </div>
-        <div class="vstep">
-          <span class="s">STEP 2</span>
-          <h4 data-ko="MCP 서버 탈중앙 검증" data-en="Decentralized verification">MCP 서버 탈중앙 검증</h4>
-          <p data-ko="페르소나 MCP 서버가 발급자 서명을 검증해 명함의 진본성을 판정합니다." data-en="The persona MCP server verifies the issuer signature to judge authenticity.">페르소나 MCP 서버가 발급자 서명을 검증해 명함의 진본성을 판정합니다.</p>
-          <div class="tags"><span data-ko="서명 진본 검증" data-en="Signature check">서명 진본 검증</span><span data-ko="위·변조 탐지" data-en="Tamper detection">위·변조 탐지</span><span data-ko="레지스트리 대조" data-en="Registry match">레지스트리 대조</span></div>
-        </div>
-        <div class="vstep">
-          <span class="s">STEP 3</span>
-          <h4 data-ko="자문위촉" data-en="Appointment">자문위촉</h4>
-          <p data-ko="검증을 통과한 페르소나를 자문위원으로 위촉하고 런타임을 동기화합니다." data-en="Verified personas are appointed as advisors and their runtime is synced.">검증을 통과한 페르소나를 자문위원으로 위촉하고 런타임을 동기화합니다.</p>
-          <div class="tags"><span data-ko="위원 위촉" data-en="Appointment">위원 위촉</span><span data-ko="런타임 동기화" data-en="Runtime sync">런타임 동기화</span><span data-ko="자문 권한 부여" data-en="Advisory grant">자문 권한 부여</span></div>
-        </div>
-      </div>
-
-      <h3 class="council-sub" data-ko="페르소나 명함 (DID)" data-en="Persona card (DID)">페르소나 명함 (DID)</h3>
-      <div class="pcard-wrap">
-        <div class="pcard">
-          <div class="pc-top"><span class="brand-s">KOREA PERSONA NETWORK</span><span class="url">panc.mysoma.space</span></div>
-          <div class="pc-body">
-            <span class="role" data-ko="자문위원 페르소나 명함" data-en="Advisor persona card">자문위원 페르소나 명함</span>
-            <div class="name">이 영 도</div>
-            <div class="title" data-ko="IT 플랫폼 아키텍트 자문위원" data-en="IT Platform Architect · Advisor">IT 플랫폼 아키텍트 자문위원</div>
-            <div class="meta" data-ko="경력 24년 · 저서 5종 · 국가공인 자격 보유" data-en="24 yrs · 5 books · nationally certified">경력 24년 · 저서 5종 · 국가공인 자격 보유</div>
-            <div class="did"><span>did:soma:kpn:9f2a…7c1e</span><span class="ok" data-ko="✓ 진본 검증됨" data-en="✓ verified">✓ 진본 검증됨</span></div>
-          </div>
-        </div>
-        <div class="pc-feats">
-          <div class="pc-feat"><span class="fi">✓</span><div><b data-ko="검증 가능한 전문성" data-en="Verifiable expertise">검증 가능한 전문성</b><span data-ko="분야·경력·저서·자격이 명함에 기재되어 자문 권위를 즉시 확인합니다." data-en="Field, career, books, and credentials on the card confirm authority at a glance.">분야·경력·저서·자격이 명함에 기재되어 자문 권위를 즉시 확인합니다.</span></div></div>
-          <div class="pc-feat"><span class="fi">⛨</span><div><b data-ko="탈중앙 진본 보증" data-en="Decentralized authenticity">탈중앙 진본 보증</b><span data-ko="발급자 서명을 MCP 서버가 검증 — 위·변조 시 즉시 탐지됩니다." data-en="The MCP server verifies the issuer signature — tampering is detected instantly.">발급자 서명을 MCP 서버가 검증 — 위·변조 시 즉시 탐지됩니다.</span></div></div>
-          <div class="pc-feat"><span class="fi">AI</span><div><b data-ko="AI 에이전트 호환" data-en="AI-agent compatible">AI 에이전트 호환</b><span data-ko="AI 에이전트가 명함을 조회·검증하고 페르소나에게 자문을 요청합니다." data-en="AI agents can look up, verify, and request advisory from the persona.">AI 에이전트가 명함을 조회·검증하고 페르소나에게 자문을 요청합니다.</span></div></div>
-          <div class="pc-feat"><span class="fi">◐</span><div><b data-ko="공개 범위 제어" data-en="Scope control">공개 범위 제어</b><span data-ko="위원이 공개 정보의 범위를 직접 설정하여 프라이버시를 보호합니다." data-en="Members set their own disclosure scope to protect privacy.">위원이 공개 정보의 범위를 직접 설정하여 프라이버시를 보호합니다.</span></div></div>
-        </div>
-      </div>
-
-      <h3 class="council-sub" data-ko="자문위원 특권 및 혜택" data-en="Member privileges & benefits">자문위원 특권 및 혜택</h3>
-      <div class="benefits">
-        <div class="benefit"><b data-ko="대한민국 대표 자문" data-en="Represent Korea">대한민국 대표 자문</b><span data-ko="국가를 대표하는 공식 자문위원으로서 전 세계 기관·기업·개인·AI 에이전트를 향한 자문 권한을 보유합니다." data-en="As an official advisor representing the nation, hold advisory authority toward institutions, companies, individuals, and AI agents worldwide.">국가를 대표하는 공식 자문위원으로서 전 세계 기관·기업·개인·AI 에이전트를 향한 자문 권한을 보유합니다.</span></div>
-        <div class="benefit"><b data-ko="위원 위촉장" data-en="Letter of appointment">위원 위촉장</b><span data-ko="위원장 명의의 공식 위촉장을 수여하며, 임기 동안 자문위원의 지위와 예우를 보장합니다." data-en="Receive an official letter of appointment under the chair's name, with status and courtesy for the full term.">위원장 명의의 공식 위촉장을 수여하며, 임기 동안 자문위원의 지위와 예우를 보장합니다.</span></div>
-        <div class="benefit"><b data-ko="자문료 및 수익" data-en="Fees & revenue">자문료 및 수익</b><span data-ko="자문 건별 자문료를 지급하며, 자문 실적에 따른 수익 배분에 참여합니다." data-en="Per-engagement fees, plus participation in revenue sharing based on advisory activity.">자문 건별 자문료를 지급하며, 자문 실적에 따른 수익 배분에 참여합니다.</span></div>
-        <div class="benefit"><b data-ko="KPN 등재·상장 혜택" data-en="Listing benefits">KPN 등재·상장 혜택</b><span data-ko="KPN 공식 등재 및 상장 시 지분·토큰 형태의 혜택을 우선 배정받습니다." data-en="Priority allocation of equity/token benefits upon official KPN listing.">KPN 공식 등재 및 상장 시 지분·토큰 형태의 혜택을 우선 배정받습니다.</span></div>
-        <div class="benefit"><b data-ko="페르소나 명함(DID)" data-en="Persona card (DID)">페르소나 명함(DID)</b><span data-ko="DID 기반 명함을 발급받아 전 세계 어디서나 진본성이 검증되는 디지털 신원을 보유합니다." data-en="A DID-based card gives you a digital identity whose authenticity is verifiable anywhere.">DID 기반 명함을 발급받아 전 세계 어디서나 진본성이 검증되는 디지털 신원을 보유합니다.</span></div>
-        <div class="benefit"><b data-ko="탈중앙 진본 보증" data-en="Tamper-proof authority">탈중앙 진본 보증</b><span data-ko="페르소나 MCP 서버의 검증을 통해 위·변조 불가능한 권위와 신뢰를 보장받습니다." data-en="MCP-server verification guarantees tamper-proof authority and trust.">페르소나 MCP 서버의 검증을 통해 위·변조 불가능한 권위와 신뢰를 보장받습니다.</span></div>
-      </div>
-
-      <div class="council-invite">
-        <div>
-          <h3 data-ko="자문위원 위촉 초대" data-en="Invitation to join the council">자문위원 위촉 초대</h3>
-          <p data-ko="검증된 Founding Council의 일원으로서, 한국 맥락 판단 룰을 정의하고 1% 예외를 판정하며 DID 서명으로 책임지는 일에 함께해 주시기를 청합니다. 임기 1년, 매년 검증을 거쳐 최대 3년까지 연임할 수 있습니다." data-en="As a member of the verified Founding Council, you're invited to define Korea-context rules, rule on the 1% exceptions, and sign with DID. One-year term, renewable up to three years after annual verification.">검증된 Founding Council의 일원으로서, 한국 맥락 판단 룰을 정의하고 1% 예외를 판정하며 DID 서명으로 책임지는 일에 함께해 주시기를 청합니다. 임기 1년, 매년 검증을 거쳐 최대 3년까지 연임할 수 있습니다.</p>
-          <div class="sign" data-ko="KPN 자문위원회 위원장 · <b>이영도</b>" data-en="Chair, KPN Advisory Council · <b>Youngdo Lee</b>">KPN 자문위원회 위원장 · <b>이영도</b></div>
-        </div>
-        <a class="btn btn-primary btn-lg" href="https://panc.mysoma.space" target="_blank" rel="noopener" data-ko="페르소나 등록하기" data-en="Register persona">페르소나 등록하기</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- MEMBERS -->
-  <section id="members">
-    <div class="wrap">
-      <div class="s-head">
-        <div>
-          <span class="eyebrow" data-ko="위원 소개" data-en="Members">위원 소개</span>
-          <h2 style="margin-top:16px" data-ko="검증을 통과한 자문위원" data-en="Verified advisory members">검증을 통과한 자문위원</h2>
-        </div>
-        <p data-ko="페르소나 MCP 서버의 진본 검증을 통과한 위원만 등재됩니다. 각 위원은 위·변조 불가능한 DID 명함으로 신원이 보증됩니다." data-en="Only members who pass authenticity verification on the persona MCP server are listed. Each is backed by a tamper-proof DID card.">페르소나 MCP 서버의 진본 검증을 통과한 위원만 등재됩니다. 각 위원은 위·변조 불가능한 DID 명함으로 신원이 보증됩니다.</p>
-      </div>
-
-      <div class="mem-note"><span class="live"></span><span id="mem-count" data-ko="위원 목록 불러오는 중…" data-en="Loading members…">위원 목록 불러오는 중…</span></div>
-
-      <div class="mem-grid" id="mem-grid">
-        <!-- 위원 카드가 Supabase에서 동적으로 채워집니다 -->
-      </div>
-
-      <p class="mem-foot" data-ko="등재 방식: 페르소나 MCP 서버가 발급자 서명을 검증(VALID)한 위원만 표시 · 검증 정본 발급자 did:mip:issuer:mip-engine-v1" data-en="Listing policy: only members whose issuer signature is verified (VALID) by the persona MCP server are shown · issuer did:mip:issuer:mip-engine-v1">등재 방식: 페르소나 MCP 서버가 발급자 서명을 검증(VALID)한 위원만 표시 · 검증 정본 발급자 did:mip:issuer:mip-engine-v1</p>
-    </div>
-  </section>
-
-  <!-- NETWORK -->
-  <section id="network">
-    <div class="wrap net">
-      <div>
-        <span class="eyebrow" data-ko="확장" data-en="Expansion">확장</span>
-        <h2 style="margin-top:16px" data-ko="하나의 노드에서 검증된 네트워크로" data-en="From one node to a verified network">하나의 노드에서 검증된 네트워크로</h2>
-        <p style="margin-top:18px;color:var(--muted);font-size:17px" data-ko="오늘은 한국 판단 네트워크입니다. 내일은 세무·법률·문화·의료·금융·산업으로 확장되는 검증된 인간 판단 레이어입니다." data-en="Today, a Korean judgment network. Tomorrow, a verified human-judgment layer across tax, legal, culture, medical, finance, and industry.">오늘은 한국 판단 네트워크입니다. 내일은 세무·법률·문화·의료·금융·산업으로 확장되는 검증된 인간 판단 레이어입니다.</p>
-        <div class="nl" style="margin-top:26px">
-          <div class="item"><b data-ko="DID 신원" data-en="DID identity">DID 신원</b><span data-ko="검증 가능한 사람·조직의 책임 단위" data-en="A verifiable accountability unit for people and organizations">검증 가능한 사람·조직의 책임 단위</span></div>
-          <div class="item"><b data-ko="평판 점수" data-en="Reputation score">평판 점수</b><span data-ko="노드별 판단 이력과 신뢰도 누적" data-en="Judgment history and trust accrued per node">노드별 판단 이력과 신뢰도 누적</span></div>
-          <div class="item"><b data-ko="보상 모델" data-en="Compensation model">보상 모델</b><span data-ko="x402 호출당 과금과 전문가 보상 구조" data-en="x402 per-call payments and expert compensation">x402 호출당 과금과 전문가 보상 구조</span></div>
-        </div>
-      </div>
-      <div class="netmap" id="netmap" aria-label="KPN network map" role="img"></div>
-    </div>
-  </section>
 </main>
 
 <!-- CTA -->
@@ -1235,7 +1236,6 @@
 <footer>
   <div class="wrap foot-in">
     <span>KPN · Verifiable Judgment Network · Republic of Korea</span>
-    <span data-ko="출처: KPN 투자 자료·세일즈킷, 2026" data-en="Source: KPN investor deck & sales kit, 2026">출처: KPN 투자 자료·세일즈킷, 2026</span>
   </div>
 </footer>
 
@@ -1557,8 +1557,7 @@
       }
       let report = '';
       if (pj.report_ready && pj.report) {
-        report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>'
-          + '<div style="margin-top:14px"><a class="btn btn-primary" href="https://persona-mcp-server.onrender.com/report/'+encodeURIComponent(pj.ref_code)+'/pdf" target="_blank" rel="noopener">'+(lang==='en'?'⬇ Download verified PDF':'⬇ 검증판 PDF 다운로드')+'</a></div>';
+        report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>';
       }
       box.innerHTML = '<div class="track-card">'
         + '<span class="track-status">● '+(lang==='en'?safeStatus(pj.status).en:safeStatus(pj.status).ko)+'</span>'
@@ -1581,8 +1580,7 @@
     }
     let report = '';
     if (pj.report_ready && pj.report) {
-      report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>'
-        + '<div style="margin-top:14px"><a class="btn btn-primary" href="https://persona-mcp-server.onrender.com/report/'+encodeURIComponent(pj.ref_code)+'/pdf" target="_blank" rel="noopener">'+(lang==='en'?'⬇ Download verified PDF':'⬇ 검증판 PDF 다운로드')+'</a></div>';
+      report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>';
     }
     return '<div class="track-card" style="margin-bottom:12px">'
       + '<span class="track-status">● '+(lang==='en'?safeStatus(pj.status).en:safeStatus(pj.status).ko)+'</span>'
