@@ -1557,7 +1557,8 @@
       }
       let report = '';
       if (pj.report_ready && pj.report) {
-        report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>';
+        report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>'
+          + '<div style="margin-top:14px"><a class="btn btn-primary" href="https://persona-mcp-server.onrender.com/report/'+encodeURIComponent(pj.ref_code)+'/pdf" target="_blank" rel="noopener">'+(lang==='en'?'⬇ Download verified PDF':'⬇ 검증판 PDF 다운로드')+'</a></div>';
       }
       box.innerHTML = '<div class="track-card">'
         + '<span class="track-status">● '+(lang==='en'?safeStatus(pj.status).en:safeStatus(pj.status).ko)+'</span>'
