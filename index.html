@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>KPN — Korean Persona Network</title>
-<meta name="description" content="KPN(Korean Persona Network)은 AI 에이전트가 한국 관련 판단을 내릴 때 환각·과신·문화적 오판을 줄이는, 사람이 책임지는 검증 레이어입니다." />
+<title>KPN — Verifiable Judgment Network</title>
+<meta name="description" content="KPN(Verifiable Judgment Network)은 한국 콘텐츠·시장진출·파트너십·여행·AI 검색 결과를 한국 맥락에서 검증하고, 위험한 판단은 멈추게 하는 검증된 판단 네트워크입니다." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -114,7 +114,7 @@
   .hero-grid{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(380px,.96fr);gap:54px;align-items:center}
   h1{font-family:var(--display);font-weight:700;letter-spacing:-.02em;line-height:1.04;
     font-size:clamp(40px,6vw,76px);margin-top:20px}
-  h1 .hl{position:relative;white-space:nowrap}
+  h1 .hl{position:relative}
   h1 .hl::after{content:"";position:absolute;left:-2px;right:-2px;bottom:.07em;height:.34em;
     background:var(--answer-dim);z-index:-1;border-radius:3px}
   .lede{margin-top:24px;max-width:560px;font-size:clamp(16px,1.4vw,19px);color:#c4d2dd}
@@ -231,6 +231,14 @@
   /* ===== customers / journey / demo / intake ===== */
   /* 3종 고객 */
   .clients{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .segments{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:6px}
+  .seg{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),var(--ink-2));padding:24px;transition:border-color .2s,transform .2s}
+  .seg:hover{border-color:var(--answer);transform:translateY(-3px)}
+  .seg .si{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;background:var(--answer-dim);color:var(--answer);font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.02em}
+  .seg h3{font-family:var(--display);font-size:17px;font-weight:600;margin:15px 0 8px}
+  .seg p{color:var(--muted);font-size:13.5px;line-height:1.6}
+  @media(max-width:980px){.segments{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.segments{grid-template-columns:1fr}}
   .client{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);padding:26px;transition:border-color .2s,transform .2s}
   .client:hover{border-color:var(--answer);transform:translateY(-3px)}
   .client .ci{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;background:var(--answer-dim);color:var(--answer);font-family:var(--mono);font-size:13px;font-weight:700}
@@ -550,17 +558,16 @@
   <div class="wrap nav-in">
     <a class="brand" href="#top" aria-label="KPN home">
       <span class="mk">KPN</span>
-      <span class="full">Korean Persona Network
+      <span class="full">Verifiable Judgment Network
         <span class="sub" data-ko="검증된 판단 레이어" data-en="Verified judgment layer">검증된 판단 레이어</span>
       </span>
     </a>
     <div class="nav-links">
-      <a href="#why" data-ko="왜 지금" data-en="Why now">왜 지금</a>
-      <a href="#architecture" data-ko="작동 방식" data-en="How it works">작동 방식</a>
+      <a href="#segments" data-ko="고객 유형" data-en="Who it's for">고객 유형</a>
       <a href="#demo" data-ko="무료 시연" data-en="Free demo">무료 시연</a>
       <a href="#pricing" data-ko="요금제" data-en="Pricing">요금제</a>
-      <a href="#council" data-ko="창립위원회" data-en="Council">창립위원회</a>
       <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
+      <a href="#council" data-ko="창립위원회" data-en="Council">창립위원회</a>
     </div>
     <div class="nav-cta">
       <button class="lang" id="lang" type="button" aria-label="Switch to English">
@@ -573,8 +580,7 @@
     </div>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#why" data-ko="왜 지금" data-en="Why now">왜 지금</a>
-    <a href="#architecture" data-ko="작동 방식" data-en="How it works">작동 방식</a>
+    <a href="#segments" data-ko="고객 유형" data-en="Who it's for">고객 유형</a>
     <a href="#demo" data-ko="무료 시연" data-en="Free demo">무료 시연</a>
     <a href="#pricing" data-ko="요금제" data-en="Pricing">요금제</a>
     <a href="#council" data-ko="창립위원회" data-en="Council">창립위원회</a>
@@ -588,16 +594,17 @@
   <header class="hero">
     <div class="wrap hero-grid">
       <div>
-        <span class="eyebrow" data-ko="에이전트 판단 인프라" data-en="Agent judgment infrastructure">에이전트 판단 인프라</span>
+        <span class="eyebrow" data-ko="한국 판단 검증" data-en="Korea judgment verification">한국 판단 검증</span>
         <h1>
-          <span data-ko="확신할 수 없을 땐," data-en="When it can't be sure,">확신할 수 없을 땐,</span><br>
-          <span class="hl" data-ko="멈추는 AI" data-en="AI that stops">멈추는 AI</span>
+          <span data-ko="한국에 관한 판단이" data-en="When you need judgment">한국에 관한 판단이</span><br>
+          <span data-ko="필요할 때," data-en="about Korea,">필요할 때,</span> <span class="hl" data-ko="KPN이 검증합니다" data-en="KPN verifies it">KPN이 검증합니다</span>
         </h1>
-        <p class="lede" data-ko="KPN은 한국 관련 판단을 내리는 AI 에이전트의 환각·과신·문화적 오판을 줄입니다. 모든 호출은 근거 있는 답변, HOLD, DID 서명, auditId 중 하나로 책임 있게 끝납니다." data-en="KPN reduces hallucination, overconfidence, and cultural misjudgment in AI agents making Korea-related decisions. Every call ends accountably — a grounded answer, a HOLD, a DID signature, an auditId.">KPN은 한국 관련 판단을 내리는 AI 에이전트의 환각·과신·문화적 오판을 줄입니다. 모든 호출은 근거 있는 답변, HOLD, DID 서명, auditId 중 하나로 책임 있게 끝납니다.</p>
-        <p class="acro" data-ko="KPN = <b>K</b>orean <b>P</b>ersona <b>N</b>etwork · 대한민국 페르소나 네트워크" data-en="KPN = <b>K</b>orean <b>P</b>ersona <b>N</b>etwork">KPN = <b>K</b>orean <b>P</b>ersona <b>N</b>etwork · 대한민국 페르소나 네트워크</p>
+        <p class="lede" data-ko="KPN은 한국 콘텐츠, 시장 진출, 파트너십, 여행, AI 검색 결과를 한국 맥락에서 검증하고, 위험한 판단은 멈추게 합니다. 모든 검증은 근거 있는 답변, HOLD, DID 서명, auditId 중 하나로 책임 있게 끝납니다." data-en="KPN verifies Korean content, market entry, partnerships, travel, and AI search results in Korean context — and stops risky judgments. Every verification ends accountably: a grounded answer, a HOLD, a DID signature, an auditId.">KPN은 한국 콘텐츠, 시장 진출, 파트너십, 여행, AI 검색 결과를 한국 맥락에서 검증하고, 위험한 판단은 멈추게 합니다. 모든 검증은 근거 있는 답변, HOLD, DID 서명, auditId 중 하나로 책임 있게 끝납니다.</p>
+        <p class="acro" data-ko="KPN = <b>Verifiable Judgment Network</b> · 한국 맥락 판단 검증 네트워크 (Korean Context Judgment Network)" data-en="KPN = <b>Verifiable Judgment Network</b> · Korean Context Judgment Network">KPN = <b>Verifiable Judgment Network</b> · 한국 맥락 판단 검증 네트워크 (Korean Context Judgment Network)</p>
         <div class="hero-actions">
-          <a class="btn btn-primary btn-lg" href="#architecture" data-ko="작동 방식 보기" data-en="See how it works">작동 방식 보기</a>
-          <a class="btn btn-ghost btn-lg" href="#evidence" data-ko="실제 판단 예시" data-en="Real examples">실제 판단 예시</a>
+          <a class="btn btn-primary btn-lg" href="#demo" data-ko="무료 시연하기" data-en="Try free demo">무료 시연하기</a>
+          <a class="btn btn-ghost btn-lg" href="#intake" data-ko="프로젝트 접수하기" data-en="Submit a project">프로젝트 접수하기</a>
+          <a class="btn btn-ghost btn-lg" href="#contact" data-ko="AI Agent 연동 문의" data-en="AI Agent integration">AI Agent 연동 문의</a>
         </div>
         <div class="pills">
           <span class="pill"><b>DID</b> <span data-ko="서명" data-en="signature">서명</span></span>
@@ -644,6 +651,41 @@
       </div>
     </div>
   </header>
+
+  <!-- SEGMENTS (customer types) -->
+  <section id="segments">
+    <div class="wrap">
+      <div class="s-head">
+        <div>
+          <span class="eyebrow" data-ko="누구를 위한 것인가" data-en="Who it's for">누구를 위한 것인가</span>
+          <h2 style="margin-top:16px" data-ko="한국에 관한 판단이 필요한 모든 곳" data-en="Wherever a Korea call has to be right">한국에 관한 판단이 필요한 모든 곳</h2>
+        </div>
+        <p data-ko="콘텐츠 사업화, 시장 진출, 한국 생활, AI 검색 — 네 가지 상황에서 KPN이 한국 맥락을 검증하고 위험한 판단을 멈춥니다." data-en="Content business, market entry, life in Korea, AI search — in four situations, KPN verifies Korean context and stops risky judgments.">콘텐츠 사업화, 시장 진출, 한국 생활, AI 검색 — 네 가지 상황에서 KPN이 한국 맥락을 검증하고 위험한 판단을 멈춥니다.</p>
+      </div>
+      <div class="segments">
+        <article class="seg">
+          <div class="si">K-IP</div>
+          <h3 data-ko="K-Content 사업화" data-en="K-Content Business">K-Content 사업화</h3>
+          <p data-ko="K-pop, 웹툰, 뷰티, 캐릭터, 드라마 IP를 해외에서 사업화할 때 한국 측 권리·관계·협상 맥락을 검증합니다." data-en="When commercializing K-pop, webtoon, beauty, character, or drama IP abroad, KPN verifies Korean-side rights, relationships, and negotiation context.">K-pop, 웹툰, 뷰티, 캐릭터, 드라마 IP를 해외에서 사업화할 때 한국 측 권리·관계·협상 맥락을 검증합니다.</p>
+        </article>
+        <article class="seg">
+          <div class="si">ENTRY</div>
+          <h3 data-ko="Korea Market Entry" data-en="Korea Market Entry">Korea Market Entry</h3>
+          <p data-ko="한국 진출, 파트너십, 합작, 유통, 공급 계약 전에 문화·조직·규제 리스크를 판단합니다." data-en="Before entering Korea — partnerships, JVs, distribution, supply contracts — KPN judges cultural, organizational, and regulatory risk.">한국 진출, 파트너십, 합작, 유통, 공급 계약 전에 문화·조직·규제 리스크를 판단합니다.</p>
+        </article>
+        <article class="seg">
+          <div class="si">LIFE</div>
+          <h3 data-ko="Korea Travel & Life" data-en="Korea Travel & Life">Korea Travel & Life</h3>
+          <p data-ko="한국 여행, 방문, 생활, 미팅, 예절, 예약, 현지 커뮤니케이션 판단을 돕습니다." data-en="Helps with judgments around travel, visits, daily life, meetings, etiquette, reservations, and local communication in Korea.">한국 여행, 방문, 생활, 미팅, 예절, 예약, 현지 커뮤니케이션 판단을 돕습니다.</p>
+        </article>
+        <article class="seg">
+          <div class="si">AGENT</div>
+          <h3 data-ko="AI Agent Verification" data-en="AI Agent Verification">AI Agent Verification</h3>
+          <p data-ko="AI 에이전트가 한국 정보를 검색·요약·판단할 때 환각·과신·위험 행동을 HOLD와 auditId로 제어합니다." data-en="When AI agents search, summarize, or judge Korean information, KPN controls hallucination, overconfidence, and risky actions with HOLD and auditId.">AI 에이전트가 한국 정보를 검색·요약·판단할 때 환각·과신·위험 행동을 HOLD와 auditId로 제어합니다.</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
   <!-- WHY -->
   <section id="why">
@@ -871,39 +913,17 @@
     </div>
   </section>
 
-  <!-- CUSTOMERS -->
+  <!-- CUSTOMER JOURNEY -->
   <section id="customers">
     <div class="wrap">
       <div class="s-head">
         <div>
-          <span class="eyebrow" data-ko="고객" data-en="Customers">고객</span>
-          <h2 style="margin-top:16px" data-ko="누가 KPN을 쓰나요" data-en="Who uses KPN">누가 KPN을 쓰나요</h2>
+          <span class="eyebrow" data-ko="고객 여정" data-en="Customer journey">고객 여정</span>
+          <h2 style="margin-top:16px" data-ko="시연에서 결과 리포트까지" data-en="From demo to result report">시연에서 결과 리포트까지</h2>
         </div>
-        <p data-ko="한국 관련 판단이 필요한 세 종류의 고객이 홈페이지나 안내 메일을 통해 들어와, 무료 시연 → 프로젝트 접수 → 결제 → 결과 리포트로 이어집니다." data-en="Three kinds of customers who need Korea-related judgment arrive via the site or outreach email, then flow from free demos to project intake, payment, and a result report.">한국 관련 판단이 필요한 세 종류의 고객이 홈페이지나 안내 메일을 통해 들어와, 무료 시연 → 프로젝트 접수 → 결제 → 결과 리포트로 이어집니다.</p>
+        <p data-ko="한국 관련 판단이 필요한 고객이 홈페이지나 안내 메일을 통해 들어와, 무료 시연 → 프로젝트 접수 → 결제 → 결과 리포트로 이어집니다." data-en="Customers who need Korea-related judgment arrive via the site or outreach email, then flow from free demo to intake, payment, and a result report.">한국 관련 판단이 필요한 고객이 홈페이지나 안내 메일을 통해 들어와, 무료 시연 → 프로젝트 접수 → 결제 → 결과 리포트로 이어집니다.</p>
       </div>
 
-      <div class="clients">
-        <div class="client">
-          <div class="ci">ENT</div>
-          <h3 data-ko="외국 기업 담당자" data-en="Foreign enterprise">외국 기업 담당자</h3>
-          <p data-ko="한국 진출·파트너십·합작을 앞두고 문화·규제 리스크를 검증받아야 하는 글로벌 기업의 의사결정자·PM." data-en="Decision-makers and PMs at global firms entering Korea who need cultural and regulatory risk verified before partnerships or JVs.">한국 진출·파트너십·합작을 앞두고 문화·규제 리스크를 검증받아야 하는 글로벌 기업의 의사결정자·PM.</p>
-          <div class="ctag" data-ko="예: 북미 SaaS 기업의 첫 한국 합작" data-en="e.g. a US SaaS firm's first Korea JV">예: 북미 SaaS 기업의 첫 한국 합작</div>
-        </div>
-        <div class="client">
-          <div class="ci">IND</div>
-          <h3 data-ko="외국인 · 개인" data-en="Individual">외국인 · 개인</h3>
-          <p data-ko="한국 비즈니스·생활·문화 맥락에서 ‘이게 맞나’를 검증된 판단으로 확인하고 싶은 개인 사용자." data-en="Individuals who want verified judgment on whether something is right in Korean business, life, or cultural context.">한국 비즈니스·생활·문화 맥락에서 ‘이게 맞나’를 검증된 판단으로 확인하고 싶은 개인 사용자.</p>
-          <div class="ctag" data-ko="예: 한국 파트너와의 협상 매너 확인" data-en="e.g. checking negotiation etiquette">예: 한국 파트너와의 협상 매너 확인</div>
-        </div>
-        <div class="client">
-          <div class="ci">AI</div>
-          <h3 data-ko="AI 에이전트" data-en="AI Agent">AI 에이전트</h3>
-          <p data-ko="MCP로 KPN 노드를 호출해, 한국 관련 답이 위험·불완전할 때 HOLD와 책임 추적을 받는 자동화 에이전트." data-en="Automated agents that call the KPN node via MCP to get HOLD and audit trails when Korea answers are risky or incomplete.">MCP로 KPN 노드를 호출해, 한국 관련 답이 위험·불완전할 때 HOLD와 책임 추적을 받는 자동화 에이전트.</p>
-          <div class="ctag" data-ko="예: 한국 시장조사 자동화 에이전트" data-en="e.g. a Korea market-research agent">예: 한국 시장조사 자동화 에이전트</div>
-        </div>
-      </div>
-
-      <h3 class="council-sub" data-ko="고객 여정" data-en="Customer journey">고객 여정</h3>
       <div class="journey">
         <div class="jstep"><span class="jn">STEP 1</span><h4 data-ko="무료 시연" data-en="Free demo">무료 시연</h4><p data-ko="검증된 5개 질문으로 KPN의 판단·HOLD를 직접 체험합니다. 카드·계약 없음." data-en="Experience KPN's judgment and HOLD on 5 verified questions. No card, no contract.">검증된 5개 질문으로 KPN의 판단·HOLD를 직접 체험합니다. 카드·계약 없음.</p></div>
         <div class="jstep"><span class="jn">STEP 2</span><h4 data-ko="프로젝트 접수" data-en="Project intake">프로젝트 접수</h4><p data-ko="아래 폼으로 의뢰 내용을 접수하면 접수번호가 발급됩니다." data-en="Submit your request below and receive a reference code.">아래 폼으로 의뢰 내용을 접수하면 접수번호가 발급됩니다.</p></div>
@@ -1214,7 +1234,7 @@
 
 <footer>
   <div class="wrap foot-in">
-    <span>KPN · Korean Persona Network · Republic of Korea</span>
+    <span>KPN · Verifiable Judgment Network · Republic of Korea</span>
     <span data-ko="출처: KPN 투자 자료·세일즈킷, 2026" data-en="Source: KPN investor deck & sales kit, 2026">출처: KPN 투자 자료·세일즈킷, 2026</span>
   </div>
 </footer>
@@ -1538,8 +1558,6 @@
       let report = '';
       if (pj.report_ready && pj.report) {
         report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>';
-      } else if (!isDone(pj.status) && (pj.status==='processing' || pj.status==='received' || pj.status==='triaged')) {
-        report = '<div style="margin-top:16px;padding:16px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:14px;line-height:1.65">⏳ '+(lang==='en'?'Preparing a verified judgment. Our council personas are analyzing your case; the report appears here after the chair reviews and approves it.':'검증된 판단을 준비 중입니다. 자문위원 페르소나가 사안을 분석하고 있으며, 위원장 검토·확정 후 이곳에 리포트가 표시됩니다.')+'</div>';
       }
       box.innerHTML = '<div class="track-card">'
         + '<span class="track-status">● '+(lang==='en'?safeStatus(pj.status).en:safeStatus(pj.status).ko)+'</span>'
@@ -1563,8 +1581,6 @@
     let report = '';
     if (pj.report_ready && pj.report) {
       report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>';
-    } else if (!isDone(pj.status) && (pj.status==='processing' || pj.status==='received' || pj.status==='triaged')) {
-      report = '<div style="margin-top:16px;padding:16px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:14px;line-height:1.65">⏳ '+(lang==='en'?'Preparing a verified judgment. Our council personas are analyzing your case; the report appears here after the chair reviews and approves it.':'검증된 판단을 준비 중입니다. 자문위원 페르소나가 사안을 분석하고 있으며, 위원장 검토·확정 후 이곳에 리포트가 표시됩니다.')+'</div>';
     }
     return '<div class="track-card" style="margin-bottom:12px">'
       + '<span class="track-status">● '+(lang==='en'?safeStatus(pj.status).en:safeStatus(pj.status).ko)+'</span>'
