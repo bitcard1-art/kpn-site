@@ -731,6 +731,8 @@ document.querySelectorAll('.sent-filter button').forEach(b=> b.onclick=()=>{
   SENT_FILTER = b.dataset.sf;
   renderSent();
 });
+/* ===== 프로젝트 관리 ===== */
+const PROJ_FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-projects";
 const ST = {received:'접수됨',quoted:'견적 안내',paid:'결제 완료',processing:'처리 중',done:'완료'};
 const CT = {enterprise:'외국 기업',individual:'개인',ai_agent:'AI 에이전트'};
 let PROJECTS = [];
