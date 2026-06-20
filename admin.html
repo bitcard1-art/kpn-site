@@ -101,6 +101,22 @@
   .sent-act a,.sent-act button{font-family:var(--mono);font-size:11.5px;padding:6px 11px;border-radius:7px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
   .sent-act a:hover,.sent-act button:hover{border-color:var(--answer)}
   .sent-act .mark{border-color:var(--answer);color:var(--answer)}
+  /* 접수·처리 현황 요약 */
+  .flow-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .flow-card{background:var(--ink-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px 18px;position:relative;overflow:hidden}
+  .flow-card .fk{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--muted-2);text-transform:uppercase}
+  .flow-card .fv{font-size:30px;font-weight:700;font-family:var(--display);margin-top:6px;font-variant-numeric:tabular-nums;line-height:1}
+  .flow-card .fs{font-size:12px;color:var(--muted);margin-top:5px}
+  .flow-card .fbar{position:absolute;left:0;bottom:0;height:3px;width:100%}
+  .flow-card.f-new .fbar{background:var(--muted-2)}
+  .flow-card.f-proc .fbar{background:var(--hold)}
+  .flow-card.f-review .fbar{background:var(--answer)}
+  .flow-card.f-sent .fbar{background:#5b8def}
+  .flow-card.f-review .fv{color:var(--answer)}
+  .flow-card.f-proc .fv{color:var(--hold)}
+  .flow-total{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+  .flow-total b{font-size:15px;color:var(--paper)}
+  .flow-total span{font-size:13px;color:var(--muted)}
   /* dashboard */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
   .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
@@ -370,6 +386,8 @@
     <div class="card">
       <h2>고객 접수 <span style="font-family:var(--mono);font-size:13px;color:var(--muted-2);font-weight:400">· 들어온 신청 전체 원장</span></h2>
       <p class="sub">고객이 신청한 건의 전체 목록입니다. 여기서 상태 변경·결제링크·수동 리포트 작성을 관리합니다. <b>실제 검토·발송은 다음 단계인 [검토·발송] 탭에서 합니다.</b></p>
+      <div class="flow-total" id="flow-total"></div>
+      <div class="flow-summary" id="flow-summary"></div>
       <div style="overflow-x:auto">
         <table>
           <thead><tr><th>접수번호 / 고객</th><th>프로젝트</th><th>상태</th><th>관리</th></tr></thead>
@@ -662,8 +680,29 @@ async function delRow(id){
   catch(e){ alert('삭제 오류: '+e.message); }
 }
 
-/* ===== 발송 현황 ===== */
-let SENT_FILTER = 'all';
+/* ===== 접수·처리 현황 요약 ===== */
+function renderFlowSummary(){
+  const fs = $('flow-summary'); const ft = $('flow-total');
+  if(!fs) return;
+  const ps = PROJECTS||[];
+  // 처리 단계 분류
+  let nNew=0, nProc=0, nReview=0, nSent=0;
+  ps.forEach(p=>{
+    if(p.sent_at){ nSent++; return; }                          // 발송 완료
+    if(p.report_ready || p.published){ nReview++; return; }     // 검토·발송 대기(초안 공개됨)
+    if(p.status==='processing' || p.advisory_stage){ nProc++; return; } // AI 처리 중
+    nNew++;                                                     // 신규 접수
+  });
+  const total = ps.length;
+  if(ft) ft.innerHTML = '<b>전체 '+total+'건</b><span>· 처리 단계별 현황</span>';
+  fs.innerHTML =
+    '<div class="flow-card f-new"><div class="fk">신규 접수</div><div class="fv">'+nNew+'</div><div class="fs">아직 처리 전</div><div class="fbar"></div></div>'
+  + '<div class="flow-card f-proc"><div class="fk">AI 처리 중</div><div class="fv">'+nProc+'</div><div class="fs">초안 생성 중</div><div class="fbar"></div></div>'
+  + '<div class="flow-card f-review"><div class="fk">검토·발송 대기</div><div class="fv">'+nReview+'</div><div class="fs">초안 완성, 검토 필요</div><div class="fbar"></div></div>'
+  + '<div class="flow-card f-sent"><div class="fk">발송 완료</div><div class="fv">'+nSent+'</div><div class="fs">고객 전달됨</div><div class="fbar"></div></div>';
+}
+
+/* ===== 접수·처리 현황 요약 끝 ===== */
 
 function sentStatusOf(p){
   // 발송 기록 필드(sent_at)가 백엔드에 있으면 우선 사용
@@ -749,7 +788,7 @@ async function loadProjects(){
     const { projects } = await pcall('list');
     PROJECTS = projects||[];
     const tb = $('prows');
-    if(!PROJECTS.length){ tb.innerHTML='<tr><td colspan="4" style="color:var(--muted)">아직 접수된 프로젝트가 없습니다.</td></tr>'; return; }
+    if(!PROJECTS.length){ tb.innerHTML='<tr><td colspan="4" style="color:var(--muted)">아직 접수된 프로젝트가 없습니다.</td></tr>'; renderFlowSummary(); return; }
     tb.innerHTML = PROJECTS.map(p => {
       return '<tr>'
         + '<td><b>'+esc(p.ref_code)+'</b><div style="color:var(--muted-2);font-size:12px;margin-top:3px">'+esc(p.name)+' · '+esc(CT[p.client_type]||p.client_type)+'</div><div style="color:var(--muted-2);font-family:var(--mono);font-size:11px">'+esc(p.email)+'</div></td>'
@@ -759,6 +798,7 @@ async function loadProjects(){
         + '</tr>';
     }).join('');
     tb.querySelectorAll('[data-pedit]').forEach(b=> b.onclick=()=>openProject(b.dataset.pedit));
+    renderFlowSummary();
   } catch(e){
     $('prows').innerHTML = '<tr><td colspan="4" style="color:var(--refuse)">오류: '+esc(e.message)+'</td></tr>';
   }
