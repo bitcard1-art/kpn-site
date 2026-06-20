@@ -410,7 +410,11 @@
 const FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-council-admin";
 // 자문 결과지 PDF (persona-mcp-server) — 한글 폰트 임베드본
 const REPORT_BASE = "https://persona-mcp-server.onrender.com/report";
+// 공개본(고객 발송) — 인증 불필요. ★고객에게 주는 링크는 반드시 이걸 쓸 것(PW 비포함).
 const reportPdfUrl = ref => `${REPORT_BASE}/${encodeURIComponent(ref)}/pdf`;
+// 미공개 검수 미리보기 — 어드민 인증 필요. iframe/anchor는 헤더 불가라 ?admin=PW 쿼리로 전달.
+// ★어드민 화면 내부 전용. 고객 발송 링크엔 절대 쓰지 말 것.
+const reportPdfPreviewUrl = ref => `${REPORT_BASE}/${encodeURIComponent(ref)}/pdf?admin=${encodeURIComponent(PW)}`;
 let PW = "";
 
 const $ = id => document.getElementById(id);
@@ -812,7 +816,9 @@ $('rm-retriage').onclick = async () => {
 $('rm-pdf-load').onclick = () => {
   const ref = $('rm-ref-code').value;
   if(!ref){ msg($('rm-msg'),'접수번호가 없습니다.',false); return; }
-  const url = reportPdfUrl(ref);
+  if(!PW){ msg($('rm-msg'),'어드민 로그인 후 미리보기가 가능합니다.',false); return; }
+  // 미공개 검수 — 어드민 인증 쿼리 포함 URL(공개 전에도 위원장이 검수). 고객 발송 링크와 별개.
+  const url = reportPdfPreviewUrl(ref);
   const frame=$('rm-pdf-frame'), open=$('rm-pdf-open'), dl=$('rm-pdf-dl'), empty=$('rm-pdf-empty'), hint=$('rm-pdf-hint');
   // 캐시 우회용 타임스탬프
   const bust = url + (url.includes('?')?'&':'?') + 't=' + Date.now();
