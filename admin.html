@@ -82,6 +82,25 @@
   .gflow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0 20px;font-family:var(--mono);font-size:11px;color:var(--muted-2)}
   .gflow span{padding:6px 12px;border:1px solid var(--line);border-radius:7px;background:var(--ink-2)}
   .gflow .arr{border:none;background:none;padding:0;color:var(--hold)}
+  /* sent 발송 현황 */
+  .sent-filter{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .sent-filter button{font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:7px;border:1px solid var(--line);background:var(--ink-2);color:var(--muted);cursor:pointer}
+  .sent-filter button.on{background:var(--panel);color:var(--paper);border-color:var(--answer)}
+  table.sent-tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+  table.sent-tbl th{text-align:left;padding:11px 12px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted-2);text-transform:uppercase;border-bottom:1px solid var(--line)}
+  table.sent-tbl td{padding:12px;border-bottom:1px solid var(--hair);vertical-align:middle}
+  table.sent-tbl tr:hover td{background:var(--ink-2)}
+  .sent-ref{font-family:var(--mono);font-size:12px;color:var(--answer)}
+  .sent-cust b{color:var(--paper)}
+  .sent-cust span{display:block;font-size:11.5px;color:var(--muted-2);font-family:var(--mono)}
+  .sbadge{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .sbadge.sent{background:rgba(47,184,168,.14);border:1px solid rgba(47,184,168,.4);color:var(--answer)}
+  .sbadge.ready{background:rgba(242,181,75,.12);border:1px solid rgba(242,181,75,.35);color:var(--hold)}
+  .sbadge.no{background:var(--panel);border:1px solid var(--line);color:var(--muted-2)}
+  .sent-act{display:flex;gap:6px;flex-wrap:wrap}
+  .sent-act a,.sent-act button{font-family:var(--mono);font-size:11.5px;padding:6px 11px;border-radius:7px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+  .sent-act a:hover,.sent-act button:hover{border-color:var(--answer)}
+  .sent-act .mark{border-color:var(--answer);color:var(--answer)}
   /* dashboard */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
   .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
@@ -215,6 +234,7 @@
       <button class="tabbtn" data-tab="members">위원 관리</button>
       <button class="tabbtn" data-tab="review">검토 대기 <span id="queue-badge" class="qbadge hide">0</span></button>
       <button class="tabbtn" data-tab="projects">프로젝트 접수</button>
+      <button class="tabbtn" data-tab="sent">발송 현황</button>
       <button class="tabbtn" data-tab="dash">운영 대시보드</button>
     </div>
 
@@ -366,6 +386,20 @@
       <div id="queue-list"><div class="empty">불러오는 중…</div></div>
     </div>
     </div><!-- /tab-review -->
+
+    <!-- ===== 발송 현황 탭 ===== -->
+    <div class="tabpane hide" id="tab-sent">
+    <div class="card">
+      <h2>발송 현황 <span style="font-family:var(--mono);font-size:13px;color:var(--muted-2);font-weight:400">· 고객별 리포트 발송 이력</span></h2>
+      <p class="sub">확정 공개된 리포트를 고객별로 관리합니다. 고객 클레임 시 보낸 PDF를 다시 확인하고, 발송 여부를 기록하세요.</p>
+      <div class="sent-filter">
+        <button class="on" data-sf="all">전체</button>
+        <button data-sf="sent">발송 완료</button>
+        <button data-sf="ready">발송 대기</button>
+      </div>
+      <div id="sent-list"><div class="empty">불러오는 중…</div></div>
+    </div>
+    </div><!-- /tab-sent -->
 
     <div class="tabpane hide" id="tab-dash">
       <div class="stats">
@@ -628,8 +662,75 @@ async function delRow(id){
   catch(e){ alert('삭제 오류: '+e.message); }
 }
 
-/* ===== 프로젝트 관리 ===== */
-const PROJ_FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-projects";
+/* ===== 발송 현황 ===== */
+let SENT_FILTER = 'all';
+
+function sentStatusOf(p){
+  // 발송 기록 필드(sent_at)가 백엔드에 있으면 우선 사용
+  if(p.sent_at) return 'sent';
+  // 확정 공개(report_ready/published)됐으면 발송 대기
+  if(p.report_ready || p.published || p.status==='done') return 'ready';
+  return 'none';
+}
+
+function renderSent(){
+  const slot = $('sent-list');
+  if(!slot) return;
+  // 확정 공개됐거나 발송된 건만 (발송 관리 대상)
+  let rows = (PROJECTS||[]).filter(p => sentStatusOf(p) !== 'none');
+  if(SENT_FILTER==='sent') rows = rows.filter(p=>sentStatusOf(p)==='sent');
+  if(SENT_FILTER==='ready') rows = rows.filter(p=>sentStatusOf(p)==='ready');
+  if(!rows.length){ slot.innerHTML='<div class="empty">표시할 발송 이력이 없습니다. 검토 대기에서 [확정 공개]한 건이 여기 나타납니다.</div>'; return; }
+
+  const badge = s => s==='sent' ? '<span class="sbadge sent">발송 완료</span>'
+                  : s==='ready'? '<span class="sbadge ready">발송 대기</span>'
+                  :              '<span class="sbadge no">—</span>';
+  const fmt = d => { try{ return new Date(d).toLocaleString('ko-KR',{dateStyle:'short',timeStyle:'short'}); }catch(_){ return d||''; } };
+
+  slot.innerHTML =
+    '<table class="sent-tbl"><thead><tr>'
+    + '<th>접수번호</th><th>고객</th><th>검토 사안</th><th>상태</th><th>발송일시</th><th>관리</th>'
+    + '</tr></thead><tbody>'
+    + rows.map(p=>{
+        const st = sentStatusOf(p);
+        const ref = p.ref_code;
+        return '<tr>'
+          + '<td><span class="sent-ref">'+esc(ref)+'</span></td>'
+          + '<td class="sent-cust"><b>'+esc(p.name||'-')+'</b><span>'+esc(p.email||'')+'</span></td>'
+          + '<td>'+esc(p.title||'')+'</td>'
+          + '<td>'+badge(st)+'</td>'
+          + '<td style="font-family:var(--mono);font-size:12px;color:var(--muted-2)">'+(p.sent_at?fmt(p.sent_at):'—')+'</td>'
+          + '<td><div class="sent-act">'
+          +   '<a href="'+reportPdfUrl(ref)+'" target="_blank" rel="noopener">📄 PDF 보기</a>'
+          +   (st==='ready' ? '<button class="mark" data-marksent="'+esc(ref)+'">✓ 발송 표시</button>' : '')
+          + '</div></td>'
+          + '</tr>';
+      }).join('')
+    + '</tbody></table>';
+
+  slot.querySelectorAll('[data-marksent]').forEach(b=> b.onclick=()=>markSent(b.dataset.marksent));
+}
+
+async function markSent(ref){
+  if(!confirm(ref+' 건을 고객에게 발송 완료로 표시할까요?')) return;
+  try {
+    // 백엔드에 발송 기록 시도 (sent_at 저장)
+    await pcall('mark_sent', { ref_code: ref });
+    await loadProjects();
+    renderSent();
+  } catch(e){
+    // 백엔드 mark_sent 미구현 시: 화면상으로만 임시 표시
+    const p = (PROJECTS||[]).find(x=>x.ref_code===ref);
+    if(p){ p.sent_at = new Date().toISOString(); renderSent(); }
+    alert('발송 표시는 기록되었으나, 영구 저장(백엔드 mark_sent)이 아직 연결되지 않았습니다. 새로고침 시 초기화될 수 있습니다.');
+  }
+}
+
+document.querySelectorAll('.sent-filter button').forEach(b=> b.onclick=()=>{
+  document.querySelectorAll('.sent-filter button').forEach(x=>x.classList.toggle('on', x===b));
+  SENT_FILTER = b.dataset.sf;
+  renderSent();
+});
 const ST = {received:'접수됨',quoted:'견적 안내',paid:'결제 완료',processing:'처리 중',done:'완료'};
 const CT = {enterprise:'외국 기업',individual:'개인',ai_agent:'AI 에이전트'};
 let PROJECTS = [];
@@ -712,6 +813,7 @@ document.querySelectorAll('.tabbtn').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tabpane').forEach(pane => pane.classList.toggle('hide', pane.id !== 'tab-'+t));
   if (t === 'dash') loadDashboard();
   if (t === 'review') loadQueue();
+  if (t === 'sent') { loadProjects().then(renderSent); }
 });
 
 /* ===== 검토 대기 (원클릭 공개) ===== */
