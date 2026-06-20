@@ -62,6 +62,26 @@
     cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px}
   .tabbtn:hover{color:var(--paper)}
   .tabbtn.on{color:var(--paper);border-bottom-color:var(--hold)}
+  /* guide */
+  .guide-hero{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(135deg,var(--ink-2),var(--panel));padding:24px 26px;margin-bottom:18px}
+  .guide-hero h2{margin:0 0 8px;font-size:20px}
+  .guide-hero p{color:var(--muted);font-size:14px;margin:0}
+  .gstep{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);padding:20px 22px;margin-bottom:14px;position:relative}
+  .gstep .gn{position:absolute;top:-12px;left:20px;width:26px;height:26px;border-radius:50%;background:var(--hold);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:13px;font-family:var(--mono)}
+  .gstep .gn.teal{background:var(--answer);color:#04231f}
+  .gstep .gn.who{background:var(--panel);color:var(--muted);border:1px solid var(--line);font-size:10px}
+  .gstep h3{margin:6px 0 6px;font-size:15.5px}
+  .gstep .gwho{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted-2);text-transform:uppercase;margin-bottom:8px}
+  .gstep p,.gstep li{color:var(--muted);font-size:13.5px;line-height:1.7}
+  .gstep ul{margin:6px 0 0;padding-left:18px}
+  .gstep li{margin-bottom:3px}
+  .gstep code{font-family:var(--mono);font-size:12px;background:var(--panel);padding:2px 7px;border-radius:5px;color:var(--answer);border:1px solid var(--line)}
+  .gstep .gnote{margin-top:10px;font-size:12.5px;padding:9px 13px;border-radius:8px;background:rgba(242,181,75,.1);border:1px solid rgba(242,181,75,.35);color:var(--hold)}
+  .gstep .gnote.teal{background:rgba(47,184,168,.1);border-color:rgba(47,184,168,.35);color:var(--answer)}
+  .gstep b{color:var(--paper)}
+  .gflow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0 20px;font-family:var(--mono);font-size:11px;color:var(--muted-2)}
+  .gflow span{padding:6px 12px;border:1px solid var(--line);border-radius:7px;background:var(--ink-2)}
+  .gflow .arr{border:none;background:none;padding:0;color:var(--hold)}
   /* dashboard */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
   .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
@@ -191,13 +211,94 @@
   <!-- 관리 화면 -->
   <div id="panel" class="hide">
     <div class="tabs">
-      <button class="tabbtn on" data-tab="members">위원 관리</button>
+      <button class="tabbtn on" data-tab="guide">가이드</button>
+      <button class="tabbtn" data-tab="members">위원 관리</button>
       <button class="tabbtn" data-tab="review">검토 대기 <span id="queue-badge" class="qbadge hide">0</span></button>
       <button class="tabbtn" data-tab="projects">프로젝트 접수</button>
       <button class="tabbtn" data-tab="dash">운영 대시보드</button>
     </div>
 
-    <div class="tabpane" id="tab-members">
+    <!-- ===== 가이드 탭 ===== -->
+    <div class="tabpane" id="tab-guide">
+      <div class="guide-hero">
+        <h2>자문위원 등록 가이드</h2>
+        <p>KPN의 "검증된 판단"은 위원의 신원이 진본임을 보증하는 데서 출발합니다. 새 위원은 아래 절차를 거쳐야 자문 라우팅에 포함됩니다.</p>
+      </div>
+
+      <div class="gflow">
+        <span>① 자격·동의 결정</span><span class="arr">→</span>
+        <span>② MIP에서 DID 발급</span><span class="arr">→</span>
+        <span>③ 화이트리스트 등록</span><span class="arr">→</span>
+        <span>④ 위원 등록 폼 저장</span><span class="arr">→</span>
+        <span>⑤ 라우팅 확인</span>
+      </div>
+
+      <div class="gstep">
+        <div class="gn who">PRE</div>
+        <h3>0 · 위원 자격과 본인 동의 확정</h3>
+        <div class="gwho">담당: 운영자(의장) 판단</div>
+        <p>등록 전에 먼저 정합니다. 이 단계는 기술이 아니라 운영 판단입니다.</p>
+        <ul>
+          <li><b>보증 분야</b> — 이 위원이 어떤 영역의 판단을 보증하는가 (예: 한국 IT 영업·파트너십)</li>
+          <li><b>책임 구조</b> — 위원의 판단이 들어간 리포트가 틀렸을 때의 책임. DID 서명은 곧 책임 표시입니다.</li>
+          <li><b>본인 동의</b> — 실명·DID·판단이 고객 리포트에 박히고 공개 사이트에 노출됩니다. 본인이 명시적으로 동의했는지 확인하세요.</li>
+        </ul>
+        <div class="gnote">자격·동의가 확정되지 않은 페르소나는 등록하지 마세요. 검증된 판단의 신뢰는 여기서 시작됩니다.</div>
+      </div>
+
+      <div class="gstep">
+        <div class="gn">1</div>
+        <h3>1 · MIP에서 페르소나 DID 발급</h3>
+        <div class="gwho">담당: 위원 본인 / MIP(mio.mysoma.space)</div>
+        <p>위원이 되려면 그 사람의 페르소나가 <b>MIP에서 DID를 발급</b>받고, Lore·DNA가 채워진 상태여야 합니다. MCP 진본 검증(VALID)은 이 DID를 기준으로 이뤄집니다.</p>
+        <ul>
+          <li>MIP에서 페르소나 생성 → DID 발급 (형식: <code>did:mip:persona:...</code> 또는 <code>did:persona:...</code>)</li>
+          <li>Lore 연결 · DNA 완료 · MCP 동기화 "활성" 상태 확인 (위원 관리 탭의 MCP 연동 현황에서 확인 가능)</li>
+        </ul>
+        <div class="gnote teal">이 DID가 없거나 검증이 VALID가 아니면, 이후 단계의 등록 폼이 저장을 거부합니다.</div>
+      </div>
+
+      <div class="gstep">
+        <div class="gn">2</div>
+        <h3>2 · 등록 화이트리스트에 DID 추가</h3>
+        <div class="gwho">담당: 개발(백엔드)</div>
+        <p>현재 등록 폼은 보안상 <b>승인된 DID만</b> 저장을 허용합니다(기본: 의장 DID만). 새 위원의 DID를 백엔드 화이트리스트에 추가해야 진본 검증을 통과합니다.</p>
+        <ul>
+          <li>persona-mcp-server의 위원 등록 허용 목록(화이트리스트)에 새 DID 추가</li>
+          <li>그 DID가 MCP 진본 검증 VALID를 통과하는지 확인</li>
+        </ul>
+        <div class="gnote">이 게이트가 더미·테스트 페르소나가 위원으로 등록되는 것을 막습니다. 우회하지 마세요.</div>
+      </div>
+
+      <div class="gstep">
+        <div class="gn">3</div>
+        <h3>3 · 위원 등록 폼 작성·저장</h3>
+        <div class="gwho">담당: 운영자 · "위원 관리" 탭</div>
+        <p>화이트리스트가 열리면 <b>위원 관리</b> 탭의 등록 폼을 채웁니다.</p>
+        <ul>
+          <li><b>이름 / 직함 / 분야</b> — 0단계에서 정한 보증 분야</li>
+          <li><b>신뢰도 점수 / 자문 이력</b> — 리포트 신뢰도 표기에 반영</li>
+          <li><b>경력·전문성</b> — 고객 리포트와 공개 사이트에 노출되는 한 줄</li>
+          <li><b>페르소나 DID</b> — 1단계에서 발급한 그 DID</li>
+          <li><b>공개 사이트 표시</b> — 체크 시 홈페이지 위원 소개에 실명 노출</li>
+        </ul>
+        <p style="margin-top:8px"><b>저장(검증 후 등록)</b>을 누르면 MCP 진본 검증을 시도하고, VALID일 때만 등록됩니다.</p>
+      </div>
+
+      <div class="gstep">
+        <div class="gn teal">4</div>
+        <h3>4 · 자문 라우팅 포함 확인</h3>
+        <div class="gwho">담당: 개발 · 운영자</div>
+        <p>등록됐다고 자동으로 자문에 불리는 것은 아닙니다. 새 위원이 <b>실제 교차검증 라우팅 후보</b>에 포함되는지 테스트 자문 1건으로 확인하세요.</p>
+        <ul>
+          <li>테스트 접수 → 새 위원이 council에 라우팅되는지 확인</li>
+          <li>교차검증은 위원 2명 이상일 때 의미가 있습니다(1명이면 "교차검증 제한적"으로 표기됨)</li>
+        </ul>
+        <div class="gnote teal">여기까지 통과하면 새 위원의 판단이 실제 자문 리포트에 반영됩니다.</div>
+      </div>
+    </div>
+
+    <div class="tabpane hide" id="tab-members">
     <div class="card">
       <h2 id="form-title">위원 등록</h2>
       <p class="sub">DID를 입력하면 저장 시 페르소나 MCP 서버로 진본 검증(VALID)을 시도합니다.</p>
@@ -410,11 +511,7 @@
 const FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-council-admin";
 // 자문 결과지 PDF (persona-mcp-server) — 한글 폰트 임베드본
 const REPORT_BASE = "https://persona-mcp-server.onrender.com/report";
-// 공개본(고객 발송) — 인증 불필요. ★고객에게 주는 링크는 반드시 이걸 쓸 것(PW 비포함).
 const reportPdfUrl = ref => `${REPORT_BASE}/${encodeURIComponent(ref)}/pdf`;
-// 미공개 검수 미리보기 — 어드민 인증 필요. iframe/anchor는 헤더 불가라 ?admin=PW 쿼리로 전달.
-// ★어드민 화면 내부 전용. 고객 발송 링크엔 절대 쓰지 말 것.
-const reportPdfPreviewUrl = ref => `${REPORT_BASE}/${encodeURIComponent(ref)}/pdf?admin=${encodeURIComponent(PW)}`;
 let PW = "";
 
 const $ = id => document.getElementById(id);
@@ -629,17 +726,6 @@ async function tcall(action, body){
   return data;
 }
 
-// 초안 생성 상태 — 워커는 ai_used를 안 쓰고 triage_meta.method/consensus.method('worker_v1' | 'degraded')와
-// report_draft를 채운다. report_draft 유무 + method로 판정(옛 ai_used 의존 버그 수정).
-function draftState(q){
-  const method = (q.triage_meta && q.triage_meta.method) || (q.consensus && q.consensus.method) || '';
-  const hasDraft = !!(q.report_draft && String(q.report_draft).trim());
-  const degraded = /degraded/i.test(method);
-  if (hasDraft && !degraded) return { cls:'ai', short:'AI 초안 생성됨', full:'AI 초안 생성됨' };
-  if (hasDraft && degraded)  return { cls:'noai', short:'초안(폴백)', full:'초안 폴백 — 생성 일부 실패(재생성 권장)' };
-  return { cls:'noai', short:'초안 미생성', full:'AI 초안 미생성 (재생성 필요)' };
-}
-
 async function loadQueue(){
   const slot = $('queue-list');
   try {
@@ -651,7 +737,7 @@ async function loadQueue(){
     if(!QUEUE.length){ slot.innerHTML='<div class="empty">검토 대기 중인 건이 없습니다. 새 접수가 들어오면 자동으로 여기 표시됩니다.</div>'; return; }
     slot.innerHTML = QUEUE.map(q => {
       const tier = (q.triage_meta && q.triage_meta.tier) || q.difficulty || '';
-      const ds = draftState(q);
+      const aiUsed = q.triage_meta && q.triage_meta.ai_used;
       const draft = (q.report_draft||'').slice(0,180);
       return '<div class="qcard">'
         + '<div class="qh">'
@@ -659,7 +745,7 @@ async function loadQueue(){
         +   '<span class="qcust">'+esc(q.name)+(q.company?(' · '+esc(q.company)):'')+(q.region?(' · '+esc(q.region)):'')+'</span>'
         +   (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
         +   (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
-        +   '<span class="ttag '+ds.cls+'">'+ds.short+'</span>'
+        +   (aiUsed?'<span class="ttag ai">AI 초안</span>':'<span class="ttag noai">초안 미생성</span>')
         + '</div>'
         + '<div class="qtitle">'+esc(q.title)+'</div>'
         + '<div class="qdraft">'+esc(draft)+(draft.length>=180?'…':'')+'</div>'
@@ -676,14 +762,14 @@ function openReview(ref){
   const q = QUEUE.find(x=>x.ref_code===ref);
   if(!q) return;
   const tier = (q.triage_meta && q.triage_meta.tier) || q.difficulty || '';
-  const ds = draftState(q);
+  const aiUsed = q.triage_meta && q.triage_meta.ai_used;
   const rationale = q.triage_meta && q.triage_meta.rationale;
   $('rm-ref-code').value = q.ref_code;
   $('rm-ref').textContent = q.ref_code + ' · ' + (CT[q.client_type]||q.client_type);
   $('rm-meta').innerHTML =
       (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
     + (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
-    + '<span class="ttag '+ds.cls+'">'+ds.full+'</span>';
+    + (aiUsed?'<span class="ttag ai">AI 초안 생성됨</span>':'<span class="ttag noai">AI 초안 미생성 (API 키 확인)</span>');
   $('rm-info').innerHTML = '<b>'+esc(q.name)+'</b>'+(q.company?(' · '+esc(q.company)):'')
     + (q.region?(' · '+esc(q.region)):'')
     + '<br><br><b>의뢰 제목</b><br>'+esc(q.title)
@@ -805,10 +891,13 @@ $('rm-approve').onclick = async () => {
 $('rm-retriage').onclick = async () => {
   const ref = $('rm-ref-code').value;
   try {
-    // v15: triage는 enqueue만(queued) — 워커가 비동기로 web_search 골든샘플 생성(1~2분).
+    msg($('rm-msg'),'AI 초안 다시 생성 중… (몇 초 소요)',true);
     await tcall('triage', { ref_code: ref });
-    msg($('rm-msg'),'↻ 재생성 요청됨 — 자문위원 워커가 처리 중입니다(약 1~2분). 큐에서 사라졌다가 완료되면 다시 나타납니다. 잠시 후 [목록 새로고침]을 누르세요.',true);
     await loadQueue();
+    const q = QUEUE.find(x=>x.ref_code===ref);
+    if(q){ $('rm-report').value=q.report_draft||''; $('rm-amount').value=q.quote_suggested||''; }
+    const aiUsed = q && q.triage_meta && q.triage_meta.ai_used;
+    msg($('rm-msg'), aiUsed?'✓ AI 초안이 새로 생성되었습니다.':'초안 생성 실패 — ANTHROPIC_API_KEY를 확인하세요.', !!aiUsed);
   } catch(e){ msg($('rm-msg'),'오류: '+e.message,false); }
 };
 
@@ -816,9 +905,7 @@ $('rm-retriage').onclick = async () => {
 $('rm-pdf-load').onclick = () => {
   const ref = $('rm-ref-code').value;
   if(!ref){ msg($('rm-msg'),'접수번호가 없습니다.',false); return; }
-  if(!PW){ msg($('rm-msg'),'어드민 로그인 후 미리보기가 가능합니다.',false); return; }
-  // 미공개 검수 — 어드민 인증 쿼리 포함 URL(공개 전에도 위원장이 검수). 고객 발송 링크와 별개.
-  const url = reportPdfPreviewUrl(ref);
+  const url = reportPdfUrl(ref);
   const frame=$('rm-pdf-frame'), open=$('rm-pdf-open'), dl=$('rm-pdf-dl'), empty=$('rm-pdf-empty'), hint=$('rm-pdf-hint');
   // 캐시 우회용 타임스탬프
   const bust = url + (url.includes('?')?'&':'?') + 't=' + Date.now();
