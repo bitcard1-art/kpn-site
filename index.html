@@ -254,7 +254,7 @@
   .jstep p{color:var(--muted);font-size:13px;line-height:1.5}
   .jstep::after{content:"→";position:absolute;right:-9px;top:26px;color:var(--line);font-size:14px;z-index:2;background:var(--ink-2);padding:0 1px}
   .jstep:last-child::after{display:none}
-  /* 무료 시연 */
+  /* 라이브 사례 */
   .demo-note{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--answer);padding:6px 12px;border:1px solid rgba(47,184,168,.3);border-radius:999px;background:rgba(47,184,168,.08);margin-bottom:20px}
   .demos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .demo{border:1px solid var(--line);border-radius:var(--radius);background:var(--ink-2);overflow:hidden}
@@ -314,7 +314,7 @@
   @media(max-width:980px){.clients{grid-template-columns:1fr}.journey{grid-template-columns:1fr 1fr}.demos{grid-template-columns:1fr}}
   @media(max-width:600px){.journey{grid-template-columns:1fr}.intake .frow{grid-template-columns:1fr}.jstep::after{display:none}}
   /* ===== pricing ===== */
-  .price-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:8px}
+  .price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
   .price-card{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--panel),var(--ink-2));padding:22px 18px;display:flex;flex-direction:column;gap:8px;position:relative;transition:transform .15s,border-color .15s}
   .price-card:hover{transform:translateY(-3px);border-color:var(--answer)}
   .price-card.feat{border-color:rgba(47,184,168,.5);box-shadow:0 0 0 1px rgba(47,184,168,.25)}
@@ -564,7 +564,7 @@
     </a>
     <div class="nav-links">
       <a href="#segments" data-ko="고객 유형" data-en="Who it's for">고객 유형</a>
-      <a href="#demo" data-ko="무료 시연" data-en="Free demo">무료 시연</a>
+      <a href="#demo" data-ko="사례 보기" data-en="See examples">사례 보기</a>
       <a href="#pricing" data-ko="요금제" data-en="Pricing">요금제</a>
       <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
       <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
@@ -581,7 +581,7 @@
   </div>
   <div class="mobile-menu" id="mobileMenu">
     <a href="#segments" data-ko="고객 유형" data-en="Who it's for">고객 유형</a>
-    <a href="#demo" data-ko="무료 시연" data-en="Free demo">무료 시연</a>
+    <a href="#demo" data-ko="사례 보기" data-en="See examples">사례 보기</a>
     <a href="#pricing" data-ko="요금제" data-en="Pricing">요금제</a>
     <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
     <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
@@ -602,7 +602,7 @@
         <p class="lede" data-ko="KPN은 한국 콘텐츠, 시장 진출, 파트너십, 여행, AI 검색 결과를 한국 맥락에서 검증하고, 위험한 판단은 멈추게 합니다. 모든 검증은 근거 있는 답변, HOLD, DID 서명, auditId 중 하나로 책임 있게 끝납니다." data-en="KPN verifies Korean content, market entry, partnerships, travel, and AI search results in Korean context — and stops risky judgments. Every verification ends accountably: a grounded answer, a HOLD, a DID signature, an auditId.">KPN은 한국 콘텐츠, 시장 진출, 파트너십, 여행, AI 검색 결과를 한국 맥락에서 검증하고, 위험한 판단은 멈추게 합니다. 모든 검증은 근거 있는 답변, HOLD, DID 서명, auditId 중 하나로 책임 있게 끝납니다.</p>
         <p class="acro" data-ko="KPN = <b>Verifiable Judgment Network</b> · 한국 맥락 판단 검증 네트워크 (Korean Context Judgment Network)" data-en="KPN = <b>Verifiable Judgment Network</b> · Korean Context Judgment Network">KPN = <b>Verifiable Judgment Network</b> · 한국 맥락 판단 검증 네트워크 (Korean Context Judgment Network)</p>
         <div class="hero-actions">
-          <a class="btn btn-primary btn-lg" href="#demo" data-ko="무료 시연하기" data-en="Try free demo">무료 시연하기</a>
+          <a class="btn btn-primary btn-lg" href="#demo" data-ko="라이브 사례 보기" data-en="See live examples">라이브 사례 보기</a>
           <a class="btn btn-ghost btn-lg" href="#intake" data-ko="프로젝트 접수하기" data-en="Submit a project">프로젝트 접수하기</a>
           <a class="btn btn-ghost btn-lg" href="#contact" data-ko="AI Agent 연동 문의" data-en="AI Agent integration">AI Agent 연동 문의</a>
         </div>
@@ -692,13 +692,13 @@
     <div class="wrap">
       <div class="s-head">
         <div>
-          <span class="eyebrow" data-ko="무료 시연" data-en="Free demo">무료 시연</span>
+          <span class="eyebrow" data-ko="라이브 검증 사례" data-en="Live-verified examples">라이브 검증 사례</span>
           <h2 style="margin-top:16px" data-ko="검증된 5개 질문으로 직접 확인하세요" data-en="See it on 5 verified questions">검증된 5개 질문으로 직접 확인하세요</h2>
         </div>
         <p data-ko="실제 라이브 검증을 통과한 질문 5개입니다. 강점 시연 3개는 범용 AI가 못 하는 한국 판단을, 안전장치 2개는 KPN이 ‘멈추는’ 장면을 보여줍니다. 카드를 눌러 응답을 확인하세요." data-en="Five questions that passed live verification. Three strength demos show Korea judgment general AI can't reach; two safety demos show KPN stopping. Tap a card to see the response.">실제 라이브 검증을 통과한 질문 5개입니다. 강점 시연 3개는 범용 AI가 못 하는 한국 판단을, 안전장치 2개는 KPN이 ‘멈추는’ 장면을 보여줍니다. 카드를 눌러 응답을 확인하세요.</p>
       </div>
 
-      <div class="demo-note"><span data-ko="● 5회 무료 · 카드/계약 없음" data-en="● 5 free · no card, no contract">● 5회 무료 · 카드/계약 없음</span></div>
+      <div class="demo-note"><span data-ko="● 실제 라이브 검증을 통과한 질의입니다" data-en="● Real queries that passed live verification">● 실제 라이브 검증을 통과한 질의입니다</span></div>
 
       <div class="demos">
         <div class="demo strength" onclick="this.classList.toggle('open')">
@@ -812,34 +812,29 @@
           <span class="eyebrow" data-ko="요금제" data-en="Pricing">요금제</span>
           <h2 style="margin-top:16px" data-ko="사안의 무게에 맞춰 고르세요" data-en="Pick what fits the weight of your decision">사안의 무게에 맞춰 고르세요</h2>
         </div>
-        <p data-ko="컨설팅 펌이라면 수천 달러, 수 주가 걸리는 한국 판단을 KPN은 며칠 만에, 합리적인 가격으로 제공합니다. 무료 시연으로 먼저 확인하세요." data-en="Korea judgment that would cost thousands and take weeks at a consulting firm — KPN delivers it in days, at a fair price. Try the free demo first.">컨설팅 펌이라면 수천 달러, 수 주가 걸리는 한국 판단을 KPN은 며칠 만에, 합리적인 가격으로 제공합니다. 무료 시연으로 먼저 확인하세요.</p>
+        <p data-ko="컨설팅 펌이라면 수천 달러, 수 주가 걸리는 한국 판단을 KPN은 며칠 만에, 합리적인 가격으로 제공합니다. 실제 사례로 먼저 확인하세요." data-en="Korea judgment that would cost thousands and take weeks at a consulting firm — KPN delivers it in days, at a fair price. See real examples first.">컨설팅 펌이라면 수천 달러, 수 주가 걸리는 한국 판단을 KPN은 며칠 만에, 합리적인 가격으로 제공합니다. 실제 사례로 먼저 확인하세요.</p>
       </div>
 
       <div class="price-grid">
         <div class="price-card">
-          <div class="pc-name">Free Demo</div>
-          <div class="pc-price">$0</div>
-          <div class="pc-use" data-ko="검증된 시연 질문 5개를 직접 체험. 카드·계약 없음." data-en="Try 5 verified demo questions. No card, no contract.">검증된 시연 질문 5개를 직접 체험. 카드·계약 없음.</div>
-        </div>
-        <div class="price-card">
           <div class="pc-name">One Question</div>
-          <div class="pc-price">$29</div>
+          <div class="pc-price">$19</div>
           <div class="pc-use" data-ko="단일 질문 1개, 간단한 한국 판단을 빠르게." data-en="One single question — a quick Korea judgment.">단일 질문 1개, 간단한 한국 판단을 빠르게.</div>
         </div>
         <div class="price-card feat">
           <span class="pc-tag" data-ko="가장 인기" data-en="Most popular">가장 인기</span>
           <div class="pc-name">Quick Read</div>
-          <div class="pc-price">$79</div>
+          <div class="pc-price">$49</div>
           <div class="pc-use" data-ko="짧은 맥락 분석, 핵심 리스크, 추천 대응." data-en="Short context, key risks, recommended response.">짧은 맥락 분석, 핵심 리스크, 추천 대응.</div>
         </div>
         <div class="price-card">
           <div class="pc-name">Deep Read</div>
-          <div class="pc-price">$190</div>
+          <div class="pc-price">$129</div>
           <div class="pc-use" data-ko="상황·상대방 신호·의사결정 구조·다음 메시지까지 분석." data-en="Situation, counterpart signals, decision structure, next message.">상황·상대방 신호·의사결정 구조·다음 메시지까지 분석.</div>
         </div>
         <div class="price-card">
           <div class="pc-name">Strategic Review</div>
-          <div class="pc-price">from $490</div>
+          <div class="pc-price">from $349</div>
           <div class="pc-use" data-ko="파트너십·협상·시장진입 같은 복합 사안 검토." data-en="Complex matters: partnerships, negotiations, market entry.">파트너십·협상·시장진입 같은 복합 사안 검토.</div>
         </div>
       </div>
@@ -928,9 +923,9 @@
       <div class="s-head">
         <div>
           <span class="eyebrow" data-ko="Founding Council" data-en="Founding Council">Founding Council</span>
-          <h2 style="margin-top:16px" data-ko="판단 룰을 보증하는 검증된 5인" data-en="The verified 5 who back the rules">판단 룰을 보증하는 검증된 5인</h2>
+          <h2 style="margin-top:16px" data-ko="판단 룰을 보증하는 검증된 10인" data-en="The verified 10 who back the rules">판단 룰을 보증하는 검증된 10인</h2>
         </div>
-        <p data-ko="KPN은 아무나 100명을 모으지 않습니다. 엄선·검증된 Founding Council 5인이 한국 맥락 판단 룰을 정의하고, 엔진이 못 푸는 예외를 판정하며, DID 서명으로 책임집니다. 규모가 아니라 신뢰가 먼저입니다." data-en="KPN doesn't gather 100 people at random. A curated, verified Founding Council of 5 defines the Korea-context rules, rules on the exceptions the engine can't resolve, and signs with DID. Trust before scale.">KPN은 아무나 100명을 모으지 않습니다. 엄선·검증된 Founding Council 5인이 한국 맥락 판단 룰을 정의하고, 엔진이 못 푸는 예외를 판정하며, DID 서명으로 책임집니다. 규모가 아니라 신뢰가 먼저입니다.</p>
+        <p data-ko="KPN은 아무나 100명을 모으지 않습니다. 엄선·검증된 Founding Council 10인이 한국 맥락 판단 룰을 정의하고, 엔진이 못 푸는 예외를 판정하며, DID 서명으로 책임집니다. 규모가 아니라 신뢰가 먼저입니다." data-en="KPN doesn't gather 100 people at random. A curated, verified Founding Council of 10 defines the Korea-context rules, rules on the exceptions the engine can't resolve, and signs with DID. Trust before scale.">KPN은 아무나 100명을 모으지 않습니다. 엄선·검증된 Founding Council 10인이 한국 맥락 판단 룰을 정의하고, 엔진이 못 푸는 예외를 판정하며, DID 서명으로 책임집니다. 규모가 아니라 신뢰가 먼저입니다.</p>
       </div>
 
       <div class="council-stats">
@@ -1204,13 +1199,13 @@
       <div class="s-head">
         <div>
           <span class="eyebrow" data-ko="고객 여정" data-en="Customer journey">고객 여정</span>
-          <h2 style="margin-top:16px" data-ko="시연에서 결과 리포트까지" data-en="From demo to result report">시연에서 결과 리포트까지</h2>
+          <h2 style="margin-top:16px" data-ko="사례 확인에서 결과 리포트까지" data-en="From examples to result report">사례 확인에서 결과 리포트까지</h2>
         </div>
-        <p data-ko="한국 관련 판단이 필요한 고객이 홈페이지나 안내 메일을 통해 들어와, 무료 시연 → 프로젝트 접수 → 결제 → 결과 리포트로 이어집니다." data-en="Customers who need Korea-related judgment arrive via the site or outreach email, then flow from free demo to intake, payment, and a result report.">한국 관련 판단이 필요한 고객이 홈페이지나 안내 메일을 통해 들어와, 무료 시연 → 프로젝트 접수 → 결제 → 결과 리포트로 이어집니다.</p>
+        <p data-ko="한국 관련 판단이 필요한 고객이 홈페이지나 안내 메일을 통해 들어와, 라이브 사례 확인 → 프로젝트 접수 → 결제 → 결과 리포트로 이어집니다." data-en="Customers who need Korea-related judgment arrive via the site or outreach email, then flow from live examples to intake, payment, and a result report.">한국 관련 판단이 필요한 고객이 홈페이지나 안내 메일을 통해 들어와, 라이브 사례 확인 → 프로젝트 접수 → 결제 → 결과 리포트로 이어집니다.</p>
       </div>
 
       <div class="journey">
-        <div class="jstep"><span class="jn">STEP 1</span><h4 data-ko="무료 시연" data-en="Free demo">무료 시연</h4><p data-ko="검증된 5개 질문으로 KPN의 판단·HOLD를 직접 체험합니다. 카드·계약 없음." data-en="Experience KPN's judgment and HOLD on 5 verified questions. No card, no contract.">검증된 5개 질문으로 KPN의 판단·HOLD를 직접 체험합니다. 카드·계약 없음.</p></div>
+        <div class="jstep"><span class="jn">STEP 1</span><h4 data-ko="라이브 사례 확인" data-en="Live examples">라이브 사례 확인</h4><p data-ko="검증된 5개 질문으로 KPN의 판단·HOLD를 직접 확인합니다." data-en="See KPN's judgment and HOLD on 5 verified questions.">검증된 5개 질문으로 KPN의 판단·HOLD를 직접 확인합니다.</p></div>
         <div class="jstep"><span class="jn">STEP 2</span><h4 data-ko="프로젝트 접수" data-en="Project intake">프로젝트 접수</h4><p data-ko="아래 폼으로 의뢰 내용을 접수하면 접수번호가 발급됩니다." data-en="Submit your request below and receive a reference code.">아래 폼으로 의뢰 내용을 접수하면 접수번호가 발급됩니다.</p></div>
         <div class="jstep"><span class="jn">STEP 3</span><h4 data-ko="견적 · 결제" data-en="Quote · payment">견적 · 결제</h4><p data-ko="범위에 맞는 견적과 결제 링크를 안내받고 결제합니다." data-en="Receive a scoped quote and payment link, then pay.">범위에 맞는 견적과 결제 링크를 안내받고 결제합니다.</p></div>
         <div class="jstep"><span class="jn">STEP 4</span><h4 data-ko="결과 리포트" data-en="Result report">결과 리포트</h4><p data-ko="처리 결과를 DID 서명·auditId가 포함된 리포트로 받습니다." data-en="Get the result as a report with DID signature and auditId.">처리 결과를 DID 서명·auditId가 포함된 리포트로 받습니다.</p></div>
@@ -1463,7 +1458,7 @@
   async function loadMembers(){
     if (!memGrid) return;
     // 우선 위원장 폴백을 즉시 표시 (Supabase 응답 전/실패 시에도 보장)
-    memGrid.innerHTML = chairFallbackCard();
+    memGrid.innerHTML = chairFallbackCard() + joinCard();
     try {
       const res = await fetch(SUPA_URL + '/rest/v1/kpn_council_members?published=eq.true&order=sort_order.asc,created_at.asc', {
         headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY }
@@ -1471,19 +1466,19 @@
       if (!res.ok) throw new Error('fetch failed');
       const rows = await res.json();
       if (Array.isArray(rows) && rows.length) {
-        memGrid.innerHTML = rows.map(memberCard).join('');
+        memGrid.innerHTML = rows.map(memberCard).join('') + joinCard();
         const verifiedN = rows.filter(r=>r.verified).length;
         if (memCount) {
           memCount.textContent = (lang==='en')
-            ? ('MCP-verified · ' + verifiedN + ' appointed')
-            : ('MCP 진본 검증 완료 · ' + verifiedN + '인 등재');
+            ? ('MCP-verified · ' + verifiedN + ' appointed · appointments in progress')
+            : ('MCP 진본 검증 완료 · ' + verifiedN + '인 등재 · 위촉 진행 중');
         }
       } else {
         if (memCount) memCount.textContent = (lang==='en') ? 'Appointments in progress' : '위촉 진행 중';
       }
     } catch(e) {
       // 폴백(위원장+모집)이 이미 표시됨
-      if (memCount) memCount.textContent = (lang==='en') ? 'MCP-verified' : 'MCP 진본 검증 완료';
+      if (memCount) memCount.textContent = (lang==='en') ? 'MCP-verified · 1 appointed · in progress' : 'MCP 진본 검증 완료 · 1인 등재 · 위촉 진행 중';
     }
   }
   loadMembers();
