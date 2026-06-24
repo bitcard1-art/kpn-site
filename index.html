@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>KPN — Verifiable Judgment Network</title>
-<meta name="description" content="KPN(Verifiable Judgment Network)은 한국 콘텐츠·시장진출·파트너십·여행·AI 검색 결과를 한국 맥락에서 검증하고, 위험한 판단은 멈추게 하는 검증된 판단 네트워크입니다." />
+<meta name="description" content="KPN (Verifiable Judgment Network) verifies judgments about Korean content, market entry, partnerships, travel, and AI search results in Korean context — and stops risky calls instead of guessing." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -275,6 +275,33 @@
   .demo.safety .demo-verdict{background:var(--hold);color:#3d2c08}
   .demo-a p{color:#c8d6e1;font-size:14px;line-height:1.65}
   .demo-meta{margin-top:12px;font-family:var(--mono);font-size:10.5px;color:var(--muted-2);display:flex;gap:14px;flex-wrap:wrap}
+  /* 리포트 6선 (전문 PDF) */
+  .reports-head{margin-top:46px;padding-top:30px;border-top:1px solid var(--hair);display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .reports-head .rh-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--answer)}
+  .reports-head h3{font-size:22px;font-family:var(--display);font-weight:600;margin-top:10px;color:#eaf2f6;letter-spacing:-.01em}
+  .reports-head .rh-note{font-size:13px;color:var(--muted);max-width:48ch}
+  .reports{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+  .report{position:relative;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--ink-2);padding:18px 18px 16px;text-decoration:none;color:inherit;min-height:218px;transition:border-color .18s,transform .18s,background .18s}
+  .report:hover{border-color:var(--answer);transform:translateY(-2px);background:var(--panel-2)}
+  .report:focus-visible{outline:2px solid var(--answer);outline-offset:3px}
+  .report .r-ref{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted-2)}
+  .report .r-lang{margin-left:6px;color:var(--hold);opacity:.85;letter-spacing:.04em}
+  .report .r-region{font-family:var(--mono);font-size:11px;color:var(--answer);margin-top:11px;letter-spacing:.02em}
+  .report h4{font-size:14.5px;line-height:1.4;font-weight:600;margin-top:5px;color:#dde7ef}
+  .report .r-liner{font-size:12.5px;line-height:1.55;color:var(--muted);margin-top:9px;flex:1}
+  .report .r-meta{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:13px;border-top:1px solid var(--hair)}
+  .report .r-verdict{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--hold);background:var(--hold-dim);padding:3px 8px;border-radius:999px;letter-spacing:.04em}
+  .report .r-risk{font-family:var(--mono);font-size:10px;color:var(--muted-2)}
+  .report .r-risk .rdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  .report .r-risk .rdot.med{background:var(--hold)}
+  .report .r-risk .rdot.high{background:var(--refuse)}
+  .report .r-trust{margin-left:auto;text-align:right;font-family:var(--mono)}
+  .report .r-trust b{font-size:19px;font-weight:700;color:#eaf2f6;letter-spacing:-.02em}
+  .report .r-trust span{display:block;font-size:8.5px;letter-spacing:.14em;color:var(--muted-2);text-transform:uppercase;margin-top:2px}
+  .report .r-open{position:absolute;top:16px;right:16px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--muted-2);opacity:0;transition:opacity .18s}
+  .report:hover .r-open{opacity:1}
+  @media(max-width:980px){.reports{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.reports{grid-template-columns:1fr}}
   /* 접수 폼 */
   .intake{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--panel),var(--ink-2));padding:34px;margin-top:8px}
   .intake .seg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
@@ -570,11 +597,11 @@
       <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
     </div>
     <div class="nav-cta">
-      <button class="lang" id="lang" type="button" aria-label="Switch to English">
-        <span class="ko-dot"></span><span id="langlabel">EN</span>
+      <button class="lang" id="lang" type="button" aria-label="한국어로 전환">
+        <span class="ko-dot"></span><span id="langlabel">한</span>
       </button>
       <a class="btn btn-primary pilot-cta" href="#contact" data-ko="파일럿 문의" data-en="Request pilot">파일럿 문의</a>
-      <button class="hamb" id="hamb" type="button" aria-label="메뉴" aria-expanded="false">
+      <button class="hamb" id="hamb" type="button" aria-label="Menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -722,6 +749,15 @@
           <div class="demo-a"><div class="demo-a-inner"><span class="demo-verdict">HOLD</span><p data-ko="execute:false — 대행은 불가하고 자문만 제공합니다. KPN은 판단과 근거를 제공할 뿐, 당사자를 대신해 협상·계약 등 행동을 수행하지 않습니다. 협상 전략과 체크포인트는 자문으로 도와드릴 수 있습니다." data-en="execute:false — we can't act on your behalf; advisory only. KPN provides judgment and rationale, never performs actions like negotiating or contracting for a party. We can advise on strategy and checkpoints.">execute:false — 대행은 불가하고 자문만 제공합니다. KPN은 판단과 근거를 제공할 뿐, 당사자를 대신해 협상·계약 등 행동을 수행하지 않습니다. 협상 전략과 체크포인트는 자문으로 도와드릴 수 있습니다.</p><div class="demo-meta"><span>verdict: HOLD</span><span>execute: false</span><span>auditId: aud_2026_demo05</span></div></div></div>
         </div>
       </div>
+      <div class="reports-head">
+        <div>
+          <span class="rh-eyebrow" data-ko="전문 리포트 · 교차검증 기록" data-en="Full reports · cross-verified">전문 리포트 · 교차검증 기록</span>
+          <h3 data-ko="실제 자문 리포트 6선" data-en="Six real advisory reports">실제 자문 리포트 6선</h3>
+        </div>
+        <p class="rh-note" data-ko="위 5개가 ‘맛보기’라면, 아래는 KPN이 실제로 작성한 7페이지 교차검증 리포트입니다. 여섯 건 모두 결론은 조건부 HOLD — 점수를 부풀리지 않는 것이 이 네트워크의 일입니다. (전문 PDF는 한글로 제공됩니다.)" data-en="If the five above are a taste, these are the full 7-page cross-verified reports KPN actually wrote. All six conclude in conditional HOLD — not inflating scores is what this network does. (Full PDFs are provided in Korean.)">위 5개가 ‘맛보기’라면, 아래는 KPN이 실제로 작성한 7페이지 교차검증 리포트입니다. 여섯 건 모두 결론은 조건부 HOLD — 점수를 부풀리지 않는 것이 이 네트워크의 일입니다. (전문 PDF는 한글로 제공됩니다.)</p>
+      </div>
+      <div class="reports" id="reports"></div>
+
       <p class="ev-quote" style="margin-top:24px" data-ko="“범용 모델은 4·5번에도 자신 있게 답합니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”" data-en="“A general model answers 4 and 5 confidently — it invents a number and offers to negotiate. KPN stops. That stop is accountability.”">“범용 모델은 4·5번에도 자신 있게 답합니다 — 가짜 숫자를 만들고, 대신 협상하겠다고 합니다. KPN은 멈춥니다. 그 ‘멈춤’이 책임입니다.”</p>
     </div>
   </section>
@@ -738,7 +774,7 @@
       </div>
       <div class="ev-grid">
         <article class="ev answer">
-          <span class="badge">ANSWER · Mind 층위</span>
+          <span class="badge" data-ko="ANSWER · Mind 층위" data-en="ANSWER · Mind layer">ANSWER · Mind 층위</span>
           <h3 data-ko="검색·범용 AI가 못 하는 한국 판단" data-en="Judgment search & general AI can't reach">검색·범용 AI가 못 하는 한국 판단</h3>
           <div class="qa">
             <div class="row q"><span class="lab">Q</span><p data-ko="첫 미팅에서 한국 파트너가 저녁 식사를 제안했어요. 받아들여야 하나요?" data-en="A Korean partner suggested dinner at our first meeting. Should we accept?">첫 미팅에서 한국 파트너가 저녁 식사를 제안했어요. 받아들여야 하나요?</p></div>
@@ -750,7 +786,7 @@
           </div>
         </article>
         <article class="ev hold">
-          <span class="badge">HOLD · 안전장치</span>
+          <span class="badge" data-ko="HOLD · 안전장치" data-en="HOLD · Safeguard">HOLD · 안전장치</span>
           <h3 data-ko="범용 AI가 구조적으로 못 하는 것" data-en="What general AI structurally can't do">범용 AI가 구조적으로 못 하는 것</h3>
           <div class="qa">
             <div class="row q"><span class="lab">Q</span><p data-ko="K-pop IP를 북미에 진출시킬 성공 확률을 %로 말해줘." data-en="What's the success probability, in %, of bringing K-pop IP to North America?">K-pop IP를 북미에 진출시킬 성공 확률을 %로 말해줘.</p></div>
@@ -988,7 +1024,7 @@
           <div class="pc-top"><span class="brand-s">KOREA PERSONA NETWORK</span><span class="url">panc.mysoma.space</span></div>
           <div class="pc-body">
             <span class="role" data-ko="자문위원 페르소나 명함" data-en="Advisor persona card">자문위원 페르소나 명함</span>
-            <div class="name">이 영 도</div>
+            <div class="name" data-ko="이 영 도" data-en="Youngdo Lee">이 영 도</div>
             <div class="title" data-ko="IT 플랫폼 아키텍트 자문위원" data-en="IT Platform Architect · Advisor">IT 플랫폼 아키텍트 자문위원</div>
             <div class="meta" data-ko="경력 24년 · 저서 5종 · 국가공인 자격 보유" data-en="24 yrs · 5 books · nationally certified">경력 24년 · 저서 5종 · 국가공인 자격 보유</div>
             <div class="did"><span>did:soma:kpn:9f2a…7c1e</span><span class="ok" data-ko="✓ 진본 검증됨" data-en="✓ verified">✓ 진본 검증됨</span></div>
@@ -1094,7 +1130,7 @@
       <div class="cmp">
         <div class="col">
           <span class="tagrole">Foundation models</span>
-          <h3>파운데이션 모델</h3>
+          <h3 data-ko="파운데이션 모델" data-en="Foundation models">파운데이션 모델</h3>
           <div class="clist">
             <div class="ci yes"><span class="m">✓</span><span data-ko="답변 생성" data-en="Answer generation">답변 생성</span></div>
             <div class="ci mid"><span class="m">~</span><span data-ko="한국 맥락 일부 이해" data-en="Partial Korean context">한국 맥락 일부 이해</span></div>
@@ -1104,7 +1140,7 @@
         </div>
         <div class="col">
           <span class="tagrole">Search AI</span>
-          <h3>검색 AI</h3>
+          <h3 data-ko="검색 AI" data-en="Search AI">검색 AI</h3>
           <div class="clist">
             <div class="ci yes"><span class="m">✓</span><span data-ko="정보 탐색·요약" data-en="Search & summarization">정보 탐색·요약</span></div>
             <div class="ci mid"><span class="m">~</span><span data-ko="표면적 한국 맥락" data-en="Surface-level Korean context">표면적 한국 맥락</span></div>
@@ -1257,17 +1293,21 @@
   /* ---------- language toggle (attribute-based) ---------- */
   const btn = document.getElementById('lang');
   const label = document.getElementById('langlabel');
-  let lang = 'ko';
+  let lang = 'en';
   const nodes = document.querySelectorAll('[data-ko]');
-  btn.addEventListener('click', ()=>{
-    lang = lang === 'ko' ? 'en' : 'ko';
+  function applyLang(){
     document.documentElement.lang = lang;
     label.textContent = lang === 'ko' ? 'EN' : '한';
     btn.setAttribute('aria-label', lang === 'ko' ? 'Switch to English' : '한국어로 전환');
-    nodes.forEach(n=>{
+    document.querySelectorAll('[data-ko]').forEach(n=>{
       const v = n.getAttribute('data-' + lang);
       if(v != null) n.innerHTML = v;
     });
+  }
+  applyLang(); // 로드 시 영어로 시작
+  btn.addEventListener('click', ()=>{
+    lang = lang === 'ko' ? 'en' : 'ko';
+    applyLang();
   });
 
   /* ---------- network map: auto radial layout + SVG links ---------- */
@@ -1447,7 +1487,7 @@
     return '<article class="mcard verified has-trust">'
       + '<span class="trust on"><span class="ts-dot"></span>' + tlabel + '</span>'
       + '<span class="chair">' + (lang==='en'?'Chair':'위원장') + '</span>'
-      + '<div class="ava"><img src="youngdo.jpg" alt="이영도"></div>'
+      + '<div class="ava"><img src="youngdo.jpg" alt="Youngdo Lee"></div>'
       + '<div class="mname">' + (lang==='en'?'Youngdo Lee':'이영도') + '</div>'
       + '<div class="mrole">' + (lang==='en'?'IT Platform Architect · Digital & Data':'IT 플랫폼 아키텍트 · 디지털·플랫폼·데이터') + '</div>'
       + '<div class="mexp">' + (lang==='en'?'Decades as IT-company CEO · Information Processing Engineer · GS certification · ISMS-certified operations':'수십 년 IT 기업 CEO · 정보처리기사 · GS 인증 경험 · ISMS 인증 기업 운영 경험') + '</div>'
@@ -1647,6 +1687,44 @@
     } catch(e){ box.innerHTML='<div class="track-card" style="color:var(--refuse)">'+(lang==='en'?'Error: ':'오류: ')+esc(e.message)+'</div>'; }
   }
 
+  /* ---------- reports 6선 (전문 PDF 카드) ---------- */
+  (function renderReports(){
+    const host=document.getElementById('reports');
+    if(!host) return;
+    const R=[
+      {ref:"KPN-2606-A4549",regKo:"스페인 · 바르셀로나",regEn:"Spain · Barcelona",tKo:"K-drama 테마 팝업의 IP·문화·상업 리스크 검토",tEn:"K-drama themed pop-up: IP, culture & commercial risk",lKo:"한국 콘텐츠를 해외에서 사업화할 때 IP 경계선이 어디서 위험해지는가.",lEn:"Where the IP line turns risky when monetizing Korean content abroad.",risk:"Medium",trust:65,pdf:"/demo/KPN-2606-A4549.pdf"},
+      {ref:"KPN-2606-LKNHO",regKo:"독일·프랑스·미국 기업 대상",regEn:"For DE·FR·US firms",tKo:"한국 파트너사 신뢰도 자동 판단 AI 검증",tEn:"Verifying an AI that auto-scores Korean partner trust",lKo:"AI가 한국어 완곡 표현을 신뢰도 점수로 단정할 때 어디서 멈춰야 하는가.",lEn:"Where to stop when AI turns Korean indirect speech into a trust score.",risk:"Medium",trust:67,pdf:"/demo/KPN-2606-LKNHO.pdf"},
+      {ref:"KPN-2606-O62GQ",regKo:"글로벌 투자자 · VC 대상",regEn:"For global investors · VCs",tKo:"한국 시장 뉴스 자동 요약 AI의 최신성·출처·판단 검증",tEn:"Verifying a Korea news-summary AI: recency, sources, judgment",lKo:"AI가 한국 정보를 검색·요약·판단할 때 어디서 멈춰야 하는가.",lEn:"Where to stop when AI searches, summarizes and judges Korean information.",risk:"Medium",trust:56,pdf:"/demo/KPN-2606-O62GQ.pdf"},
+      {ref:"KPN-2606-SBXR6",regKo:"인도네시아 · 자카르타",regEn:"Indonesia · Jakarta",tKo:"한국 미용 시술 여행·콘텐츠 촬영의 의료·광고 리스크",tEn:"Korea beauty-procedure travel & content: medical/ad risk",lKo:"위원 양측이 보류한 사안을 KPN이 독립 교차검증으로 막아낸 기록.",lEn:"A case both advisors held — caught by KPN's independent cross-check.",risk:"High",trust:42,pdf:"/demo/KPN-2606-SBXR6.pdf"},
+      {ref:"KPN-2606-UVADM",regKo:"인도네시아",regEn:"Indonesia",tKo:"한국 성형·피부과 의료관광 추천 AI의 법률·광고·안전 검증",tEn:"Verifying a Korea medical-tourism rec AI: law, ads, safety",lKo:"AI가 의료광고법 위반 표현을 자동 생성할 때 6문장 중 5개를 잡아낸 기록.",lEn:"Caught 5 of 6 AI-generated sentences breaching medical-ad law.",risk:"High",trust:42,pdf:"/demo/KPN-2606-UVADM.pdf"},
+      {ref:"KPN-2606-3FED1",regKo:"미국",regEn:"United States",tKo:"미국 비건 스낵 브랜드의 한국 이커머스 진출 판단 검증",tEn:"Verifying a US vegan-snack brand's Korea e-commerce entry",lKo:"해외 브랜드의 한국 진출 초안에서 규제 위반 3건을 사전에 걸러낸 기록.",lEn:"Filtered out 3 regulatory breaches in a foreign brand's entry draft.",risk:"High",trust:42,pdf:"/demo/KPN-2606-3FED1.pdf"},
+    ];
+    const en = (typeof lang!=='undefined' && lang==='en');
+    const vKo="조건부 HOLD", vEn="Conditional HOLD";
+    const trustKo="신뢰도 / 100", trustEn="Trust / 100";
+    R.forEach(c=>{
+      const rc=c.risk==="High"?"high":"med";
+      const riskKo="위험 "+(c.risk==="High"?"높음":"보통");
+      const riskEn="Risk "+c.risk;
+      const a=document.createElement('a');
+      a.className='report';a.href=c.pdf;a.target='_blank';a.rel='noopener';
+      a.setAttribute('aria-label',(en?c.tEn:c.tKo)+' — PDF');
+      a.innerHTML=
+        '<span class="r-open" data-ko="전문 보기 →" data-en="Open report →">'+(en?'Open report →':'전문 보기 →')+'</span>'
+        +'<div class="r-ref">'+c.ref+'<span class="r-lang" data-ko="· 한글 전문 PDF" data-en="· PDF in Korean">'+(en?'· PDF in Korean':'· 한글 전문 PDF')+'</span></div>'
+        +'<div class="r-region" data-ko="'+c.regKo+'" data-en="'+c.regEn+'">'+(en?c.regEn:c.regKo)+'</div>'
+        +'<h4 data-ko="'+c.tKo+'" data-en="'+c.tEn+'">'+(en?c.tEn:c.tKo)+'</h4>'
+        +'<p class="r-liner" data-ko="'+c.lKo+'" data-en="'+c.lEn+'">'+(en?c.lEn:c.lKo)+'</p>'
+        +'<div class="r-meta">'
+          +'<span class="r-verdict" data-ko="'+vKo+'" data-en="'+vEn+'">'+(en?vEn:vKo)+'</span>'
+          +'<span class="r-risk" data-ko="'+riskKo+'" data-en="'+riskEn+'"><span class="rdot '+rc+'"></span>'+(en?riskEn:riskKo)+'</span>'
+          +'<span class="r-trust"><b>'+c.trust+'</b><span data-ko="'+trustKo+'" data-en="'+trustEn+'">'+(en?trustEn:trustKo)+'</span></span>'
+        +'</div>';
+      host.appendChild(a);
+    });
+  })();
+
+  applyLang(); // 동적 생성(위원·노드맵·리포트) 완료 후 현재 언어로 재동기화
   checkMagicSession();
 })();
 </script>
