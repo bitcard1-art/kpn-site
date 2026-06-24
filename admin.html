@@ -716,6 +716,20 @@ function sentStatusOf(p){
   return 'none';
 }
 
+// created_at/sent_at(UTC) → KST 'M/D H:mm' 표시. 브라우저 시간대와 무관하게 Asia/Seoul로 고정 변환(UTC+9).
+function fmtKST(d){
+  if(!d) return '';
+  try{
+    // 공백→T, 콜론 없는 오프셋('+00')→'+00:00' 보정(엔진별 파싱 견고성).
+    const dt = new Date(String(d).trim().replace(' ','T').replace(/([+-]\d{2})$/, '$1:00'));
+    if(isNaN(dt.getTime())) return '';
+    const parts = new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(dt);
+    const g = t => (parts.find(x=>x.type===t)||{}).value || '';
+    let hh = g('hour'); if(hh==='24') hh='00';
+    return g('month')+'/'+g('day')+' '+hh+':'+g('minute');
+  }catch(_){ return ''; }
+}
+
 function renderSent(){
   const slot = $('sent-list');
   if(!slot) return;
@@ -724,15 +738,17 @@ function renderSent(){
   if(SENT_FILTER==='sent') rows = rows.filter(p=>sentStatusOf(p)==='sent');
   if(SENT_FILTER==='ready') rows = rows.filter(p=>sentStatusOf(p)==='ready');
   if(!rows.length){ slot.innerHTML='<div class="empty">표시할 발송 이력이 없습니다. 검토 대기에서 [확정 공개]한 건이 여기 나타납니다.</div>'; return; }
+  // 발송 현황은 sent_at DESC NULLS LAST, created_at DESC(최근 발송이 위) — 발송일시 표시와 순서 일치.
+  rows = rows.slice().sort((a,b)=> String(b.sent_at||'').localeCompare(String(a.sent_at||'')) || String(b.created_at||'').localeCompare(String(a.created_at||'')));
 
   const badge = s => s==='sent' ? '<span class="sbadge sent">발송 완료</span>'
                   : s==='ready'? '<span class="sbadge ready">발송 대기</span>'
                   :              '<span class="sbadge no">—</span>';
-  const fmt = d => { try{ return new Date(d).toLocaleString('ko-KR',{dateStyle:'short',timeStyle:'short'}); }catch(_){ return d||''; } };
+  const fmt = fmtKST;   // KST 'M/D H:mm' 통일(접수·발송 둘 다 한국시간)
 
   slot.innerHTML =
     '<table class="sent-tbl"><thead><tr>'
-    + '<th>접수번호</th><th>고객</th><th>검토 사안</th><th>상태</th><th>발송일시</th><th>관리</th>'
+    + '<th>접수번호</th><th>고객</th><th>검토 사안</th><th>상태</th><th>접수일시</th><th>발송일시</th><th>관리</th>'
     + '</tr></thead><tbody>'
     + rows.map(p=>{
         const st = sentStatusOf(p);
@@ -742,6 +758,7 @@ function renderSent(){
           + '<td class="sent-cust"><b>'+esc(p.name||'-')+'</b><span>'+esc(p.email||'')+'</span></td>'
           + '<td>'+esc(p.title||'')+'</td>'
           + '<td>'+badge(st)+'</td>'
+          + '<td style="font-family:var(--mono);font-size:12px;color:var(--muted-2)">'+esc(fmtKST(p.created_at))+'</td>'
           + '<td style="font-family:var(--mono);font-size:12px;color:var(--muted-2)">'+(p.sent_at?fmt(p.sent_at):'—')+'</td>'
           + '<td><div class="sent-act">'
           +   '<a href="'+reportPdfPreviewUrl(ref)+'" target="_blank" rel="noopener">📄 PDF 보기</a>'
@@ -793,9 +810,13 @@ async function loadProjects(){
     PROJECTS = projects||[];
     const tb = $('prows');
     if(!PROJECTS.length){ tb.innerHTML='<tr><td colspan="4" style="color:var(--muted)">아직 접수된 프로젝트가 없습니다.</td></tr>'; renderFlowSummary(); return; }
-    tb.innerHTML = PROJECTS.map(p => {
+    // 접수 순(created_at ASC·FIFO) — 표시 시간과 위→아래 순서 일치. (서버 flat은 DESC라 화면용으로 ASC 정렬)
+    const ordered = [...PROJECTS].sort((a,b)=> String(a.created_at||'').localeCompare(String(b.created_at||'')));
+    tb.innerHTML = ordered.map(p => {
       return '<tr>'
-        + '<td><b>'+esc(p.ref_code)+'</b><div style="color:var(--muted-2);font-size:12px;margin-top:3px">'+esc(p.name)+' · '+esc(CT[p.client_type]||p.client_type)+'</div><div style="color:var(--muted-2);font-family:var(--mono);font-size:11px">'+esc(p.email)+'</div></td>'
+        + '<td><b>'+esc(p.ref_code)+'</b>'
+        +   '<div style="color:var(--muted-2);font-family:var(--mono);font-size:11px;margin-top:2px">🕒 '+esc(fmtKST(p.created_at))+'</div>'
+        +   '<div style="color:var(--muted-2);font-size:12px;margin-top:3px">'+esc(p.name)+' · '+esc(CT[p.client_type]||p.client_type)+'</div><div style="color:var(--muted-2);font-family:var(--mono);font-size:11px">'+esc(p.email)+'</div></td>'
         + '<td>'+esc(p.title)+(p.company?('<div style="color:var(--muted-2);font-size:12px;margin-top:3px">'+esc(p.company)+(p.region?(' · '+esc(p.region)):'')+'</div>'):'')+'</td>'
         + '<td><span class="vtag '+(p.status==='done'?'y':'n')+'">'+esc(ST[p.status]||p.status)+'</span></td>'
         + '<td><button class="btn ghost sm" data-pedit="'+p.id+'">관리</button></td>'
@@ -890,6 +911,7 @@ async function loadQueue(){
       return '<div class="qcard">'
         + '<div class="qh">'
         +   '<span class="qref">'+esc(q.ref_code)+'</span>'
+        +   '<span class="qtime" style="color:var(--muted-2);font-family:var(--mono);font-size:11px">🕒 '+esc(fmtKST(q.created_at))+'</span>'
         +   '<span class="qcust">'+esc(q.name)+(q.company?(' · '+esc(q.company)):'')+(q.region?(' · '+esc(q.region)):'')+'</span>'
         +   (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
         +   (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
