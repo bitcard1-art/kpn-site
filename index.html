@@ -909,6 +909,35 @@
         <input id="in-title" placeholder="" data-ko-ph="예: 한국 합작 파트너십 문화·규제 리스크 검증" />
         <label data-ko="의뢰 상세" data-en="Details">의뢰 상세</label>
         <textarea id="in-detail" placeholder=""></textarea>
+
+        <!-- ── 사람 채널 자동 견적 신호(assessDepth) — 기업/개인만 표시. AI 에이전트는 x402(별도). ── -->
+        <div id="hq-fields" style="margin-top:20px;border-top:1px solid var(--line);padding-top:18px">
+          <label data-ko="관여 분야 (복수 선택)" data-en="Domains involved (multi-select)">관여 분야 (복수 선택)</label>
+          <div id="hq-domains" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+          <div class="frow" style="margin-top:16px">
+            <div>
+              <label data-ko="주요 쟁점 수" data-en="Number of key issues">주요 쟁점 수</label>
+              <select id="hq-issues" style="width:100%;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px">
+                <option value="1" data-ko="1개" data-en="1 issue">1개</option>
+                <option value="2" data-ko="2개" data-en="2 issues">2개</option>
+                <option value="3" data-ko="3개 이상" data-en="3 or more">3개 이상</option>
+              </select>
+            </div>
+            <div>
+              <label data-ko="법령·세무 검토 필요" data-en="Legal/tax review needed">법령·세무 검토 필요</label>
+              <div id="hq-legal" style="display:flex;gap:6px">
+                <button type="button" data-v="0" class="btn on" style="flex:1" data-ko="아니오" data-en="No">아니오</button>
+                <button type="button" data-v="1" class="btn" style="flex:1" data-ko="예" data-en="Yes">예</button>
+              </div>
+            </div>
+          </div>
+          <label style="margin-top:16px;display:block" data-ko="원문 자료 첨부 (이메일·계약서·회의록 등 · 선택)" data-en="Attach source docs (email, contract, notes · optional)">원문 자료 첨부 (선택)</label>
+          <input type="file" id="hq-files" multiple style="margin-top:6px;color:var(--muted)" />
+          <div style="margin-top:6px;color:var(--muted-2);font-size:12px" data-ko="원문 첨부 시 원문 교차검증으로 더 정밀하게 산정됩니다(자가신고 아님)." data-en="Attaching docs enables source cross-check (auto-detected, not self-reported).">원문 첨부 시 더 정밀하게 산정됩니다.</div>
+          <div style="margin-top:16px"><button class="btn btn-primary" id="hq-btn" data-ko="자동 견적 받기" data-en="Get auto quote">자동 견적 받기</button></div>
+          <div id="hq-result" style="display:none;margin-top:18px"></div>
+        </div>
+
         <div style="margin-top:18px"><button class="btn btn-primary btn-lg" id="in-submit" data-ko="접수하기" data-en="Submit">접수하기</button></div>
         <div class="intake-msg" id="in-msg"></div>
       </div>
@@ -1556,6 +1585,57 @@
       ['in-name','in-email','in-company','in-region','in-title','in-detail'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
     } catch(e){ imsg((lang==='en'?'Error: ':'오류: ')+e.message, false); }
   });
+
+  // ── 사람 채널 자동 견적 (assessDepth 단일출처 → /human/quote). 명시 신호만 수집(추측 0). ──
+  const HQ_URL = "https://persona-mcp-server.onrender.com/human/quote";
+  const HQ_DOMAINS = ["반도체","딥테크·AI","바이오·헬스","모빌리티","조선·방산","에너지","플랫폼·SW","경제·금융·통상","K컬처·콘텐츠","K뷰티·식품","법률·정책·교육","도시·인프라"];
+  (function initHQ(){
+    const wrap = document.getElementById('hq-domains');
+    if(wrap) HQ_DOMAINS.forEach(d=>{ const b=document.createElement('button'); b.type='button'; b.textContent=d; b.dataset.on='0';
+      b.style.cssText='border:1px solid var(--line);background:var(--ink-2);color:var(--paper);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer';
+      b.addEventListener('click',()=>{ const on=b.dataset.on==='1'; b.dataset.on=on?'0':'1'; b.style.borderColor=on?'var(--line)':'var(--answer)'; b.style.color=on?'var(--paper)':'var(--answer)'; }); wrap.appendChild(b); });
+    const legal = document.getElementById('hq-legal');
+    if(legal) legal.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ legal.querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); }));
+    // 견적 필드는 기업/개인만(ai_agent는 x402). 타입 전환 시 토글.
+    function toggleHQ(){ const f=document.getElementById('hq-fields'); if(f) f.style.display = (clientType==='ai_agent')?'none':'block'; }
+    if(seg) seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',toggleHQ));
+    toggleHQ();
+    const btn=document.getElementById('hq-btn');
+    if(btn) btn.addEventListener('click', async ()=>{
+      // ★명시 신호만 — 도메인 선택 수·쟁점 수·법령 토글·업로드 유무(자동). 텍스트 추론 없음.
+      const domain_count = document.querySelectorAll('#hq-domains button[data-on="1"]').length || 1;
+      const issue_count = Number(document.getElementById('hq-issues').value)||1;
+      const has_legal = document.querySelector('#hq-legal button.on') ? document.querySelector('#hq-legal button.on').dataset.v==='1' : false;
+      const has_source_doc = (document.getElementById('hq-files').files||[]).length>0;  // 업로드 유무로 자동 감지(자가신고 아님)
+      const body = { client_type: clientType,
+        name:(document.getElementById('in-name').value||'').trim(), email:(document.getElementById('in-email').value||'').trim(),
+        company:(document.getElementById('in-company').value||'').trim(), region:(document.getElementById('in-region').value||'').trim(),
+        title:(document.getElementById('in-title').value||'').trim(), question:(document.getElementById('in-detail').value||'').trim(),
+        domain_count, issue_count, has_legal, has_source_doc };
+      const out=document.getElementById('hq-result'); out.style.display='block';
+      out.innerHTML='<div style="color:var(--muted)">'+(lang==='en'?'Calculating quote…':'견적 산정 중…')+'</div>';
+      try{ const res=await fetch(HQ_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        const d=await res.json(); if(!res.ok) throw new Error(d.error||('HTTP '+res.status)); renderHQ(d);
+      }catch(e){ out.innerHTML='<div style="color:var(--refuse)">'+(lang==='en'?'Error: ':'오류: ')+esc(e.message)+'</div>'; }
+    });
+    function renderHQ(d){
+      const out=document.getElementById('hq-result');
+      const cards=(d.tiers||[]).map(t=>{ const rec=t.recommended; const price=t.price||('$'+((t.cents||0)/100));
+        return '<button type="button" class="hq-tier" data-tier="'+esc(t.tier)+'" style="flex:1;min-width:130px;border:1px solid '+(rec?'var(--answer)':'var(--line)')+';border-radius:12px;background:var(--ink-2);padding:12px;cursor:pointer;text-align:left">'
+          +'<div style="font-weight:700;color:var(--paper)">'+esc(t.label)+'</div>'
+          +'<div style="font-size:20px;font-weight:700;color:var(--answer);margin-top:4px">'+esc(price)+'</div>'
+          +(rec?'<div style="font-size:11px;color:var(--answer);margin-top:4px">'+(lang==='en'?'Recommended':'추천')+'</div>':'')+'</button>'; }).join('');
+      // ★reason은 서버 문자열 그대로(프론트 미가공·표시=실제).
+      out.innerHTML='<div style="font-size:13px;color:var(--muted-2);margin-bottom:10px">'+(lang==='en'?'Auto-quote reason: ':'자동 견적 산정 사유: ')+'<b style="color:var(--paper)">'+esc(d.reason||'')+'</b></div>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:10px">'+cards+'</div>'
+        +(d.note?'<div style="font-size:12px;color:var(--muted-2);margin-top:8px">'+esc(d.note)+'</div>':'')
+        +'<div id="hq-confirm" style="margin-top:14px;color:var(--muted-2);font-size:13px"></div>';
+      const confirmMsg=(tier)=>(lang==='en'?'Selected: ':'선택: ')+'<b style="color:var(--answer)">'+esc(tier)+'</b> · '+(lang==='en'?'Payment (Stripe) coming soon. Quote saved · ref ':'결제(Stripe)는 곧 제공됩니다. 견적 저장됨 · 접수번호 ')+'<b>'+esc(d.ref_code||'-')+'</b>';
+      const c=document.getElementById('hq-confirm'); if(c) c.innerHTML=confirmMsg(d.recommended_tier);
+      // 추천과 다른 티어 자유 선택 허용(막기/경고 없음 — 안내만).
+      out.querySelectorAll('.hq-tier').forEach(b=>b.addEventListener('click',()=>{ out.querySelectorAll('.hq-tier').forEach(x=>x.style.borderColor='var(--line)'); b.style.borderColor='var(--answer)'; if(c) c.innerHTML=confirmMsg(b.dataset.tier); }));
+    }
+  })();
 
   const STATUS_MAP = {
     received: {ko:'접수됨', en:'Received'},
