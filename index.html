@@ -627,8 +627,9 @@
           <span data-ko="한국에 관한 판단이" data-en="When you need judgment">한국에 관한 판단이</span><br>
           <span data-ko="필요할 때," data-en="about Korea,">필요할 때,</span> <span class="hl" data-ko="KPN이 검증합니다" data-en="KPN verifies it">KPN이 검증합니다</span>
         </h1>
-        <p class="lede" data-ko="KPN은 한국 콘텐츠, 시장 진출, 파트너십, 여행, AI 검색 결과를 한국 맥락에서 검증하고, 위험한 판단은 멈추게 합니다. 모든 검증은 근거 있는 답변, HOLD, DID 서명, auditId 중 하나로 책임 있게 끝납니다." data-en="KPN verifies Korean content, market entry, partnerships, travel, and AI search results in Korean context — and stops risky judgments. Every verification ends accountably: a grounded answer, a HOLD, a DID signature, an auditId.">KPN은 한국 콘텐츠, 시장 진출, 파트너십, 여행, AI 검색 결과를 한국 맥락에서 검증하고, 위험한 판단은 멈추게 합니다. 모든 검증은 근거 있는 답변, HOLD, DID 서명, auditId 중 하나로 책임 있게 끝납니다.</p>
-        <p class="acro" data-ko="KPN = <b>Verifiable Judgment Network</b> · 한국 맥락 판단 검증 네트워크 (Korean Context Judgment Network)" data-en="KPN = <b>Verifiable Judgment Network</b> · Korean Context Judgment Network">KPN = <b>Verifiable Judgment Network</b> · 한국 맥락 판단 검증 네트워크 (Korean Context Judgment Network)</p>
+        <p class="acro" style="font-weight:600"><b>The Korean Judgment Layer for AI</b></p>
+        <p class="principle" style="margin-top:10px;font-size:15px" data-ko="<b>Facts are public. Judgments are paid.</b> · 사실은 무료로 검증하고, 판단은 유료로 검증합니다." data-en="<b>Facts are public. Judgments are paid.</b>"><b>Facts are public. Judgments are paid.</b> · 사실은 무료로 검증하고, 판단은 유료로 검증합니다.</p>
+        <p class="lede" data-ko="KPN은 한국 콘텐츠·시장 진출·파트너십·AI 검색 결과를 한국 맥락에서 검증하고, 위험한 판단은 멈춥니다(HOLD). 모든 검증은 근거 있는 답변·HOLD·DID 서명·auditId 중 하나로 책임 있게 끝납니다." data-en="KPN verifies Korean content, market entry, partnerships, and AI search results in Korean context — and stops risky judgments (HOLD). Every verification ends accountably: a grounded answer, a HOLD, a DID signature, or an auditId.">KPN은 한국 콘텐츠·시장 진출·파트너십·AI 검색 결과를 한국 맥락에서 검증하고, 위험한 판단은 멈춥니다(HOLD). 모든 검증은 근거 있는 답변·HOLD·DID 서명·auditId 중 하나로 책임 있게 끝납니다.</p>
         <div class="hero-actions">
           <a class="btn btn-primary btn-lg" href="#demo" data-ko="라이브 사례 보기" data-en="See live examples">라이브 사례 보기</a>
           <a class="btn btn-ghost btn-lg" href="#intake" data-ko="프로젝트 접수하기" data-en="Submit a project">프로젝트 접수하기</a>
@@ -1323,7 +1324,8 @@
   /* ---------- language toggle (attribute-based) ---------- */
   const btn = document.getElementById('lang');
   const label = document.getElementById('langlabel');
-  let lang = 'en';
+  // 국문 1급: 저장된 선택 우선 → 없으면 브라우저 언어(ko*면 국문). 첫 사람 고객=한국 사업자 대응.
+  let lang = (function(){ try{ var s=localStorage.getItem('kpn_lang'); if(s==='ko'||s==='en') return s; }catch(e){} return /^ko/i.test((navigator.language||navigator.userLanguage||'')) ? 'ko' : 'en'; })();
   const nodes = document.querySelectorAll('[data-ko]');
   function applyLang(){
     document.documentElement.lang = lang;
@@ -1334,9 +1336,10 @@
       if(v != null) n.innerHTML = v;
     });
   }
-  applyLang(); // 로드 시 영어로 시작
+  applyLang(); // 저장/감지된 언어로 시작(국문 1급)
   btn.addEventListener('click', ()=>{
     lang = lang === 'ko' ? 'en' : 'ko';
+    try{ localStorage.setItem('kpn_lang', lang); }catch(e){}
     applyLang();
   });
 
@@ -1581,7 +1584,12 @@
       const res = await fetch(PROJ_FN, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({action:'submit'}, {project})) });
       const data = await res.json();
       if(!res.ok) throw new Error(data.error||('HTTP '+res.status));
-      imsg(lang==='en'?'Received. Your reference code:':'접수되었습니다. 접수번호:', true, '<span class="ref">'+esc(data.ref_code)+'</span>'+(lang==='en'?'Keep this code to track your project below.':'아래에서 이 번호로 진행 상황을 조회하세요.'));
+      // 선결1: submit은 quote_ready에서 정지 — 결제 확인(mark_paid) 후에만 KPN 검증 생성. 결제 UI는 준비 중(자리만).
+      imsg(lang==='en'?'Received. Your reference code:':'접수되었습니다. 접수번호:', true,
+        '<span class="ref">'+esc(data.ref_code)+'</span>'
+        + (lang==='en'
+          ? 'Next: <b>verification starts after payment is confirmed</b>. 💳 Payment instructions are being finalized (Payoneer / KakaoPay) — we will guide you shortly. Track status below with this code.'
+          : '다음 단계: <b>결제 확인 후 KPN 검증이 시작</b>됩니다. 💳 결제 안내는 준비 중입니다(페이오니아·카카오페이 — 수단 확정 후 안내). 아래에서 이 번호로 진행 상황을 조회하세요.'));
       ['in-name','in-email','in-company','in-region','in-title','in-detail'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
     } catch(e){ imsg((lang==='en'?'Error: ':'오류: ')+e.message, false); }
   });
@@ -1639,6 +1647,7 @@
 
   const STATUS_MAP = {
     received: {ko:'접수됨', en:'Received'},
+    quote_ready: {ko:'결제 대기', en:'Awaiting payment'},   // 선결1: submit 정지 지점(결제 확인 전)
     triaged:  {ko:'검토 중', en:'In review'},
     quoted:   {ko:'견적 안내', en:'Quoted'},
     paid:     {ko:'결제 완료', en:'Paid'},
@@ -1649,7 +1658,7 @@
   // 고객에게 보이는 진행 단계 (triaged는 received와 같은 '접수·검토' 단계로 묶어 표시)
   const STATUS_ORDER = ['received','quoted','paid','completed'];
   // 실제 status를 진행단계 인덱스로 매핑
-  const STATUS_STEP = { received:0, triaged:0, quoted:1, paid:2, processing:2, completed:3, done:3 };
+  const STATUS_STEP = { received:0, quote_ready:1, triaged:0, quoted:1, paid:2, processing:2, completed:3, done:3 };
   function safeStatus(s){ return STATUS_MAP[s] || {ko:s||'—', en:s||'—'}; }
   // 완료 상태 판정 (done/completed 둘 다)
   function isDone(s){ return s==='done' || s==='completed'; }

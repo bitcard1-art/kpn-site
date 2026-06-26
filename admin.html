@@ -733,13 +733,11 @@ function fmtKST(d){
 function renderSent(){
   const slot = $('sent-list');
   if(!slot) return;
-  // 확정 공개됐거나 발송된 건만 (발송 관리 대상)
-  let rows = (PROJECTS||[]).filter(p => sentStatusOf(p) !== 'none');
+  // ★data.tabs.sent(서버정렬 sent_at DESC NULLS LAST, created DESC) 우선 — 프론트 .sort() 제거. 없으면 flat 폴백.
+  let rows = Array.isArray(TABS.sent) ? TABS.sent.slice() : (PROJECTS||[]).filter(p => sentStatusOf(p) !== 'none');
   if(SENT_FILTER==='sent') rows = rows.filter(p=>sentStatusOf(p)==='sent');
   if(SENT_FILTER==='ready') rows = rows.filter(p=>sentStatusOf(p)==='ready');
   if(!rows.length){ slot.innerHTML='<div class="empty">표시할 발송 이력이 없습니다. 검토 대기에서 [확정 공개]한 건이 여기 나타납니다.</div>'; return; }
-  // 발송 현황은 sent_at DESC NULLS LAST, created_at DESC(최근 발송이 위) — 발송일시 표시와 순서 일치.
-  rows = rows.slice().sort((a,b)=> String(b.sent_at||'').localeCompare(String(a.sent_at||'')) || String(b.created_at||'').localeCompare(String(a.created_at||'')));
 
   const badge = s => s==='sent' ? '<span class="sbadge sent">발송 완료</span>'
                   : s==='ready'? '<span class="sbadge ready">발송 대기</span>'
@@ -793,9 +791,10 @@ document.querySelectorAll('.sent-filter button').forEach(b=> b.onclick=()=>{
 });
 /* ===== 프로젝트 관리 ===== */
 const PROJ_FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-projects";
-const ST = {received:'접수됨',quoted:'견적 안내',paid:'결제 완료',processing:'처리 중',done:'완료'};
+const ST = {received:'접수됨',quote_ready:'결제 대기',quoted:'견적 대기',paid:'결제 완료',processing:'처리 중',done:'완료'};
 const CT = {enterprise:'외국 기업',individual:'개인',ai_agent:'AI 에이전트'};
 let PROJECTS = [];
+let TABS = {};   // data.tabs 서버정렬 버킷(intake/processing/review_send/sent) — 프론트 .sort() 없이 받은 순서 렌더
 
 async function pcall(action, body){
   const res = await fetch(PROJ_FN, { method:'POST', headers:{'Content-Type':'application/json','x-admin-password':PW}, body: JSON.stringify(Object.assign({action}, body||{})) });
@@ -806,12 +805,14 @@ async function pcall(action, body){
 
 async function loadProjects(){
   try {
-    const { projects } = await pcall('list');
-    PROJECTS = projects||[];
+    const { projects, tabs } = await pcall('list');
+    PROJECTS = projects||[];   // openProject(id) 조회용 flat(하위호환) 유지
+    TABS = tabs || {};
     const tb = $('prows');
-    if(!PROJECTS.length){ tb.innerHTML='<tr><td colspan="4" style="color:var(--muted)">아직 접수된 프로젝트가 없습니다.</td></tr>'; renderFlowSummary(); return; }
-    // 접수 순(created_at ASC·FIFO) — 표시 시간과 위→아래 순서 일치. (서버 flat은 DESC라 화면용으로 ASC 정렬)
-    const ordered = [...PROJECTS].sort((a,b)=> String(a.created_at||'').localeCompare(String(b.created_at||'')));
+    // ★data.tabs 서버정렬 버킷을 받은 순서대로(파이프라인 순) 렌더 — 프론트 .sort() 제거(백엔드 정렬 단일출처).
+    //   quote_ready(결제대기)는 intake 버킷에 포함(선결1). tabs 없으면 flat 폴백.
+    const ordered = tabs ? [].concat(tabs.intake||[], tabs.processing||[], tabs.review_send||[], tabs.sent||[]) : PROJECTS;
+    if(!ordered.length){ tb.innerHTML='<tr><td colspan="4" style="color:var(--muted)">아직 접수된 프로젝트가 없습니다.</td></tr>'; renderFlowSummary(); return; }
     tb.innerHTML = ordered.map(p => {
       return '<tr>'
         + '<td><b>'+esc(p.ref_code)+'</b>'
