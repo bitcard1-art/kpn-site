@@ -917,7 +917,7 @@
         <div class="intake-msg" id="in-msg"></div>
       </div>
 
-      <h3 class="council-sub" data-ko="접수 현황 · 결과 조회" data-en="Track status · result">접수 현황 · 결과 조회</h3>
+      <h3 id="track" class="council-sub" data-ko="접수 현황 · 결과 조회" data-en="Track status · result">접수 현황 · 결과 조회</h3>
       <div class="track-box">
         <div class="tf">
           <label data-ko="접수번호" data-en="Reference code">접수번호</label>
@@ -1664,6 +1664,18 @@
       bindPay(box);
     } catch(e){ box.innerHTML='<div class="track-card" style="color:var(--refuse)">'+(lang==='en'?'Error: ':'오류: ')+esc(e.message)+'</div>'; }
   });
+
+  // 메일 '진행 상황 조회' 링크(/?ref=KPN-XXXX#track) 대응 — URL ref 파라미터를 접수번호 칸에 자동 채우고 자동 조회.
+  //   ref 없으면 빈 칸 유지(기존 동작). #track 앵커는 브라우저가 해당 섹션으로 스크롤.
+  (function autoTrack(){
+    try{
+      const ref = new URLSearchParams(location.search).get('ref');
+      if(!ref) return;
+      const inp = document.getElementById('tr-ref');
+      if(inp) inp.value = ref.trim();
+      if(trBtn) trBtn.click();   // 자동 조회 실행
+    }catch(_e){}
+  })();
 
   /* ========== 매직링크 로그인 (Supabase Auth) ========== */
   // 단일 프로젝트 카드 렌더링 (track / my_projects 공용)
