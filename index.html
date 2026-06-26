@@ -1597,8 +1597,19 @@
     return '<div class="pay-wrap" style="margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px">'
       + '<div style="font-size:13px;color:var(--muted-2)">'+(lang==='en'?'Amount':'견적 금액')+'</div>'
       + '<div style="font-size:22px;font-weight:700;color:var(--paper);margin:2px 0 12px">'+amount+'</div>'
-      + '<button class="btn btn-primary" data-pay-ref="'+esc(pj.ref_code)+'">'+(lang==='en'?'Pay now':'결제하기')+'</button>'
+      + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
+      +   '<button class="btn btn-primary" data-pay-ref="'+esc(pj.ref_code)+'">'+(lang==='en'?'Pay now':'결제하기')+'</button>'
+      +   '<button class="btn btn-ghost" data-hold-ref="'+esc(pj.ref_code)+'">'+(lang==='en'?'Hold for now':'보류하기')+'</button>'
+      + '</div>'
       + '<div class="pay-msg" style="margin-top:10px;font-size:13px;color:var(--muted-2)"></div></div>';
+  }
+  // 보류 = 서버 상태 변경 없음(quote_ready 유지·검증 시작 안 함). 안내만 표시. 재조회 시 결제/보류 버튼 다시 나옴.
+  function holdNow(ref, btn){
+    const wrap = btn.closest('.pay-wrap'); const msg = wrap.querySelector('.pay-msg');
+    msg.style.color='var(--hold)';
+    msg.innerHTML=(lang==='en'
+      ? '⏸ On hold — verification starts when you pay. Re-track anytime with your reference code to pay.'
+      : '⏸ 보류됨 — 결제 시 KPN 검증이 시작됩니다. 언제든 접수번호로 다시 조회해 결제하실 수 있습니다.');
   }
   async function payNow(ref, btn){
     const wrap = btn.closest('.pay-wrap'); const msg = wrap.querySelector('.pay-msg');
@@ -1616,7 +1627,10 @@
       }
     }catch(e){ btn.disabled=false; msg.style.color='var(--refuse)'; msg.textContent=(lang==='en'?'Error: ':'오류: ')+esc(e.message); }
   }
-  function bindPay(scope){ (scope||document).querySelectorAll('[data-pay-ref]').forEach(b=>{ b.onclick=()=>payNow(b.dataset.payRef,b); }); }
+  function bindPay(scope){
+    (scope||document).querySelectorAll('[data-pay-ref]').forEach(b=>{ b.onclick=()=>payNow(b.dataset.payRef,b); });
+    (scope||document).querySelectorAll('[data-hold-ref]').forEach(b=>{ b.onclick=()=>holdNow(b.dataset.holdRef,b); });
+  }
 
   const trBtn = document.getElementById('tr-btn');
   if (trBtn) trBtn.addEventListener('click', async () => {
@@ -1666,6 +1680,19 @@
       + pay + report
       + '</div>';
   }
+
+  // 작업2: 로그인 이메일 칸을 접수 폼 이메일로 자동 채움(수정 가능). 사용자가 로그인 칸을 직접 고치면 자동동기화 중단.
+  (function syncLoginEmail(){
+    const inEmail = document.getElementById('in-email');
+    const loginEmail = document.getElementById('login-email');
+    if(!inEmail || !loginEmail) return;
+    let touched = false;
+    loginEmail.addEventListener('input', ()=>{ touched = true; });
+    function sync(){ if(!touched && inEmail.value) loginEmail.value = inEmail.value; }
+    inEmail.addEventListener('input', sync);   // 접수 이메일 입력/변경 시 반영
+    loginEmail.addEventListener('focus', sync); // 포커스 시에도 동기화(아직 손 안 댔으면)
+    sync();
+  })();
 
   const loginBtn = document.getElementById('login-btn');
   const loginMsg = document.getElementById('login-msg');
