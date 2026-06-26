@@ -1558,12 +1558,15 @@
       const res = await fetch(PROJ_FN, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({action:'submit'}, {project})) });
       const data = await res.json();
       if(!res.ok) throw new Error(data.error||('HTTP '+res.status));
-      // 선결1: submit은 quote_ready에서 정지 — 결제 확인(mark_paid) 후에만 KPN 검증 생성. 결제 UI는 준비 중(자리만).
+      // 선결1: submit은 quote_ready에서 정지. 접수 직후 견적 금액(어드민 미입력 시 기본 ₩29,000)+결제/보류 버튼을 바로 표시.
+      const pseudo = { ref_code: data.ref_code, status: 'quote_ready', pay_amount: null };
       imsg(lang==='en'?'Received. Your reference code:':'접수되었습니다. 접수번호:', true,
         '<span class="ref">'+esc(data.ref_code)+'</span>'
         + (lang==='en'
-          ? 'Next: <b>verification starts after payment is confirmed</b>. 💳 Payment instructions are being finalized (Payoneer / KakaoPay) — we will guide you shortly. Track status below with this code.'
-          : '다음 단계: <b>결제 확인 후 KPN 검증이 시작</b>됩니다. 💳 결제 안내는 준비 중입니다(페이오니아·카카오페이 — 수단 확정 후 안내). 아래에서 이 번호로 진행 상황을 조회하세요.'));
+          ? 'Review the quote below — <b>pay now</b> to start verification, or <b>hold for later</b>. Re-track anytime with this code.'
+          : '아래 <b>견적 금액</b>을 확인하고 <b>결제</b>하시면 KPN 검증이 시작됩니다. <b>보류</b> 후 언제든 이 번호로 다시 조회해 결제하실 수 있습니다.')
+        + payBlock(pseudo));
+      bindPay(document.getElementById('in-msg'));
       ['in-name','in-email','in-company','in-region','in-title','in-detail'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
     } catch(e){ imsg((lang==='en'?'Error: ':'오류: ')+e.message, false); }
   });
