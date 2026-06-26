@@ -482,6 +482,7 @@
     <div class="checkrow"><label><input type="checkbox" id="pm-ready" /> 리포트 공개 (고객에게 표시)</label></div>
     <div style="margin-top:18px" class="actions">
       <button class="btn" id="pm-save">저장</button>
+      <button class="btn" id="pm-quote" title="견적 금액을 저장하고 고객에게 견적 안내 메일 발송">💰 견적 메일 발송</button>
       <button class="btn ghost" id="pm-close">닫기</button>
       <button class="btn danger" id="pm-del" style="margin-left:auto">삭제</button>
     </div>
@@ -863,6 +864,22 @@ $('pm-save').onclick = async () => {
     msg($('pm-msg'),'저장되었습니다.',true);
     await loadProjects();
     setTimeout(()=>show($('pmodal'), false), 600);
+  } catch(e){ msg($('pm-msg'),'오류: '+e.message,false); }
+};
+
+// 견적 금액 저장 + 고객에게 견적 안내 메일(금액+결제 CTA) 한 번에 발송.
+$('pm-quote').onclick = async () => {
+  const ref = $('pm-ref').textContent.trim();
+  const id = $('pm-id').value;
+  const amount = $('pm-amount').value.trim();
+  if(!amount){ msg($('pm-msg'),'견적 금액을 먼저 입력하세요.',false); return; }
+  if(!confirm('견적 금액 '+amount+' (으)로 고객에게 견적 안내 메일을 보낼까요?')) return;
+  try {
+    msg($('pm-msg'),'금액 저장 후 견적 메일 발송 중…',true);
+    await pcall('update', { id, project: { pay_amount: amount } });   // 금액 저장
+    const r = await pcall('send_quote', { ref_code: ref });           // 견적 메일 발송
+    msg($('pm-msg'),'✓ 견적 메일 발송됨 → '+esc(r.sent_to||'')+' · '+esc(r.amount||''),true);
+    await loadProjects();
   } catch(e){ msg($('pm-msg'),'오류: '+e.message,false); }
 };
 
