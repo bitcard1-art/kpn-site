@@ -552,8 +552,7 @@
       <button class="btn ghost sm" id="rm-retriage">↻ AI 초안 다시 생성</button>
       <div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">
         <button class="btn ghost" id="rm-close2">닫기</button>
-        <button class="btn ghost" id="rm-send" style="border-color:var(--answer);color:var(--answer)">✉ 고객에게 발송</button>
-        <button class="btn" id="rm-approve" style="background:var(--hold);color:#231a04">✓ 확정 공개</button>
+        <button class="btn" id="rm-approve" style="background:var(--hold);color:#231a04">✓ 확정 공개 + 발송</button>
       </div>
     </div>
     <div class="msg" id="rm-msg" style="margin:0 28px 20px"></div>
@@ -762,12 +761,23 @@ function renderSent(){
           + '<td><div class="sent-act">'
           +   '<a href="'+reportPdfPreviewUrl(ref)+'" target="_blank" rel="noopener">📄 PDF 보기</a>'
           +   (st==='ready' ? '<button class="mark" data-marksent="'+esc(ref)+'">✓ 발송 표시</button>' : '')
+          +   (p.email ? '<button class="mark" data-resend="'+esc(ref)+'" title="고객이 메일을 못 받았을 때 결과 메일 재발송">✉ 재발송</button>' : '<span style="color:var(--muted-2);font-size:11px">이메일 없음</span>')
           + '</div></td>'
           + '</tr>';
       }).join('')
     + '</tbody></table>';
 
   slot.querySelectorAll('[data-marksent]').forEach(b=> b.onclick=()=>markSent(b.dataset.marksent));
+  slot.querySelectorAll('[data-resend]').forEach(b=> b.onclick=()=>resendResult(b.dataset.resend));
+}
+
+// 결과 메일 재발송(발송 현황 탭) — 고객이 메일 못 받았다 할 때.
+async function resendResult(ref){
+  if(!confirm(ref+' 건의 결과 메일을 고객에게 다시 보낼까요?')) return;
+  try {
+    const r = await tcall('resend_result', { ref_code: ref });
+    alert('✓ 결과 메일 재발송됨 → '+(r.email||''));
+  } catch(e){ alert('재발송 오류: '+e.message); }
 }
 
 async function markSent(ref){
@@ -1063,16 +1073,20 @@ function fnum(v){ const n=parseFloat(v); return isNaN(n)?esc(String(v)):(n<=1? n
 $('rm-close').onclick = ()=> { resetPdfPreview(); show($('rmodal'), false); };
 $('rm-close2').onclick = ()=> { resetPdfPreview(); show($('rmodal'), false); };
 
+// 확정 공개 + 결과 메일 발송 통합. 이메일 있으면 자동 발송, 없으면 확정만(미발송 표시). 메일 실패해도 확정 유지.
 $('rm-approve').onclick = async () => {
   const ref = $('rm-ref-code').value;
   const report = $('rm-report').value.trim();
   if(!report){ msg($('rm-msg'),'리포트 내용이 비어 있습니다.',false); return; }
-  if(!confirm('이 판단 리포트를 고객에게 공개할까요?\n공개 후 고객이 접수번호로 바로 조회할 수 있습니다.')) return;
+  if(!confirm('이 리포트를 확정 공개하고, 고객 이메일이 있으면 결과 메일을 발송합니다.\n발송 전 PDF 미리보기로 한글·내용을 확인했는지 점검하세요. 진행할까요?')) return;
   try {
-    msg($('rm-msg'),'공개 처리 중…',true);
-    await tcall('approve', { ref_code: ref, report, pay_amount: $('rm-amount').value.trim(), pay_link: $('rm-paylink').value.trim() });
-    msg($('rm-msg'),'✓ 공개되었습니다. 고객이 조회할 수 있습니다.',true);
-    setTimeout(()=>{ show($('rmodal'), false); loadQueue(); loadProjects(); }, 800);
+    msg($('rm-msg'),'확정 공개 + 발송 처리 중…',true);
+    const r = await tcall('approve', { ref_code: ref, report, pay_amount: $('rm-amount').value.trim(), pay_link: $('rm-paylink').value.trim() });
+    const mailMsg = r && r.emailed
+      ? ' · 결과 메일 발송됨('+esc(r.email||'')+')'
+      : ' · ⚠ 고객 이메일 미등록 — 메일 미발송(확정만 완료, 발송 현황 탭에서 이메일 보완 후 재발송 가능)';
+    msg($('rm-msg'),'✓ 확정 공개됨'+mailMsg, true);
+    setTimeout(()=>{ show($('rmodal'), false); loadQueue(); loadProjects(); }, 1500);
   } catch(e){ msg($('rm-msg'),'오류: '+e.message,false); }
 };
 
@@ -1109,39 +1123,7 @@ $('rm-pdf-load').onclick = () => {
   dl.href = url;   dl.style.display='inline-flex';
 };
 
-/* ===== 고객에게 발송 =====
-   1순위: 백엔드 send 액션(서버가 메일 전송 + 발송기록).
-   폴백: 백엔드에 send가 없으면 mailto로 메일 클라이언트를 열어 수동 발송. */
-$('rm-send').onclick = async () => {
-  const ref = $('rm-ref-code').value;
-  const report = $('rm-report').value.trim();
-  if(!ref){ msg($('rm-msg'),'접수번호가 없습니다.',false); return; }
-  if(!report){ msg($('rm-msg'),'리포트 내용이 비어 있습니다. 먼저 작성·확정하세요.',false); return; }
-  const to = RM_CTX.email;
-  if(!to){ msg($('rm-msg'),'고객 이메일이 없습니다. 접수 정보를 확인하세요.',false); return; }
-  if(!confirm('고객('+to+')에게 자문 결과지를 발송할까요?\n발송 전 PDF 미리보기로 한글·내용을 확인했는지 점검하세요.')) return;
-  msg($('rm-msg'),'발송 처리 중…',true);
-  try {
-    // 1) 백엔드 send 시도
-    await tcall('send', { ref_code: ref, email: to });
-    msg($('rm-msg'),'✓ 고객에게 발송되었습니다. ('+to+')',true);
-  } catch(e){
-    // 2) 폴백: mailto (PDF 링크 동봉)
-    const subject = `[KPN] 자문 결과지 · ${ref}`;
-    const body =
-`${RM_CTX.name ? RM_CTX.name+'님, ' : ''}안녕하세요. KPN 자문 결과지를 보내드립니다.
-
-· 접수번호: ${ref}
-· 결과지(PDF): ${reportPdfUrl(ref)}
-
-내용 확인 후 문의사항이 있으시면 회신 부탁드립니다.
-감사합니다.
-— KPN`;
-    const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
-    msg($('rm-msg'),'백엔드 자동발송이 없어 메일 작성창을 열었습니다. 내용 확인 후 직접 보내세요.',true);
-  }
-};
+/* ===== 고객에게 발송 — [확정 공개 + 발송]으로 통합됨(별도 버튼 제거). 재발송은 발송 현황 탭. ===== */
 
 /* ===== 대시보드 ===== */
 const VMAP = {ANSWER:'a', HOLD:'h'};
