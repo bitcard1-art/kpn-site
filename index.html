@@ -1445,6 +1445,18 @@
   const memCount = document.getElementById('mem-count');
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  // 결과 리포트 표시 — 모델 conclusion이 JSON으로 박힌 경우({"lead":..,"body":..}) 문장으로 언래핑(중괄호 매칭·문자열 안전) + 경량 마크다운.
+  function unwrapReportJson(txt){
+    var s=String(txt||''); var i=s.search(/\{\s*"lead"/); if(i<0) return s;
+    var depth=0,inStr=false,esc2=false,end=-1;
+    for(var k=i;k<s.length;k++){ var ch=s[k];
+      if(inStr){ if(esc2)esc2=false; else if(ch==='\\')esc2=true; else if(ch==='"')inStr=false; }
+      else { if(ch==='"')inStr=true; else if(ch==='{')depth++; else if(ch==='}'){depth--; if(depth===0){end=k+1;break;}} } }
+    if(end<0) return s;
+    try{ var o=JSON.parse(s.slice(i,end)); if(o&&(o.lead||o.body)){ var prose=(o.lead?o.lead+'\n\n':'')+(o.body||''); return s.slice(0,i).replace(/\*+\s*$/,'')+prose+s.slice(end); } }catch(e){}
+    return s;
+  }
+  function renderReport(txt){ return esc(unwrapReportJson(txt)).replace(/^#{1,4}\s*(.+)$/gm,'<b>$1</b>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>'); }
   function initials(name){ const n=(name||'').trim(); return n ? n.slice(0,2) : '?'; }
 
   function joinCard(){
@@ -1652,7 +1664,7 @@
       const pay = payBlock(pj);   // 결제 대기면 금액+결제버튼(/human/pay)
       let report = '';
       if (pj.report_ready && pj.report) {
-        report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>';
+        report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+renderReport(pj.report)+'</div>';
       }
       box.innerHTML = '<div class="track-card">'
         + '<span class="track-status">● '+(lang==='en'?safeStatus(pj.status).en:safeStatus(pj.status).ko)+'</span>'
@@ -1685,7 +1697,7 @@
     const pay = payBlock(pj);   // 결제 대기면 금액+결제버튼(/human/pay) — 호출처에서 bindPay 필요
     let report = '';
     if (pj.report_ready && pj.report) {
-      report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+esc(pj.report)+'</div>';
+      report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+renderReport(pj.report)+'</div>';
     }
     return '<div class="track-card" style="margin-bottom:12px">'
       + '<span class="track-status">● '+(lang==='en'?safeStatus(pj.status).en:safeStatus(pj.status).ko)+'</span>'
