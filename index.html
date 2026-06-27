@@ -926,6 +926,14 @@
         <label data-ko="의뢰 상세" data-en="Details">의뢰 상세</label>
         <textarea id="in-detail" placeholder=""></textarea>
 
+        <!-- 리포트 언어(영어 리포트 1단계: 선택+저장. 출력은 2단계부터 분기) — 본문 언어 따라 자동 프리셀렉트, 변경 가능 -->
+        <label data-ko="리포트 언어" data-en="Report language" style="margin-top:14px">리포트 언어</label>
+        <select id="in-lang" style="width:100%;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:11px">
+          <option value="ko" data-ko="한국어" data-en="Korean">한국어</option>
+          <option value="en" data-ko="English (영어)" data-en="English">English (영어)</option>
+        </select>
+        <div style="margin-top:5px;color:var(--muted-2);font-size:12px" data-ko="결과 리포트를 받을 언어입니다. 의뢰 내용 언어에 맞춰 자동 선택되며, 바꿀 수 있습니다." data-en="Language for your result report. Auto-selected from your request, changeable.">결과 리포트를 받을 언어입니다. 의뢰 내용 언어에 맞춰 자동 선택되며, 바꿀 수 있습니다.</div>
+
         <!-- 자동견적 제거(2026-06-26): 접수 전 견적은 구조 모순(Failed to fetch). 견적은 접수 후 어드민 금액 입력→track 표시로 일원화. -->
 
         <div style="margin-top:18px"><button class="btn btn-primary btn-lg" id="in-submit" data-ko="접수하기" data-en="Submit">접수하기</button></div>
@@ -1523,6 +1531,17 @@
     }));
   }
   function imsg(t, ok, refHtml){ const e=document.getElementById('in-msg'); if(!e) return; e.className='intake-msg '+(ok?'ok':'err'); e.innerHTML = t + (refHtml||''); }
+  // 리포트 언어 자동 프리셀렉트 — 의뢰 본문 언어 판별(한글 있으면 ko, 한글 없고 영문이면 en, 애매하면 ko). 직접 바꾸면 중단.
+  (function autoReportLang(){
+    const t=document.getElementById('in-title'), d=document.getElementById('in-detail'), sel=document.getElementById('in-lang');
+    if(!t||!sel) return;
+    let touched=false;
+    sel.addEventListener('change',()=>{ touched=true; });
+    function detect(){ if(touched) return; const txt=((t.value||'')+' '+((d&&d.value)||'')).trim(); if(!txt) return;
+      sel.value = (!/[가-힣]/.test(txt) && /[A-Za-z]/.test(txt)) ? 'en' : 'ko'; }
+    t.addEventListener('input',detect); if(d) d.addEventListener('input',detect);
+  })();
+
   const inSubmit = document.getElementById('in-submit');
   if (inSubmit) inSubmit.addEventListener('click', async () => {
     const project = {
@@ -1533,6 +1552,7 @@
       region: (document.getElementById('in-region').value||'').trim(),
       title: (document.getElementById('in-title').value||'').trim(),
       detail: (document.getElementById('in-detail').value||'').trim(),
+      report_lang: (document.getElementById('in-lang')||{}).value === 'en' ? 'en' : 'ko',   // 1단계: 리포트 언어 저장
     };
     if(!project.name || !project.email || !project.title){ imsg(lang==='en'?'Name, email, and title are required.':'이름·이메일·프로젝트 제목은 필수입니다.', false); return; }
     imsg(lang==='en'?'Submitting…':'접수 중…', true);
