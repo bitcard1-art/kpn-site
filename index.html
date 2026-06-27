@@ -1712,7 +1712,7 @@
     const pay = payBlock(pj);   // 결제 대기면 금액+결제버튼(/human/pay) — 호출처에서 bindPay 필요
     let report = '';
     if (pj.report_ready && pj.report) {
-      report = '<h4 style="font-family:var(--display);margin:18px 0 0">'+(lang==='en'?'Result report':'결과 리포트')+'</h4><div class="report-body">'+renderReport(pj.report)+'</div>';
+      report = reportEmbed(pj);   // ★PDF 임베드(완성본 그대로)
     }
     return '<div class="track-card" style="margin-bottom:12px">'
       + '<span class="track-status">● '+(lang==='en'?safeStatus(pj.status).en:safeStatus(pj.status).ko)+'</span>'
