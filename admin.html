@@ -385,7 +385,7 @@
     <div class="tabpane hide" id="tab-projects">
     <div class="card">
       <h2>고객 접수 <span style="font-family:var(--mono);font-size:13px;color:var(--muted-2);font-weight:400">· 들어온 신청 전체 원장</span></h2>
-      <p class="sub">고객이 신청한 건의 전체 목록입니다. 여기서 상태 변경·결제링크·수동 리포트 작성을 관리합니다. <b>실제 검토·발송은 다음 단계인 [검토·발송] 탭에서 합니다.</b></p>
+      <p class="sub">고객이 신청한 건의 전체 목록입니다(최신 접수 순). 여기서 상태 변경·결제링크·수동 리포트 작성을 관리합니다. <b>실제 검토·발송은 다음 단계인 [검토·발송] 탭에서 합니다.</b></p>
       <div class="flow-total" id="flow-total"></div>
       <div class="flow-summary" id="flow-summary"></div>
       <div style="overflow-x:auto">
@@ -400,7 +400,7 @@
     <div class="tabpane hide" id="tab-review">
     <div class="card">
       <h2>검토·발송 <span style="font-family:var(--mono);font-size:13px;color:var(--muted-2);font-weight:400">· AI 초안을 검토하고 PDF 확인 후 발송</span></h2>
-      <p class="sub">AI가 분류·판단 초안·견적을 채운 건들입니다. 각 건의 <b>PDF를 직접 확인</b>하고, <b style="color:var(--hold)">[확정 공개]</b> 후 <b style="color:var(--answer)">고객에게 발송</b>합니다. 우선순위(난이도) 높은 순으로 표시됩니다.</p>
+      <p class="sub">AI가 분류·판단 초안·견적을 채운 건들입니다. 각 건의 <b>PDF를 직접 확인</b>하고, <b style="color:var(--hold)">[확정 공개]</b> 후 <b style="color:var(--answer)">고객에게 발송</b>합니다. 최신 접수 순으로 표시됩니다.</p>
       <div id="queue-list"><div class="empty">불러오는 중…</div></div>
     </div>
     </div><!-- /tab-review -->
@@ -834,9 +834,10 @@ async function loadProjects(){
     PROJECTS = projects||[];   // openProject(id) 조회용 flat(하위호환) 유지
     TABS = tabs || {};
     const tb = $('prows');
-    // ★data.tabs 서버정렬 버킷을 받은 순서대로(파이프라인 순) 렌더 — 프론트 .sort() 제거(백엔드 정렬 단일출처).
-    //   quote_ready(결제대기)는 intake 버킷에 포함(선결1). tabs 없으면 flat 폴백.
-    PROJ_ORDERED = tabs ? [].concat(tabs.intake||[], tabs.processing||[], tabs.review_send||[], tabs.sent||[]) : PROJECTS;
+    // ★정렬 정책(2026-06-27 변경): 고객 접수 = 전체 원장을 '최신 접수 먼저'(created_at DESC)로. flat(projects)을
+    //   타임스탬프로 정렬(문자열 정렬 금지) → 페이지 슬라이스 전에 정렬 보장. (이전: 버킷 concat·FIFO)
+    PROJ_ORDERED = (projects || PROJECTS || []).slice()
+      .sort((a,b)=> new Date(b.created_at||0).getTime() - new Date(a.created_at||0).getTime());
     renderProjectsPage();
     renderFlowSummary();
   } catch(e){
@@ -953,7 +954,8 @@ async function loadQueue(){
   const slot = $('queue-list');
   try {
     const { queue } = await tcall('queue');
-    QUEUE = queue||[];
+    // ★정렬 정책(2026-06-27): 검토·발송도 '최신 접수 먼저'(created_at DESC). 타임스탬프 정렬 → 슬라이스 전 보장.
+    QUEUE = (queue||[]).slice().sort((a,b)=> new Date(b.created_at||0).getTime() - new Date(a.created_at||0).getTime());
     const badge = $('queue-badge');
     if(QUEUE.length){ badge.textContent = QUEUE.length; show(badge, true); }   // 배지=전체 건수(페이지네이션과 무관)
     else { show(badge, false); }
