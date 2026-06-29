@@ -1601,21 +1601,30 @@
   function isDone(s){ return s==='done' || s==='completed'; }
   // ── 결제 (접수번호=주문번호). 백엔드 /human/pay가 PAYMENT_TEST_MODE 게이트: 테스트모드만 paid 처리, 아니면 '준비 중'.
   //   ★나이스페이 연동 시 백엔드 /human/pay의 결제 지점만 교체 — 프론트는 그대로 이 버튼 사용.
-  const PAY_URL = "https://persona-mcp-server.onrender.com/human/pay";
+  // 결제 = 하이브리드(자동추천 등급 + 고객 확정) + 통화분기(KRW=NICEPAY / USD=준비중). 청구금액은 서버 확정(프론트값 불신).
   function payBlock(pj){
-    // 결제 대기(quote_ready/received)에서만 금액+결제버튼. 금액=pay_amount(어드민 입력) 없으면 테스트 기본값 ₩29,000.
     if (!(pj.status==='quote_ready' || pj.status==='received')) return '';
-    const amount = pj.pay_amount ? esc(String(pj.pay_amount)) : '₩29,000';
-    return '<div class="pay-wrap" style="margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px">'
-      + '<div style="font-size:13px;color:var(--muted-2)">'+(lang==='en'?'Amount':'견적 금액')+'</div>'
-      + '<div style="font-size:22px;font-weight:700;color:var(--paper);margin:2px 0 12px">'+amount+'</div>'
+    const ref = esc(pj.ref_code);
+    const sty='background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:8px;padding:9px';
+    return '<div class="pay-wrap" data-pay-ref="'+ref+'" style="margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px">'
+      + '<div style="font-size:13px;color:var(--muted-2)">'+(lang==='en'?'Recommended tier (auto) — confirm or change':'추천 등급(자동) — 확인 후 변경 가능')+'</div>'
+      + '<div class="pay-rec" style="font-size:14px;color:var(--paper);margin:4px 0 10px">'+(lang==='en'?'Analyzing…':'분석 중…')+'</div>'
+      + '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px">'
+      +   '<select class="pay-tier" style="'+sty+'"></select>'
+      +   '<select class="pay-cur" style="'+sty+'">'
+      +     '<option value="KRW">🇰🇷 '+(lang==='en'?'Korea (KRW)':'한국 (원화)')+'</option>'
+      +     '<option value="USD">🌍 '+(lang==='en'?'Overseas (USD)':'해외 (달러)')+'</option>'
+      +   '</select>'
+      + '</div>'
+      + '<div style="font-size:13px;color:var(--muted-2)">'+(lang==='en'?'Amount':'결제 금액')+'</div>'
+      + '<div class="pay-amt" style="font-size:22px;font-weight:700;color:var(--paper);margin:2px 0 12px">—</div>'
       + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
-      +   '<button class="btn btn-primary" data-pay-ref="'+esc(pj.ref_code)+'">'+(lang==='en'?'Pay now':'결제하기')+'</button>'
-      +   '<button class="btn btn-ghost" data-hold-ref="'+esc(pj.ref_code)+'">'+(lang==='en'?'Hold for now':'보류하기')+'</button>'
+      +   '<button class="btn btn-primary pay-go">'+(lang==='en'?'Pay now':'결제하기')+'</button>'
+      +   '<button class="btn btn-ghost" data-hold-ref="'+ref+'">'+(lang==='en'?'Hold for now':'보류하기')+'</button>'
       + '</div>'
       + '<div class="pay-msg" style="margin-top:10px;font-size:13px;color:var(--muted-2)"></div></div>';
   }
-  // 보류 = 서버 상태 변경 없음(quote_ready 유지·검증 시작 안 함). 안내만 표시. 재조회 시 결제/보류 버튼 다시 나옴.
+  // 보류 = 서버 상태 변경 없음(quote_ready 유지). 안내만.
   function holdNow(ref, btn){
     const wrap = btn.closest('.pay-wrap'); const msg = wrap.querySelector('.pay-msg');
     msg.style.color='var(--hold)';
@@ -1623,24 +1632,35 @@
       ? '⏸ On hold — verification starts when you pay. Re-track anytime with your reference code to pay.'
       : '⏸ 보류됨 — 결제 시 KPN 검증이 시작됩니다. 언제든 접수번호로 다시 조회해 결제하실 수 있습니다.');
   }
-  async function payNow(ref, btn){
-    const wrap = btn.closest('.pay-wrap'); const msg = wrap.querySelector('.pay-msg');
-    btn.disabled=true; msg.style.color='var(--muted)'; msg.textContent=(lang==='en'?'Processing…':'처리 중…');
-    try{
-      const res = await fetch(PAY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ref_code:ref})});
-      const d = await res.json().catch(()=>({}));
-      if(d && d.ok && d.status==='paid'){
-        msg.style.color='var(--answer)';
-        msg.innerHTML=(lang==='en'?'✓ Payment complete (test) — verification started.':'✓ 결제 완료(테스트) — KPN 검증을 시작합니다.');
-        btn.textContent=(lang==='en'?'Paid':'결제 완료');
-      } else {
-        btn.disabled=false; msg.style.color='var(--hold)';
-        msg.textContent = (d && d.message) || (lang==='en'?'Payment not available yet.':'결제 준비 중입니다.');
-      }
-    }catch(e){ btn.disabled=false; msg.style.color='var(--refuse)'; msg.textContent=(lang==='en'?'Error: ':'오류: ')+esc(e.message); }
+  // 등급 자동추천 + 카탈로그(단일출처) 로드 → 고객 확정 → KRW=NICEPAY 결제창 / USD=준비중. 청구금액은 서버가 등급으로 확정.
+  async function loadPayOptions(ref, wrap){
+    const recEl=wrap.querySelector('.pay-rec'), tierSel=wrap.querySelector('.pay-tier'), curSel=wrap.querySelector('.pay-cur'),
+          amtEl=wrap.querySelector('.pay-amt'), goBtn=wrap.querySelector('.pay-go'), msg=wrap.querySelector('.pay-msg');
+    let data;
+    try{ const r=await fetch(REPORT_BASE+'/pay/recommend?ref='+encodeURIComponent(ref)); data=await r.json(); }
+    catch(e){ recEl.textContent=(lang==='en'?'Could not load pricing.':'가격 정보를 불러오지 못했습니다.'); return; }
+    const cat=data.catalog||[], rec=data.recommended||{};
+    tierSel.innerHTML=cat.map(function(c){ return '<option value="'+c.tier+'"'+(c.tier===rec.tier?' selected':'')+'>'+esc(c.label)+'</option>'; }).join('');
+    curSel.value=(data.currency_suggest==='USD')?'USD':'KRW';
+    recEl.innerHTML=(lang==='en'?'This request looks like ':'이 의뢰는 ')+'<b>'+esc(rec.label||'')+'</b>'+(lang==='en'?' level.':' 수준으로 보입니다.')
+      +(data.admin_override?(' <span style="color:var(--muted-2)">('+(lang==='en'?'admin quote applies':'어드민 견적 적용')+')</span>'):'');
+    function refresh(){
+      const c=cat.find(function(x){return x.tier===tierSel.value;})||{};
+      if(curSel.value==='USD'){ amtEl.textContent=c.usd||'-'; }
+      else { amtEl.textContent=data.admin_override?('₩'+Number(data.admin_override).toLocaleString('ko-KR')):(c.krw_display||'-'); }
+      goBtn.textContent=(curSel.value==='USD')?(lang==='en'?'Overseas (coming soon)':'해외 결제 준비 중'):(lang==='en'?'Pay now (card)':'결제하기 (카드)');
+    }
+    tierSel.onchange=refresh; curSel.onchange=refresh; refresh();
+    goBtn.onclick=function(){
+      if(curSel.value==='USD'){ msg.style.color='var(--hold)'; msg.innerHTML=(lang==='en'
+        ? '🌍 Overseas (USD) payment is being prepared. Please use KRW for now, or contact us.'
+        : '🌍 해외(USD) 결제는 준비 중입니다. 현재는 원화(KRW) 결제 또는 문의를 이용해 주세요.'); return; }
+      // KRW → NICEPAY (서버가 고객확정 등급으로 금액 확정·청구)
+      window.location.href=REPORT_BASE+'/pay/nicepay/start?ref='+encodeURIComponent(ref)+'&tier='+encodeURIComponent(tierSel.value);
+    };
   }
   function bindPay(scope){
-    (scope||document).querySelectorAll('[data-pay-ref]').forEach(b=>{ b.onclick=()=>payNow(b.dataset.payRef,b); });
+    (scope||document).querySelectorAll('.pay-wrap[data-pay-ref]').forEach(function(w){ loadPayOptions(w.dataset.payRef, w); });
     (scope||document).querySelectorAll('[data-hold-ref]').forEach(b=>{ b.onclick=()=>holdNow(b.dataset.holdRef,b); });
   }
 
