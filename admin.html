@@ -526,12 +526,16 @@
       <button class="btn ghost sm" id="pm-savepay" title="취소·환불 등 결제상태를 수동 기록">💾 결제상태 저장</button>
     </div>
     <label>상태</label>
+    <!-- ★재발방지: 모든 status 값 옵션화. 누락 시 select.value 미매칭→빈값→저장 때 status="" 덮어쓰기(VCC0T 등 원인). -->
     <select id="pm-status">
       <option value="received">접수됨</option>
+      <option value="quote_ready">결제 대기</option>
       <option value="quoted">견적 안내</option>
       <option value="paid">결제 완료</option>
       <option value="processing">처리 중</option>
       <option value="done">완료</option>
+      <option value="completed">완료(발송)</option>
+      <option value="archived">보관</option>
     </select>
     <div class="row">
       <div><label>견적 금액 (표시용)</label><input id="pm-amount" placeholder="예: $1,500 / ₩2,000,000" /></div>
@@ -1088,12 +1092,13 @@ $('pm-close').onclick = ()=> show($('pmodal'), false);
 $('pm-save').onclick = async () => {
   const id = $('pm-id').value;
   const project = {
-    status: $('pm-status').value,
     pay_amount: $('pm-amount').value.trim(),
     pay_link: $('pm-paylink').value.trim(),
     report: $('pm-report').value.trim(),
     report_ready: $('pm-ready').checked,
   };
+  const stVal = $('pm-status').value;
+  if (stVal) project.status = stVal;   // ★빈값이면 status 미포함(빈 문자열로 덮어쓰지 않음 — 재발방지 가드)
   try {
     msg($('pm-msg'),'저장 중…',true);
     await pcall('update', { id, project });
