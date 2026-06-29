@@ -523,7 +523,8 @@
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px">
       <button class="btn ghost sm" id="pm-requeue" title="생성 실패·지연 시 자문 재생성 큐잉">🔁 자문 재큐잉</button>
-      <button class="btn ghost sm" id="pm-savepay" title="취소·환불 등 결제상태를 수동 기록">💾 결제상태 저장</button>
+      <button class="btn ghost sm" id="pm-cancel" title="실제 NICEPAY 승인취소(전액 환불) — 자문 생성 전만 가능">💳 결제 취소(NICEPAY 환불)</button>
+      <button class="btn ghost sm" id="pm-savepay" title="외부 환불·메모 등 결제상태 수동 기록(NICEPAY API 호출 아님)">💾 결제상태 수동기록</button>
     </div>
     <label>상태</label>
     <!-- ★재발방지: 모든 status 값 옵션화. 누락 시 select.value 미매칭→빈값→저장 때 status="" 덮어쓰기(VCC0T 등 원인). -->
@@ -1084,10 +1085,36 @@ function openProject(id){
   $('pm-paylink').value = p.pay_link||'';
   $('pm-report').value = p.report||'';
   $('pm-ready').checked = !!p.report_ready;
+  // ★결제 취소 버튼 정책 가드 — 승인된 NICEPAY 결제 + 자문 생성 전(quote_ready/received/queued)만 활성. 이후·취소완료는 비활성.
+  const cbtn = $('pm-cancel');
+  if(cbtn){
+    const preGen = ['quote_ready','received','queued'].includes(p.advisory_stage||'');
+    const cancellable = payStatusKey(p)==='approved' && p.pay_tid && preGen && !p.report_ready;
+    cbtn.disabled = !cancellable;
+    cbtn.title = (payStatusKey(p)==='cancelled') ? '이미 취소됨'
+      : (payStatusKey(p)!=='approved'||!p.pay_tid) ? 'NICEPAY 승인 결제만 취소 가능'
+      : (!cancellable) ? '자문 생성 시작/완료 — 환불 불가(정책)'
+      : '실제 NICEPAY 승인취소(전액 환불)';
+    cbtn.style.opacity = cancellable ? '1' : '0.45';
+  }
   $('pm-msg').className='msg';
   show($('pmodal'), true);
 }
 $('pm-close').onclick = ()=> show($('pmodal'), false);
+
+// ★실제 NICEPAY 승인취소(전액 환불) — Render /pay/nicepay/cancel(상점키 서버). 성공(2001)해야 cancelled 기록.
+$('pm-cancel').onclick = async () => {
+  if($('pm-cancel').disabled) return;
+  const ref = $('pm-ref').textContent.trim();
+  if(!confirm(ref+' 결제를 실제로 취소(전액 환불)할까요? NICEPAY 승인취소가 호출됩니다.')) return;
+  try{
+    msg($('pm-msg'),'NICEPAY 취소 호출 중…',true);
+    const res = await fetch('https://persona-mcp-server.onrender.com/pay/nicepay/cancel',{method:'POST',headers:{'Content-Type':'application/json','x-admin-password':PW},body:JSON.stringify({ref_code:ref})});
+    const d = await res.json().catch(()=>({}));
+    if(res.ok && d.ok){ msg($('pm-msg'),'✓ 취소(환불) 완료 · '+(d.result_code||'')+' · ₩'+(d.cancel_amt||''),true); await loadProjects(); }
+    else { msg($('pm-msg'),'취소 실패: '+(d.message||d.error||('HTTP '+res.status)),false); }
+  }catch(e){ msg($('pm-msg'),'오류: '+e.message,false); }
+};
 
 $('pm-save').onclick = async () => {
   const id = $('pm-id').value;
