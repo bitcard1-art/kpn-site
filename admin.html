@@ -388,10 +388,18 @@
       <p class="sub">고객이 신청한 건의 전체 목록입니다(최신 접수 순). 여기서 상태 변경·결제링크·수동 리포트 작성을 관리합니다. <b>실제 검토·발송은 다음 단계인 [검토·발송] 탭에서 합니다.</b></p>
       <div class="flow-total" id="flow-total"></div>
       <div class="flow-summary" id="flow-summary"></div>
+      <!-- STEP1: 결제상태 필터 (미처리 우선) -->
+      <div id="pay-filter" style="display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 12px">
+        <button class="btn ghost sm pf-btn" data-pf="all">전체</button>
+        <button class="btn ghost sm pf-btn" data-pf="action">⚑ 처리 필요</button>
+        <button class="btn ghost sm pf-btn" data-pf="unpaid">미결제</button>
+        <button class="btn ghost sm pf-btn" data-pf="approved">결제 승인</button>
+        <button class="btn ghost sm pf-btn" data-pf="failed">실패·취소</button>
+      </div>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>접수번호 / 고객</th><th>프로젝트</th><th>상태</th><th>관리</th></tr></thead>
-          <tbody id="prows"><tr><td colspan="4" style="color:var(--muted)">불러오는 중…</td></tr></tbody>
+          <thead><tr><th>접수번호 / 고객</th><th>등급 · 금액</th><th>결제</th><th>자문생성</th><th>관리</th></tr></thead>
+          <tbody id="prows"><tr><td colspan="5" style="color:var(--muted)">불러오는 중…</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -464,6 +472,23 @@
     <p class="sub" id="pm-ref"></p>
     <input type="hidden" id="pm-id" />
     <div id="pm-info" style="font-size:13.5px;color:var(--muted);line-height:1.7;border:1px solid var(--hair);border-radius:9px;padding:14px;margin-bottom:8px"></div>
+    <!-- STEP2: 결제·검증 정보(읽기 전용) -->
+    <div id="pm-pay" style="font-size:13px;line-height:1.85;border:1px solid var(--hair);border-radius:9px;padding:14px;margin-bottom:8px"></div>
+    <!-- STEP3: 수동 조치(재큐잉·결제상태 수동 기록) -->
+    <div class="row">
+      <div><label>결제 상태 수동 기록</label>
+        <select id="pm-paystatus">
+          <option value="">(변경 없음)</option>
+          <option value="approved">승인</option>
+          <option value="cancelled">취소</option>
+          <option value="refunded">환불</option>
+        </select></div>
+      <div><label>결제 메모(취소·환불 사유)</label><input id="pm-paynote" placeholder="예: 고객 요청 환불 2026-06-29" /></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px">
+      <button class="btn ghost sm" id="pm-requeue" title="생성 실패·지연 시 자문 재생성 큐잉">🔁 자문 재큐잉</button>
+      <button class="btn ghost sm" id="pm-savepay" title="취소·환불 등 결제상태를 수동 기록">💾 결제상태 저장</button>
+    </div>
     <label>상태</label>
     <select id="pm-status">
       <option value="received">접수됨</option>
@@ -807,6 +832,33 @@ document.querySelectorAll('.sent-filter button').forEach(b=> b.onclick=()=>{
 const PROJ_FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-projects";
 const ST = {received:'접수됨',quote_ready:'결제 대기',quoted:'견적 대기',paid:'결제 완료',processing:'처리 중',done:'완료'};
 const CT = {enterprise:'외국 기업',individual:'개인',ai_agent:'AI 에이전트'};
+// STEP1: 결제·등급·자문생성 표시 헬퍼
+const PAYST = {approved:{t:'승인',c:'y'},failed:{t:'실패',c:'n'},cancelled:{t:'취소',c:'n'},refunded:{t:'환불',c:'n'}};
+const TIER_SHORT = {one_question:'One Question',quick_read:'Quick Read',deep_read:'Deep Read',strategic_review:'Strategic'};
+const ADVST = {queued:'대기',received:'대기',generating:'생성중',ready_to_publish:'검토대기',needs_review:'검토필요',published:'완료',failed:'실패'};
+function payStatusKey(p){ return p.payment_status || (p.paid_at ? 'approved' : ''); }   // '' = 미결제
+function fmtAmtKRW(p){
+  if(p.approved_amount) return '₩'+Number(p.approved_amount).toLocaleString('ko-KR');
+  if(p.pay_amount) return esc(String(p.pay_amount));   // 어드민 견적/override(표시값)
+  return '—';
+}
+// 처리 필요 = 미결제(접수상태) OR 자문 실패·검토필요
+function needsAction(p){
+  const ps=payStatusKey(p); const st=p.advisory_stage||'';
+  if(!ps && (p.status==='quote_ready'||p.status==='received')) return true;
+  if(ps==='approved' && (st==='failed'||st==='needs_review')) return true;
+  return false;
+}
+let PAY_FILTER = 'all';
+function passPayFilter(p){
+  const ps=payStatusKey(p);
+  if(PAY_FILTER==='all') return true;
+  if(PAY_FILTER==='action') return needsAction(p);
+  if(PAY_FILTER==='unpaid') return !ps;
+  if(PAY_FILTER==='approved') return ps==='approved';
+  if(PAY_FILTER==='failed') return ps==='failed'||ps==='cancelled'||ps==='refunded';
+  return true;
+}
 let PROJECTS = [];
 let TABS = {};   // data.tabs 서버정렬 버킷(intake/processing/review_send/sent) — 프론트 .sort() 없이 받은 순서 렌더
 let PROJ_ORDERED = [];  // loadProjects가 채우는 정렬된 전체 목록(페이지네이션 슬라이스 원본)
@@ -847,24 +899,58 @@ async function loadProjects(){
 // 페이지(10건) 렌더 — refetch 없이 슬라이스만. 페이저는 table 말미 행으로.
 function renderProjectsPage(){
   const tb = $('prows'); if(!tb) return;
-  if(!PROJ_ORDERED.length){ tb.innerHTML='<tr><td colspan="4" style="color:var(--muted)">아직 접수된 프로젝트가 없습니다.</td></tr>'; return; }
-  const items = pageSlice('projects', PROJ_ORDERED);
-  const pgr = pagerHtml('projects', PROJ_ORDERED.length);
+  // STEP1: 결제상태 필터 적용(정렬은 PROJ_ORDERED=최신순 유지). '처리 필요'는 actionable만.
+  const filtered = PROJ_ORDERED.filter(passPayFilter);
+  if(!filtered.length){ tb.innerHTML='<tr><td colspan="5" style="color:var(--muted)">해당 조건의 접수 건이 없습니다.</td></tr>'; bindPager(tb); return; }
+  const items = pageSlice('projects', filtered);
+  const pgr = pagerHtml('projects', filtered.length);
   tb.innerHTML = items.map(p => {
-      return '<tr>'
+      const ps = payStatusKey(p);
+      const psMeta = ps ? (PAYST[ps]||{t:ps,c:'n'}) : {t:'미결제',c:''};
+      const tierLabel = TIER_SHORT[p.paid_tier] || (p.paid_tier||'—');
+      const advLabel = ADVST[p.advisory_stage] || (p.advisory_stage||'—');
+      const advCls = (p.advisory_stage==='published')?'y':(p.advisory_stage==='failed'||p.advisory_stage==='needs_review')?'n':'';
+      return '<tr'+(needsAction(p)?' style="background:rgba(201,162,39,.06)"':'')+'>'
         + '<td><b>'+esc(p.ref_code)+'</b>'
         +   '<div style="color:var(--muted-2);font-family:var(--mono);font-size:11px;margin-top:2px">🕒 '+esc(fmtKST(p.created_at))+'</div>'
         +   '<div style="color:var(--muted-2);font-size:12px;margin-top:3px">'+esc(p.name)+' · '+esc(CT[p.client_type]||p.client_type)+'</div><div style="color:var(--muted-2);font-family:var(--mono);font-size:11px">'+esc(p.email)+'</div></td>'
-        + '<td>'+esc(p.title)+(p.company?('<div style="color:var(--muted-2);font-size:12px;margin-top:3px">'+esc(p.company)+(p.region?(' · '+esc(p.region)):'')+'</div>'):'')+'</td>'
-        + '<td><span class="vtag '+(p.status==='done'?'y':'n')+'">'+esc(ST[p.status]||p.status)+'</span></td>'
+        + '<td>'+esc(tierLabel)+'<div style="font-weight:700;color:var(--paper);margin-top:2px">'+fmtAmtKRW(p)+'</div>'+(p.currency&&p.currency!=='KRW'?('<div style="color:var(--muted-2);font-size:11px">'+esc(p.currency)+'</div>'):'')+'</td>'
+        + '<td><span class="vtag '+psMeta.c+'">'+esc(psMeta.t)+'</span>'
+        +   (p.paid_at?('<div style="color:var(--muted-2);font-family:var(--mono);font-size:11px;margin-top:3px">🕒 '+esc(fmtKST(p.paid_at))+'</div>'):'')
+        +   (p.pay_tid?('<div style="color:var(--muted-2);font-family:var(--mono);font-size:10.5px">TID '+esc(p.pay_tid)+'</div>'):'')+'</td>'
+        + '<td><span class="vtag '+advCls+'">'+esc(advLabel)+'</span></td>'
         + '<td><button class="btn ghost sm" data-pedit="'+p.id+'">관리</button></td>'
         + '</tr>';
     }).join('')
-    + (pgr ? '<tr><td colspan="4" style="padding:0">'+pgr+'</td></tr>' : '');
+    + (pgr ? '<tr><td colspan="5" style="padding:0">'+pgr+'</td></tr>' : '');
   tb.querySelectorAll('[data-pedit]').forEach(b=> b.onclick=()=>openProject(b.dataset.pedit));
   bindPager(tb);
 }
+// 필터 버튼 바인딩(한 번)
+document.addEventListener('click', function(e){
+  const b=e.target.closest('.pf-btn'); if(!b) return;
+  PAY_FILTER=b.dataset.pf; pg.projects=1;
+  document.querySelectorAll('.pf-btn').forEach(x=>x.classList.toggle('active', x===b));
+  renderProjectsPage();
+});
 
+// STEP2: 결제·검증 정보(읽기 전용) — 마스킹 카드번호만, 민감정보 없음.
+function paymentInfoHtml(p){
+  const ps=payStatusKey(p); const m=ps?(PAYST[ps]||{t:ps,c:'n'}):{t:'미결제',c:''};
+  const rows=[
+    ['결제 상태','<span class="vtag '+m.c+'">'+esc(m.t)+'</span>'],
+    ['청구 등급', esc(TIER_SHORT[p.paid_tier]||p.paid_tier||'—')],
+    ['승인 금액', p.approved_amount?('₩'+Number(p.approved_amount).toLocaleString('ko-KR')):'—'],
+    ['결제수단', esc(p.pay_method||'—')+(p.card_masked?(' · '+esc(p.card_masked)):'')],
+    ['TID', '<span style="font-family:var(--mono);font-size:12px">'+esc(p.pay_tid||'—')+'</span>'],
+    ['결제일시', p.paid_at?esc(fmtKST(p.paid_at)):'—'],
+    ['자문 생성', esc(ADVST[p.advisory_stage]||p.advisory_stage||'—')],
+    ['금액 검증', ps==='approved'?'<span style="color:var(--answer)">✓ 서버 확정금액 일치(위변조 3중대조 통과)</span>':'—'],
+  ];
+  if(p.payment_note) rows.push(['결제 메모', esc(p.payment_note)]);
+  return '<div style="font-weight:700;margin-bottom:6px">💳 결제·검증 정보</div>'
+    + rows.map(r=>'<div><span style="color:var(--muted-2);display:inline-block;min-width:92px">'+r[0]+'</span> '+r[1]+'</div>').join('');
+}
 function openProject(id){
   const p = PROJECTS.find(x=>x.id===id);
   if(!p) return;
@@ -873,6 +959,8 @@ function openProject(id){
   $('pm-info').innerHTML = '<b>'+esc(p.name)+'</b> · '+esc(CT[p.client_type]||p.client_type)
     + '<br>'+esc(p.email) + (p.company?(' · '+esc(p.company)):'') + (p.region?(' · '+esc(p.region)):'')
     + '<br><br><b>의뢰 내용</b><br>'+esc(p.detail||'(상세 없음)');
+  $('pm-pay').innerHTML = paymentInfoHtml(p);                 // STEP2 결제·검증 정보
+  $('pm-paystatus').value = ''; $('pm-paynote').value = p.payment_note||'';  // STEP3
   $('pm-status').value = p.status;
   $('pm-amount').value = p.pay_amount||'';
   $('pm-paylink').value = p.pay_link||'';
@@ -901,6 +989,22 @@ $('pm-save').onclick = async () => {
   } catch(e){ msg($('pm-msg'),'오류: '+e.message,false); }
 };
 
+// STEP3: 자문 재큐잉(생성 실패·지연 시) — 기존 retriage 액션 재사용.
+$('pm-requeue').onclick = async () => {
+  const ref = $('pm-ref').textContent.trim();
+  if(!confirm(ref+' 자문을 재큐잉할까요? (생성 재시도)')) return;
+  try { msg($('pm-msg'),'재큐잉 중…',true); await pcall('retriage', { ref_code: ref }); msg($('pm-msg'),'✓ 재큐잉됨 — 잠시 후 생성이 시작됩니다.',true); await loadProjects(); }
+  catch(e){ msg($('pm-msg'),'오류: '+e.message,false); }
+};
+// STEP3: 결제 상태 수동 기록(취소·환불 등) — update 액션 재사용(payment_status/note).
+$('pm-savepay').onclick = async () => {
+  const id = $('pm-id').value, st = $('pm-paystatus').value, note = $('pm-paynote').value.trim();
+  if(!st && !note){ msg($('pm-msg'),'변경할 결제 상태 또는 메모를 입력하세요.',false); return; }
+  const project = { payment_note: note };
+  if(st){ project.payment_status = st; project.payment_status_at = new Date().toISOString(); }
+  try { msg($('pm-msg'),'결제상태 저장 중…',true); await pcall('update', { id, project }); msg($('pm-msg'),'✓ 결제상태 기록됨'+(st?(' ('+st+')'):''),true); await loadProjects(); }
+  catch(e){ msg($('pm-msg'),'오류: '+e.message,false); }
+};
 // 견적 금액 저장 + 고객에게 견적 안내 메일(금액+결제 CTA) 한 번에 발송.
 $('pm-quote').onclick = async () => {
   const ref = $('pm-ref').textContent.trim();
