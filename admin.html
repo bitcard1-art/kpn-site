@@ -249,6 +249,7 @@
       <button class="tabbtn on" data-tab="guide">가이드</button>
       <button class="tabbtn" data-tab="projects">고객 접수</button>
       <button class="tabbtn" data-tab="pay">결제관리</button>
+      <button class="tabbtn" data-tab="x402">x402 결제</button>
       <button class="tabbtn" data-tab="review">검토·발송 <span id="queue-badge" class="qbadge hide">0</span></button>
       <button class="tabbtn" data-tab="sent">발송 현황</button>
       <button class="tabbtn" data-tab="dash">운영 대시보드</button>
@@ -418,6 +419,27 @@
       </div>
     </div>
     </div><!-- /tab-pay -->
+
+    <!-- x402 결제 탭(신설) — AI 에이전트 USDC 채널. 카드(NICEPAY)와 별개. settle 발생 시 자동 기록·표시. -->
+    <div class="tabpane hide" id="tab-x402">
+    <div class="card">
+      <h2>x402 결제 <span style="font-family:var(--mono);font-size:13px;color:var(--muted-2);font-weight:400">· AI 에이전트 USDC</span></h2>
+      <p class="sub">AI 에이전트 x402(USDC/Base) 결제·정산을 관리합니다. 카드 결제(NICEPAY)와 <b>별개 채널</b>. settle(온체인 정산) 발생 시 tx·정산시각이 자동 기록됩니다.</p>
+      <div id="x402-filter" style="display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 12px">
+        <button class="btn ghost sm xf-btn" data-xf="all">전체</button>
+        <button class="btn ghost sm xf-btn" data-xf="settled">정산완료</button>
+        <button class="btn ghost sm xf-btn" data-xf="pending">정산대기</button>
+        <button class="btn ghost sm xf-btn" data-xf="action">⚑ 자문 처리필요</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>접수번호 / 에이전트</th><th>USDC · 등급</th><th>정산 (tx)</th><th>자문생성</th><th>관리</th></tr></thead>
+          <tbody id="x402rows"><tr><td colspan="5" style="color:var(--muted)">불러오는 중…</td></tr></tbody>
+        </table>
+      </div>
+      <p class="sub" style="font-size:12px;margin-top:8px">수금 주소(payTo): <span style="font-family:var(--mono)">0x63fFCA01D352A245f9D5cF372380966814D3Ee5e</span> (Base). settle 성공 = 이 주소로 USDC 입금. 첫 settle 전이면 목록 비어있음(정상).</p>
+    </div>
+    </div><!-- /tab-x402 -->
 
     <div class="tabpane hide" id="tab-review">
     <div class="card">
@@ -878,14 +900,14 @@ let TABS = {};   // data.tabs 서버정렬 버킷(intake/processing/review_send/
 let PROJ_ORDERED = [];  // loadProjects가 채우는 정렬된 전체 목록(페이지네이션 슬라이스 원본)
 // ── 페이지네이션(10건/페이지) — 정렬은 백엔드/기존 그대로, 페이지만 분할. 탭 카운트 배지는 전체 건수 유지. ──
 const PER_PAGE = 10;
-const pg = { projects: 1, queue: 1, sent: 1, pay: 1 };
+const pg = { projects: 1, queue: 1, sent: 1, pay: 1, x402: 1 };
 function pageSlice(key, arr){ const pages = Math.max(1, Math.ceil(arr.length/PER_PAGE)); if(pg[key]>pages) pg[key]=pages; if(pg[key]<1) pg[key]=1; const s=(pg[key]-1)*PER_PAGE; return arr.slice(s, s+PER_PAGE); }
 function pagerHtml(key, total){ const pages=Math.max(1,Math.ceil(total/PER_PAGE)); if(pages<=1) return ''; const cur=Math.min(Math.max(pg[key],1),pages);
   return '<div class="pager" style="display:flex;gap:10px;align-items:center;justify-content:center;margin:14px 0 2px">'
     +'<button class="btn ghost sm" data-pgk="'+key+'" data-pgto="'+(cur-1)+'"'+(cur<=1?' disabled':'')+'>‹ 이전</button>'
     +'<span style="font-size:12.5px;color:var(--muted-2)">'+cur+' / '+pages+' 페이지 · 총 '+total+'건</span>'
     +'<button class="btn ghost sm" data-pgk="'+key+'" data-pgto="'+(cur+1)+'"'+(cur>=pages?' disabled':'')+'>다음 ›</button></div>'; }
-function bindPager(scope){ (scope||document).querySelectorAll('[data-pgto]').forEach(b=> b.onclick=()=>{ const k=b.dataset.pgk; pg[k]=Math.max(1, parseInt(b.dataset.pgto,10)||1); if(k==='projects') renderIntake(); else if(k==='pay') renderPayments(); else if(k==='queue') renderQueuePage(); else renderSent(); }); }
+function bindPager(scope){ (scope||document).querySelectorAll('[data-pgto]').forEach(b=> b.onclick=()=>{ const k=b.dataset.pgk; pg[k]=Math.max(1, parseInt(b.dataset.pgto,10)||1); if(k==='projects') renderIntake(); else if(k==='pay') renderPayments(); else if(k==='x402') renderX402(); else if(k==='queue') renderQueuePage(); else renderSent(); }); }
 
 async function pcall(action, body){
   const res = await fetch(PROJ_FN, { method:'POST', headers:{'Content-Type':'application/json','x-admin-password':PW}, body: JSON.stringify(Object.assign({action}, body||{})) });
@@ -905,7 +927,8 @@ async function loadProjects(){
     PROJ_ORDERED = (projects || PROJECTS || []).slice()
       .sort((a,b)=> new Date(b.created_at||0).getTime() - new Date(a.created_at||0).getTime());
     renderIntake();      // 고객 접수 탭(intake 컬럼)
-    renderPayments();    // 결제관리 탭(결제 컬럼+필터)
+    renderPayments();    // 결제관리 탭(카드/NICEPAY)
+    renderX402();        // x402 결제 탭(AI USDC)
     renderFlowSummary();
   } catch(e){
     $('prows').innerHTML = '<tr><td colspan="4" style="color:var(--refuse)">오류: '+esc(e.message)+'</td></tr>';
@@ -966,8 +989,67 @@ document.addEventListener('click', function(e){
   renderPayments();
 });
 
+// ===== x402(USDC) 결제관리 — AI 에이전트 채널(client_type='ai_agent'). 데이터=PROJ_ORDERED 공유. =====
+const X402ST = { settled:{t:'정산완료',c:'y'}, pending:{t:'정산대기',c:''} };
+let X402_FILTER='all';
+function x402Settled(p){ return !!p.x402_tx; }
+function passX402Filter(p){
+  if(X402_FILTER==='all') return true;
+  if(X402_FILTER==='settled') return x402Settled(p);
+  if(X402_FILTER==='pending') return !x402Settled(p);
+  if(X402_FILTER==='action') return p.advisory_stage==='failed'||p.advisory_stage==='needs_review';
+  return true;
+}
+function shortHash(s){ s=String(s||''); return s.length>14 ? (s.slice(0,8)+'…'+s.slice(-4)) : s; }
+function renderX402(){
+  const tb=$('x402rows'); if(!tb) return;
+  const ai = PROJ_ORDERED.filter(p=>p.client_type==='ai_agent').filter(passX402Filter);
+  if(!ai.length){ tb.innerHTML='<tr><td colspan="5" style="color:var(--muted)">해당 x402 결제 건이 없습니다.</td></tr>'; bindPager(tb); return; }
+  const items=pageSlice('x402', ai); const pgr=pagerHtml('x402', ai.length);
+  tb.innerHTML = items.map(p=>{
+    const xp=p.x402_pricing||{}; const st=x402Settled(p)?'settled':'pending'; const m=X402ST[st];
+    const advLabel=ADVST[p.advisory_stage]||(p.advisory_stage||'—');
+    const advCls=(p.advisory_stage==='published')?'y':(p.advisory_stage==='failed'||p.advisory_stage==='needs_review')?'n':'';
+    return '<tr'+((p.advisory_stage==='failed'||p.advisory_stage==='needs_review')?' style="background:rgba(201,162,39,.06)"':'')+'>'
+      + '<td><b>'+esc(p.ref_code)+'</b><div style="color:var(--muted-2);font-family:var(--mono);font-size:11px;margin-top:2px">🕒 '+esc(fmtKST(p.created_at))+'</div><div style="color:var(--muted-2);font-size:12px;margin-top:3px">'+esc(p.name||'AI Agent')+'</div></td>'
+      + '<td><span style="font-weight:700;color:var(--paper)">'+esc(xp.price||'—')+'</span><div style="color:var(--muted-2);font-size:12px;margin-top:2px">'+esc(TIER_SHORT[xp.tier]||xp.tier||'—')+'</div></td>'
+      + '<td><span class="vtag '+m.c+'">'+esc(m.t)+'</span>'
+      +   (p.x402_settle_at?('<div style="color:var(--muted-2);font-family:var(--mono);font-size:11px;margin-top:3px">🕒 '+esc(fmtKST(p.x402_settle_at))+'</div>'):'')
+      +   (p.x402_tx?('<div style="color:var(--muted-2);font-family:var(--mono);font-size:10.5px">tx '+esc(shortHash(p.x402_tx))+'</div>'):'')+'</td>'
+      + '<td><span class="vtag '+advCls+'">'+esc(advLabel)+'</span></td>'
+      + '<td><button class="btn ghost sm" data-pedit="'+p.id+'">관리</button></td></tr>';
+  }).join('') + (pgr?'<tr><td colspan="5" style="padding:0">'+pgr+'</td></tr>':'');
+  tb.querySelectorAll('[data-pedit]').forEach(b=>b.onclick=()=>openProject(b.dataset.pedit));
+  bindPager(tb);
+}
+document.addEventListener('click', function(e){
+  const b=e.target.closest('.xf-btn'); if(!b) return;
+  X402_FILTER=b.dataset.xf; pg.x402=1;
+  document.querySelectorAll('.xf-btn').forEach(x=>x.classList.toggle('active', x===b));
+  renderX402();
+});
+
 // STEP2: 결제·검증 정보(읽기 전용) — 마스킹 카드번호만, 민감정보 없음.
 function paymentInfoHtml(p){
+  // x402(AI USDC) 채널은 별도 블록 — tx·payer·network·정산(온체인 공개값).
+  if(p.client_type==='ai_agent' || p.x402_pricing){
+    const xp=p.x402_pricing||{}; const settled=!!p.x402_tx;
+    const xrows=[
+      ['채널','x402 (USDC · Base)'],
+      ['정산 상태', settled?'<span class="vtag y">정산완료</span>':'<span class="vtag">정산대기</span>'],
+      ['USDC 금액', esc(xp.price||'—')],
+      ['등급', esc(TIER_SHORT[xp.tier]||xp.tier||'—')],
+      ['tx hash', '<span style="font-family:var(--mono);font-size:12px;word-break:break-all">'+esc(p.x402_tx||'—')+'</span>'],
+      ['결제자(payer)', '<span style="font-family:var(--mono);font-size:12px;word-break:break-all">'+esc(p.x402_payer||'—')+'</span>'],
+      ['네트워크', esc(p.x402_network||'—')],
+      ['정산 시각', p.x402_settle_at?esc(fmtKST(p.x402_settle_at)):'—'],
+      ['수금(payTo)', '<span style="font-family:var(--mono);font-size:11px;word-break:break-all">0x63fFCA01D352A245f9D5cF372380966814D3Ee5e</span>'],
+      ['자문 생성', esc(ADVST[p.advisory_stage]||p.advisory_stage||'—')],
+      ['입금 확인', settled?'<span style="color:var(--answer)">✓ settle 성공 — payTo 입금</span>':'—'],
+    ];
+    return '<div style="font-weight:700;margin-bottom:6px">⛓ x402(USDC) 결제·정산 정보</div>'
+      + xrows.map(r=>'<div><span style="color:var(--muted-2);display:inline-block;min-width:96px">'+r[0]+'</span> '+r[1]+'</div>').join('');
+  }
   const ps=payStatusKey(p); const m=ps?(PAYST[ps]||{t:ps,c:'n'}):{t:'미결제',c:''};
   const rows=[
     ['결제 상태','<span class="vtag '+m.c+'">'+esc(m.t)+'</span>'],
@@ -1068,6 +1150,7 @@ document.querySelectorAll('.tabbtn').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tabpane').forEach(pane => pane.classList.toggle('hide', pane.id !== 'tab-'+t));
   if (t === 'projects') { pg.projects = 1; renderIntake(); }   // 탭 전환 시 1페이지로
   if (t === 'pay') { pg.pay = 1; renderPayments(); }
+  if (t === 'x402') { pg.x402 = 1; renderX402(); }
   if (t === 'review') pg.queue = 1;
   if (t === 'sent') pg.sent = 1;
   if (t === 'dash') loadDashboard();
