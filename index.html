@@ -1599,8 +1599,8 @@
   function safeStatus(s){ return STATUS_MAP[s] || {ko:s||'—', en:s||'—'}; }
   // 완료 상태 판정 (done/completed 둘 다)
   function isDone(s){ return s==='done' || s==='completed'; }
-  // ── 결제 (접수번호=주문번호). 백엔드 /human/pay가 PAYMENT_TEST_MODE 게이트: 테스트모드만 paid 처리, 아니면 '준비 중'.
-  //   ★나이스페이 연동 시 백엔드 /human/pay의 결제 지점만 교체 — 프론트는 그대로 이 버튼 사용.
+  // ── 결제 (접수번호=주문번호). 하이브리드 자동추천 등급 + 고객 확정 + 통화분기.
+  //   KRW=NICEPAY 결제창(persona-mcp-server /pay/nicepay/start?ref&tier, 서버가 등급으로 금액 확정), USD=해외 준비중 안내.
   // 결제 = 하이브리드(자동추천 등급 + 고객 확정) + 통화분기(KRW=NICEPAY / USD=준비중). 청구금액은 서버 확정(프론트값 불신).
   function payBlock(pj){
     if (!(pj.status==='quote_ready' || pj.status==='received')) return '';
