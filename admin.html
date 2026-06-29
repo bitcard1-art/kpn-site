@@ -549,6 +549,8 @@
     <div style="margin-top:18px" class="actions">
       <button class="btn" id="pm-save">저장</button>
       <button class="btn" id="pm-quote" title="견적 금액을 저장하고 고객에게 견적 안내 메일 발송">💰 견적 메일 발송</button>
+      <!-- 테스트 전용 — ADMIN_TEST_MODE ON일 때만 노출(기본 숨김). 결제 없이 즉시 생성(paid_at 미설정). -->
+      <button class="btn" id="pm-teststart" hidden style="background:#7a3da8" title="결제 없이 즉시 자문 생성 시작(테스트 전용·paid_at 미설정·결제완료 메일 안 감)">🧪 결제완료 처리(테스트)</button>
       <button class="btn ghost" id="pm-close">닫기</button>
       <button class="btn danger" id="pm-del" style="margin-left:auto">삭제</button>
     </div>
@@ -661,6 +663,7 @@ $('login').onclick = async () => {
     loadRows();
     loadProjects();
     loadQueue();
+    checkAdminTestMode();          // ADMIN_TEST_MODE ON이면 테스트 버튼 노출
   } catch(e) {
     msg($('gate-msg'), e.message==='unauthorized' ? '비밀번호가 올바르지 않습니다.' : ('오류: '+e.message), false);
   }
@@ -1140,6 +1143,18 @@ $('pm-requeue').onclick = async () => {
   const ref = $('pm-ref').textContent.trim();
   if(!confirm(ref+' 자문을 재큐잉할까요? (생성 재시도)')) return;
   try { msg($('pm-msg'),'재큐잉 중…',true); await pcall('retriage', { ref_code: ref }); msg($('pm-msg'),'✓ 재큐잉됨 — 잠시 후 생성이 시작됩니다.',true); await loadProjects(); }
+  catch(e){ msg($('pm-msg'),'오류: '+e.message,false); }
+};
+// 🧪 테스트 강제 시작 — ADMIN_TEST_MODE ON일 때만 노출. retriage 재사용(advisory_stage=queued, paid_at 불가침) → 워커 즉시 생성(paid_at null=유예 회피). 결제완료 메일 안 감.
+function checkAdminTestMode(){
+  fetch('https://persona-mcp-server.onrender.com/healthz').then(r=>r.json()).then(d=>{
+    if(d && d.admin_test_mode){ const b=$('pm-teststart'); if(b) b.hidden=false; }
+  }).catch(()=>{});
+}
+$('pm-teststart').onclick = async () => {
+  const ref = $('pm-ref').textContent.trim();
+  if(!confirm('[테스트] '+ref+' 를 결제 없이 즉시 자문 생성 시작할까요?\n(paid_at 미설정 · 결제완료 메일 안 감 · 워커가 바로 생성)')) return;
+  try { msg($('pm-msg'),'테스트 생성 큐잉 중…',true); await pcall('retriage', { ref_code: ref }); msg($('pm-msg'),'✓ 테스트 생성 시작(결제 없이) — 잠시 후 generating',true); await loadProjects(); }
   catch(e){ msg($('pm-msg'),'오류: '+e.message,false); }
 };
 // STEP3: 결제 상태 수동 기록(취소·환불 등) — update 액션 재사용(payment_status/note).
