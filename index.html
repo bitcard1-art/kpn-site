@@ -891,9 +891,10 @@
           </tbody>
         </table>
       </div>
-      <!-- 카드 결제(NICEPAY 인증결제) 진입 — 카드사 심사 재현용. 결제 전구간은 서버(Render)에서 처리. -->
+      <!-- ★결제는 의뢰서 접수 시점에만(의뢰 없이 결제 불가). 가격 페이지 버튼은 의뢰서 작성으로 보내는 CTA. -->
       <div style="text-align:center;margin:18px 0 4px">
-        <a class="btn btn-primary btn-lg" href="https://persona-mcp-server.onrender.com/pay" target="_blank" rel="noopener" data-ko="💳 카드로 결제하기 (NICEPAY)" data-en="💳 Pay by card (NICEPAY)">💳 카드로 결제하기 (NICEPAY)</a>
+        <a class="btn btn-primary btn-lg" href="#intake" data-ko="의뢰서 작성하고 시작하기 →" data-en="Start a request →">의뢰서 작성하고 시작하기 →</a>
+        <div style="font-size:12px;color:var(--muted-2);margin-top:8px" data-ko="결제는 의뢰 접수 시 확정 등급 금액으로 진행됩니다 · 카드(NICEPAY)" data-en="Payment is taken at intake, at your confirmed‑tier amount · card (NICEPAY)">결제는 의뢰 접수 시 확정 등급 금액으로 진행됩니다 · 카드(NICEPAY)</div>
       </div>
 
       <!-- 환율 미적용 명기(클레임·차지백 방지) — 표시가격=청구가격, 한국=원화/해외=달러 고정가 -->
