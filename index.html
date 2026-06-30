@@ -902,6 +902,43 @@
       <p class="price-note" data-ko="모든 판단은 검증된 위원의 감수를 거칩니다 · 견적은 사안 범위에 따라 확정됩니다" data-en="Every judgment is reviewed by a verified council member · final quote depends on scope">모든 판단은 검증된 위원의 감수를 거칩니다 · 견적은 사안 범위에 따라 확정됩니다</p>
       <!-- 환불 규정(카드사 심사·무형 디지털 서비스) -->
       <p class="price-note" data-ko="환불 규정 · 자문 생성 시작 전(결제 후 약 10분 이내) 전액 환불 / 자문 생성 시작 후 환불 불가(무형 디지털 서비스) · 시스템 오류 시 자동 취소" data-en="Refund policy · Full refund before advisory generation begins (within ~10 min of payment) / No refund after generation starts (intangible digital service) · auto-cancel on system error">환불 규정 · 자문 생성 시작 전(결제 후 약 10분 이내) 전액 환불 / 자문 생성 시작 후 환불 불가(무형 디지털 서비스) · 시스템 오류 시 자동 취소</p>
+
+      <!-- ★ For AI Agents (x402) — 사람 채널(카드·원화)과 시각적으로 분리된 AI 전용 결제. 표시=실제: 인프라 사용이지 코인베이스 협업 아님. -->
+      <div style="margin-top:34px;border-top:1px dashed var(--line);padding-top:26px">
+        <div style="max-width:760px;margin:0 auto;background:var(--ink-2);border:1px solid var(--answer);border-radius:16px;padding:24px 26px;position:relative">
+          <span style="position:absolute;top:-11px;left:22px;background:var(--answer);color:#03201c;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 11px;border-radius:20px" data-ko="AI 에이전트 전용" data-en="FOR AI AGENTS ONLY">AI 에이전트 전용</span>
+          <h3 style="font-family:var(--display);font-size:clamp(19px,2.6vw,25px);margin:6px 0 6px;color:var(--paper)" data-ko="AI 에이전트는 x402로 자율 결제 (Base USDC)" data-en="AI agents pay autonomously via x402 (USDC on Base)">AI 에이전트는 x402로 자율 결제 (Base USDC)</h3>
+          <p style="color:var(--muted);font-size:14px;margin:0 0 16px" data-ko="지갑·x402를 갖춘 자율 AI 에이전트가 사람 개입 없이 KPN을 발견·결제·이용합니다. 사람 고객(카드·원화)과 별개 채널입니다." data-en="Autonomous AI agents with a wallet discover, pay, and use KPN without a human in the loop. Separate from the human (card · KRW) channel.">지갑·x402를 갖춘 자율 AI 에이전트가 사람 개입 없이 KPN을 발견·결제·이용합니다. 사람 고객(카드·원화)과 별개 채널입니다.</p>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+            <div style="flex:1;min-width:150px;background:var(--ink);border:1px solid var(--line);border-radius:11px;padding:13px 15px">
+              <div style="font-size:12px;color:var(--muted-2)" data-ko="단순 분류" data-en="classification">단순 분류</div>
+              <div style="font-size:22px;font-weight:800;color:var(--answer);margin-top:2px">$1</div>
+            </div>
+            <div style="flex:1;min-width:150px;background:var(--ink);border:1px solid var(--line);border-radius:11px;padding:13px 15px">
+              <div style="font-size:12px;color:var(--muted-2)" data-ko="위원 교차검증" data-en="committee">위원 교차검증</div>
+              <div style="font-size:22px;font-weight:800;color:var(--answer);margin-top:2px">$3</div>
+            </div>
+            <div style="flex:1;min-width:150px;background:var(--ink);border:1px solid var(--line);border-radius:11px;padding:13px 15px">
+              <div style="font-size:12px;color:var(--muted-2)" data-ko="법령+원문 심층" data-en="deep (legal+docs)">법령+원문 심층</div>
+              <div style="font-size:22px;font-weight:800;color:var(--answer);margin-top:2px">$5</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px">
+            <span style="font-size:12px;font-weight:700;color:var(--answer);background:var(--answer-dim);border:1px solid var(--answer);border-radius:20px;padding:4px 12px">● <span data-ko="Base 메인넷 라이브" data-en="Live on Base mainnet">Base 메인넷 라이브</span></span>
+            <span style="font-size:12px;font-weight:700;color:var(--muted);background:var(--ink);border:1px solid var(--line);border-radius:20px;padding:4px 12px" data-ko="Coinbase CDP Bazaar 등재" data-en="Indexed in Coinbase CDP Bazaar">Coinbase CDP Bazaar 등재</span>
+            <span style="font-size:12px;color:var(--muted-2);font-family:var(--mono)">USDC · Base · EIP-3009 (gasless)</span>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <a class="btn btn-primary" href="https://persona-mcp-server.onrender.com/x402" target="_blank" rel="noopener" data-ko="에이전트 연동 가이드 →" data-en="Agent integration guide →">에이전트 연동 가이드 →</a>
+            <span style="font-size:12px;color:var(--muted-2)" data-ko="무료 미리보기 → $1부터 · 사람 가입·계약 불필요" data-en="Free preview → from $1 · no human sign-up or contract">무료 미리보기 → $1부터 · 사람 가입·계약 불필요</span>
+          </div>
+
+          <p style="font-size:11px;color:var(--muted-2);margin:16px 0 0;line-height:1.6" data-ko="※ x402는 공개 표준이며, 결제 정산은 Coinbase CDP facilitator를 통해 이뤄지고 KPN은 CDP Bazaar에 등재되어 있습니다. KPN은 이 인프라를 사용할 뿐, 코인베이스와의 파트너십·협업 관계가 아닙니다." data-en="※ x402 is an open standard; settlement runs through the Coinbase CDP facilitator and KPN is indexed in the CDP Bazaar. KPN uses this infrastructure — it is not a Coinbase partnership or collaboration.">※ x402는 공개 표준이며, 결제 정산은 Coinbase CDP facilitator를 통해 이뤄지고 KPN은 CDP Bazaar에 등재되어 있습니다. KPN은 이 인프라를 사용할 뿐, 코인베이스와의 파트너십·협업 관계가 아닙니다.</p>
+        </div>
+      </div>
     </div>
   </section>
 
