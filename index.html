@@ -751,9 +751,9 @@
       <div class="reports-head">
         <div>
           <span class="rh-eyebrow" data-ko="전문 리포트 · 교차검증 기록" data-en="Full reports · cross-verified">전문 리포트 · 교차검증 기록</span>
-          <h3 data-ko="실제 자문 리포트 6선" data-en="Six real advisory reports">실제 자문 리포트 6선</h3>
+          <h3 data-ko="실제 자문 리포트" data-en="Real advisory reports">실제 자문 리포트</h3>
         </div>
-        <p class="rh-note" data-ko="위 5개가 ‘맛보기’라면, 아래는 KPN이 실제로 작성한 7페이지 교차검증 리포트입니다. 여섯 건 모두 결론은 조건부 HOLD — 점수를 부풀리지 않는 것이 이 네트워크의 일입니다. (전문 PDF는 한글로 제공됩니다.)" data-en="If the five above are a taste, these are the full 7-page cross-verified reports KPN actually wrote. All six conclude in conditional HOLD — not inflating scores is what this network does. (Full PDFs are provided in Korean.)">위 5개가 ‘맛보기’라면, 아래는 KPN이 실제로 작성한 7페이지 교차검증 리포트입니다. 여섯 건 모두 결론은 조건부 HOLD — 점수를 부풀리지 않는 것이 이 네트워크의 일입니다. (전문 PDF는 한글로 제공됩니다.)</p>
+        <p class="rh-note" data-ko="KPN이 실제로 작성한 교차검증 리포트입니다. 점수·판정은 부풀리지 않은 실제 값을 그대로 표기합니다. (해외 사례는 영문 리포트로 제공됩니다.)" data-en="Full cross-verified reports KPN actually produced. Scores and verdicts are shown as-is, never inflated. (Overseas cases are provided as English reports.)">KPN이 실제로 작성한 교차검증 리포트입니다. 점수·판정은 부풀리지 않은 실제 값을 그대로 표기합니다. (해외 사례는 영문 리포트로 제공됩니다.)</p>
       </div>
       <div class="reports" id="reports"></div>
 
@@ -1908,40 +1908,43 @@
   }
 
   /* ---------- reports 6선 (전문 PDF 카드) ---------- */
-  (function renderReports(){
+  (async function renderReports(){
     const host=document.getElementById('reports');
     if(!host) return;
-    const R=[
-      {ref:"KPN-2606-A4549",regKo:"스페인 · 바르셀로나",regEn:"Spain · Barcelona",tKo:"K-drama 테마 팝업의 IP·문화·상업 리스크 검토",tEn:"K-drama themed pop-up: IP, culture & commercial risk",lKo:"한국 콘텐츠를 해외에서 사업화할 때 IP 경계선이 어디서 위험해지는가.",lEn:"Where the IP line turns risky when monetizing Korean content abroad.",risk:"Medium",trust:65,pdf:"/KPN-2606-A4549.pdf"},
-      {ref:"KPN-2606-LKNHO",regKo:"독일·프랑스·미국 기업 대상",regEn:"For DE·FR·US firms",tKo:"한국 파트너사 신뢰도 자동 판단 AI 검증",tEn:"Verifying an AI that auto-scores Korean partner trust",lKo:"AI가 한국어 완곡 표현을 신뢰도 점수로 단정할 때 어디서 멈춰야 하는가.",lEn:"Where to stop when AI turns Korean indirect speech into a trust score.",risk:"Medium",trust:67,pdf:"/KPN-2606-LKNHO.pdf"},
-      {ref:"KPN-2606-O62GQ",regKo:"글로벌 투자자 · VC 대상",regEn:"For global investors · VCs",tKo:"한국 시장 뉴스 자동 요약 AI의 최신성·출처·판단 검증",tEn:"Verifying a Korea news-summary AI: recency, sources, judgment",lKo:"AI가 한국 정보를 검색·요약·판단할 때 어디서 멈춰야 하는가.",lEn:"Where to stop when AI searches, summarizes and judges Korean information.",risk:"Medium",trust:56,pdf:"/KPN-2606-O62GQ.pdf"},
-      {ref:"KPN-2606-SBXR6",regKo:"인도네시아 · 자카르타",regEn:"Indonesia · Jakarta",tKo:"한국 미용 시술 여행·콘텐츠 촬영의 의료·광고 리스크",tEn:"Korea beauty-procedure travel & content: medical/ad risk",lKo:"위원 양측이 보류한 사안을 KPN이 독립 교차검증으로 막아낸 기록.",lEn:"A case both advisors held — caught by KPN's independent cross-check.",risk:"High",trust:42,pdf:"/KPN-2606-SBXR6.pdf"},
-      {ref:"KPN-2606-UVADM",regKo:"인도네시아",regEn:"Indonesia",tKo:"한국 성형·피부과 의료관광 추천 AI의 법률·광고·안전 검증",tEn:"Verifying a Korea medical-tourism rec AI: law, ads, safety",lKo:"AI가 의료광고법 위반 표현을 자동 생성할 때 6문장 중 5개를 잡아낸 기록.",lEn:"Caught 5 of 6 AI-generated sentences breaching medical-ad law.",risk:"High",trust:42,pdf:"/KPN-2606-UVADM.pdf"},
-      {ref:"KPN-2606-3FED1",regKo:"미국",regEn:"United States",tKo:"미국 비건 스낵 브랜드의 한국 이커머스 진출 판단 검증",tEn:"Verifying a US vegan-snack brand's Korea e-commerce entry",lKo:"해외 브랜드의 한국 진출 초안에서 규제 위반 3건을 사전에 걸러낸 기록.",lEn:"Filtered out 3 regulatory breaches in a foreign brand's entry draft.",risk:"High",trust:42,pdf:"/KPN-2606-3FED1.pdf"},
-    ];
     const en = (typeof lang!=='undefined' && lang==='en');
-    const vKo="조건부 HOLD", vEn="Conditional HOLD";
     const trustKo="신뢰도 / 100", trustEn="Trust / 100";
-    R.forEach(c=>{
-      const rc=c.risk==="High"?"high":"med";
-      const riskKo="위험 "+(c.risk==="High"?"높음":"보통");
-      const riskEn="Risk "+c.risk;
-      const a=document.createElement('a');
-      a.className='report';a.href=c.pdf;a.target='_blank';a.rel='noopener';
-      a.setAttribute('aria-label',(en?c.tEn:c.tKo)+' — PDF');
+    function esc2(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+    let items=[];
+    try{ const r=await fetch(REPORT_BASE+'/advisory/showcase'); const d=await r.json(); items=(d.items||[]); }catch(e){ items=[]; }
+    if(!items.length){ host.innerHTML='<div style="color:var(--muted-2);font-size:14px;grid-column:1/-1">'+(en?'Loading reports…':'리포트를 불러오는 중…')+'</div>'; return; }
+    host.innerHTML='';
+    items.forEach(c=>{
+      const high=(c.risk==='High'), rc=high?'high':(c.risk==='Low'?'low':'med');
+      const riskKo="위험 "+(high?"높음":(c.risk==='Low'?"낮음":"보통"));
+      const riskEn="Risk "+(c.risk||'Medium');
+      const langKo=(c.report_lang==='en')?'· 영문 전문 PDF':'· 한글 전문 PDF';
+      const langEn=(c.report_lang==='en')?'· PDF in English':'· PDF in Korean';
+      const ready=!!c.report_ready;
+      const pdf=REPORT_BASE+'/report/'+encodeURIComponent(c.ref)+'/pdf?inline=1';
+      const a=document.createElement(ready?'a':'div');
+      a.className='report'+(ready?'':' pending');
+      if(ready){ a.href=pdf; a.target='_blank'; a.rel='noopener'; a.setAttribute('aria-label',(en?c.title_en:c.title_ko)+' — PDF'); }
+      else { a.style.opacity='.72'; a.style.cursor='default'; }
+      const openKo=ready?'전문 보기 →':'검증 진행 중', openEn=ready?'Open report →':'In verification';
       a.innerHTML=
-        '<span class="r-open" data-ko="전문 보기 →" data-en="Open report →">'+(en?'Open report →':'전문 보기 →')+'</span>'
-        +'<div class="r-ref">'+c.ref+'<span class="r-lang" data-ko="· 한글 전문 PDF" data-en="· PDF in Korean">'+(en?'· PDF in Korean':'· 한글 전문 PDF')+'</span></div>'
-        +'<div class="r-region" data-ko="'+c.regKo+'" data-en="'+c.regEn+'">'+(en?c.regEn:c.regKo)+'</div>'
-        +'<h4 data-ko="'+c.tKo+'" data-en="'+c.tEn+'">'+(en?c.tEn:c.tKo)+'</h4>'
-        +'<p class="r-liner" data-ko="'+c.lKo+'" data-en="'+c.lEn+'">'+(en?c.lEn:c.lKo)+'</p>'
+        '<span class="r-open" data-ko="'+openKo+'" data-en="'+openEn+'">'+(en?openEn:openKo)+'</span>'
+        +'<div class="r-ref">'+esc2(c.ref)+'<span class="r-lang" data-ko="'+langKo+'" data-en="'+langEn+'">'+(en?langEn:langKo)+'</span></div>'
+        +'<div class="r-region" data-ko="'+esc2(c.region_ko)+'" data-en="'+esc2(c.region_en)+'">'+esc2(en?c.region_en:c.region_ko)+'</div>'
+        +'<h4 data-ko="'+esc2(c.title_ko)+'" data-en="'+esc2(c.title_en)+'">'+esc2(en?c.title_en:c.title_ko)+'</h4>'
+        +'<p class="r-liner" data-ko="'+esc2(c.lede_ko)+'" data-en="'+esc2(c.lede_en)+'">'+esc2(en?c.lede_en:c.lede_ko)+'</p>'
         +'<div class="r-meta">'
-          +'<span class="r-verdict" data-ko="'+vKo+'" data-en="'+vEn+'">'+(en?vEn:vKo)+'</span>'
+          +'<span class="r-verdict" data-ko="'+esc2(c.verdict_ko)+'" data-en="'+esc2(c.verdict_en)+'">'+esc2(en?c.verdict_en:c.verdict_ko)+'</span>'
           +'<span class="r-risk" data-ko="'+riskKo+'" data-en="'+riskEn+'"><span class="rdot '+rc+'"></span>'+(en?riskEn:riskKo)+'</span>'
-          +'<span class="r-trust"><b>'+c.trust+'</b><span data-ko="'+trustKo+'" data-en="'+trustEn+'">'+(en?trustEn:trustKo)+'</span></span>'
+          +'<span class="r-trust"><b>'+(c.trust||0)+'</b><span data-ko="'+trustKo+'" data-en="'+trustEn+'">'+(en?trustEn:trustKo)+'</span></span>'
         +'</div>';
       host.appendChild(a);
     });
+    if(typeof applyLang==='function') applyLang();
   })();
 
   applyLang(); // 동적 생성(위원·노드맵·리포트) 완료 후 현재 언어로 재동기화
