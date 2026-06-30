@@ -1011,8 +1011,9 @@ function passX402Filter(p){
 function shortHash(s){ s=String(s||''); return s.length>14 ? (s.slice(0,8)+'…'+s.slice(-4)) : s; }
 function renderX402(){
   const tb=$('x402rows'); if(!tb) return;
-  const ai = PROJ_ORDERED.filter(p=>p.client_type==='ai_agent').filter(passX402Filter);
-  if(!ai.length){ tb.innerHTML='<tr><td colspan="5" style="color:var(--muted)">해당 x402 결제 건이 없습니다.</td></tr>'; bindPager(tb); return; }
+  // ★진짜 settle만: 온체인 tx(x402_tx) 있는 행만 노출. paid 플래그만 있고 tx 없는 '유령(스텁/테스트)' 건은 숨김(DB는 보존).
+  const ai = PROJ_ORDERED.filter(p=>p.client_type==='ai_agent').filter(x402Settled).filter(passX402Filter);
+  if(!ai.length){ tb.innerHTML='<tr><td colspan="5" style="color:var(--muted)">온체인 settle된 x402 거래가 없습니다.</td></tr>'; bindPager(tb); return; }
   const items=pageSlice('x402', ai); const pgr=pagerHtml('x402', ai.length);
   tb.innerHTML = items.map(p=>{
     const xp=p.x402_pricing||{}; const st=x402Settled(p)?'settled':'pending'; const m=X402ST[st];
