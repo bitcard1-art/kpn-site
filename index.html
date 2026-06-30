@@ -596,6 +596,7 @@
       <a href="#pricing" data-ko="요금제" data-en="Pricing">요금제</a>
       <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
       <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
+      <a href="#myadvisory" data-ko="내 자문 조회" data-en="My advisories">내 자문 조회</a>
     </div>
     <div class="nav-cta">
       <button class="lang" id="lang" type="button" aria-label="한국어로 전환">
@@ -613,6 +614,7 @@
     <a href="#pricing" data-ko="요금제" data-en="Pricing">요금제</a>
     <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
     <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
+    <a href="#myadvisory" data-ko="내 자문 조회" data-en="My advisories">내 자문 조회</a>
     <a href="#contact" class="mm-cta" data-ko="파일럿 문의" data-en="Request pilot">파일럿 문의</a>
   </div>
 </nav>
@@ -970,6 +972,31 @@
       <div class="intake-msg" id="login-msg" style="margin-top:12px"></div>
 
       <div class="track-result" id="tr-result"></div>
+    </div>
+  </section>
+
+  <!-- ACTIVITY LIST + MY ADVISORY (magiclink) -->
+  <section id="myadvisory">
+    <div class="wrap">
+      <h2 style="font-family:var(--display);font-size:clamp(24px,3.4vw,34px);margin:0 0 8px" data-ko="자문 활동" data-en="Advisory activity">자문 활동</h2>
+      <p style="color:var(--muted);font-size:15px;max-width:680px;margin:0" data-ko="실제 접수된 자문 활동입니다. 의뢰자·회사 정보는 보호를 위해 일부 가려지며, 결과·결론은 본인 인증 후에만 열람할 수 있습니다." data-en="Real advisory activity. Requester and company info is partially masked for privacy; results and conclusions are visible only after verifying it's you.">실제 접수된 자문 활동입니다. 의뢰자·회사 정보는 보호를 위해 일부 가려지며, 결과·결론은 본인 인증 후에만 열람할 수 있습니다.</p>
+      <div id="act-count" style="margin-top:14px;font-size:13px;color:var(--muted-2)"></div>
+      <div id="act-list" style="margin-top:12px">…</div>
+
+      <div id="myq-box" style="margin-top:36px;background:var(--ink-2);border:1px solid var(--line);border-radius:14px;padding:22px;max-width:680px">
+        <h3 style="font-family:var(--display);font-size:19px;margin:0 0 6px" data-ko="내 자문 조회" data-en="My advisories">내 자문 조회</h3>
+        <p style="color:var(--muted);font-size:13.5px;margin:0 0 14px" data-ko="가입 없이, 접수 시 사용한 이메일로 본인 자문 상세(결과·PDF)를 확인하세요. 입력하신 이메일로 일회용 열람 링크를 보내드립니다." data-en="No sign-up. Enter the email you used at intake; we'll email you a one-time link to view your advisory details (results · PDF).">가입 없이, 접수 시 사용한 이메일로 본인 자문 상세(결과·PDF)를 확인하세요. 입력하신 이메일로 일회용 열람 링크를 보내드립니다.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <input id="myq-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1;min-width:220px;padding:12px 14px;border-radius:9px;border:1px solid var(--line);background:var(--ink);color:var(--paper);font-size:15px">
+          <button class="btn btn-primary" id="myq-send" type="button" data-ko="조회 링크 받기" data-en="Send link">조회 링크 받기</button>
+        </div>
+        <div id="myq-msg" style="margin-top:10px;font-size:13.5px;color:var(--muted)"></div>
+      </div>
+
+      <div id="myq-detail" hidden style="margin-top:26px;max-width:680px">
+        <h3 style="font-family:var(--display);font-size:19px;margin:0 0 10px" data-ko="내 자문 상세" data-en="My advisory details">내 자문 상세</h3>
+        <div id="myq-detail-list"></div>
+      </div>
     </div>
   </section>
 
@@ -1719,6 +1746,73 @@
       if(inp) inp.value = ref.trim();
       if(trBtn) trBtn.click();   // 자동 조회 실행
     }catch(_e){}
+  })();
+
+  /* ========== 자문 활동 리스트(공개·마스킹) + 본인 열람(매직링크 커스텀 토큰) ========== */
+  (function advisoryPublic(){
+    function statusEn(ko){ return ko==='검증 완료'?'Verified':ko==='진행 중'?'In progress':'Received'; }
+    function statusColor(ko){ return ko==='검증 완료'?'var(--answer)':ko==='진행 중'?'var(--hold)':'var(--muted)'; }
+    // 공개 활동 리스트
+    (async function loadList(){
+      const listEl = document.getElementById('act-list'), countEl = document.getElementById('act-count');
+      if(!listEl) return;
+      try{
+        const r = await fetch(REPORT_BASE+'/advisory/list');
+        const d = await r.json(); const items = d.items||[];
+        if(countEl) countEl.textContent = (lang==='en'? ('Total '+(d.count||items.length)+' advisories received') : ('지금까지 접수된 자문 총 '+(d.count||items.length)+'건'));
+        if(!items.length){ listEl.innerHTML='<div style="color:var(--muted-2);font-size:14px">'+(lang==='en'?'No activity yet.':'아직 활동이 없습니다.')+'</div>'; return; }
+        listEl.innerHTML = items.map(function(it){
+          const who = esc(it.requester||'') + (it.company? ' · '+esc(it.company) : '');
+          const st = lang==='en'? statusEn(it.status) : esc(it.status);
+          return '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--ink-2)">'
+            + '<div style="min-width:0"><div style="font-weight:600;color:var(--paper);font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(it.title)+'</div>'
+            +   '<div style="font-size:12px;color:var(--muted-2);margin-top:3px">'+who+' · '+esc(it.date)+'</div></div>'
+            + '<div style="white-space:nowrap;font-size:12px;font-weight:700;color:'+statusColor(it.status)+'">● '+st+'</div></div>';
+        }).join('');
+      }catch(e){ listEl.innerHTML='<div style="color:var(--muted-2);font-size:14px">'+(lang==='en'?'Could not load activity.':'활동을 불러오지 못했습니다.')+'</div>'; }
+    })();
+    // 매직링크 요청 — enumeration-safe 동일 응답
+    const sendBtn = document.getElementById('myq-send');
+    if(sendBtn) sendBtn.onclick = async function(){
+      const email = (document.getElementById('myq-email').value||'').trim(), msgEl = document.getElementById('myq-msg');
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msgEl.style.color='var(--refuse)'; msgEl.textContent=(lang==='en'?'Enter a valid email.':'유효한 이메일을 입력하세요.'); return; }
+      sendBtn.disabled=true; msgEl.style.color='var(--muted)'; msgEl.textContent=(lang==='en'?'Sending…':'전송 중…');
+      try{
+        const r = await fetch(REPORT_BASE+'/advisory/magiclink',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})});
+        await r.json().catch(()=>({}));
+        msgEl.style.color='var(--answer)';
+        msgEl.textContent=(lang==='en'?'If that email has advisories, we emailed a one-time link (valid 20 min). Check your inbox.':'이력이 있는 이메일이면 일회용 링크(20분 유효)를 보냈습니다. 메일함을 확인하세요.');
+      }catch(e){ msgEl.style.color='var(--refuse)'; msgEl.textContent=(lang==='en'?'Error, please retry.':'오류가 발생했습니다. 다시 시도하세요.'); }
+      finally{ sendBtn.disabled=false; }
+    };
+    // ?mlt= 토큰 → 검증 → 본인 자문 상세(결과·PDF)
+    (async function verifyFromUrl(){
+      let token; try{ token = new URLSearchParams(location.search).get('mlt'); }catch(_e){ return; }
+      if(!token) return;
+      const box = document.getElementById('myq-detail'), list = document.getElementById('myq-detail-list');
+      if(!box||!list) return;
+      box.hidden=false; list.innerHTML='<div style="color:var(--muted)">'+(lang==='en'?'Verifying…':'확인 중…')+'</div>';
+      try{ history.replaceState(null,'',location.pathname+'#myadvisory'); }catch(_e){}   // 토큰 URL에서 제거(노출·재사용 방지)
+      try{
+        const r = await fetch(REPORT_BASE+'/advisory/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token})});
+        const d = await r.json().catch(()=>({}));
+        if(!r.ok || !d.ok){ list.innerHTML='<div style="color:var(--refuse)">'+esc(d.message||(lang==='en'?'Link invalid or expired. Please request again.':'링크가 유효하지 않거나 만료되었습니다. 다시 요청하세요.'))+'</div>'; return; }
+        const items = d.items||[];
+        if(!items.length){ list.innerHTML='<div style="color:var(--muted)">'+(lang==='en'?'No advisories for this email.':'해당 이메일의 자문이 없습니다.')+'</div>'; return; }
+        list.innerHTML = '<div style="font-size:13px;color:var(--muted-2);margin-bottom:10px">'+esc(d.email)+' · '+items.length+(lang==='en'?' advisories':'건')+'</div>'
+          + items.map(function(it){
+            const st = lang==='en'? statusEn(it.status) : esc(it.status);
+            return '<div style="border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;background:var(--ink-2)">'
+              + '<div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div style="font-family:var(--display);font-size:16px;font-weight:600">'+esc(it.title)+'</div>'
+              +   '<div style="white-space:nowrap;font-size:12px;font-weight:700;color:'+statusColor(it.status)+'">● '+st+'</div></div>'
+              + '<div style="font-family:var(--mono);font-size:12px;color:var(--muted-2);margin-top:4px">'+esc(it.ref_code)+' · '+esc(it.date)+'</div>'
+              + reportEmbed(it)
+              + (it.report_ready? '' : '<div style="font-size:13px;color:var(--muted);margin-top:10px">'+(lang==='en'?'The result will appear here once verification completes.':'검증이 완료되면 결과가 여기 표시됩니다.')+'</div>')
+              + '</div>';
+          }).join('');
+        try{ document.getElementById('myadvisory').scrollIntoView({behavior:'smooth'}); }catch(_e){}
+      }catch(e){ list.innerHTML='<div style="color:var(--refuse)">'+(lang==='en'?'Error verifying link.':'링크 확인 중 오류가 발생했습니다.')+'</div>'; }
+    })();
   })();
 
   /* ========== 매직링크 로그인 (Supabase Auth) ========== */
