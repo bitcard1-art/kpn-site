@@ -1312,7 +1312,23 @@
         <h2 style="margin-top:14px" data-ko="모델은 답하고, 에이전트는 행동합니다. KPN은 멈출 때를 정합니다." data-en="Models answer. Agents act. KPN defines when not to act.">모델은 답하고, 에이전트는 행동합니다. KPN은 멈출 때를 정합니다.</h2>
         <p data-ko="AI 에이전트가 한국 관련 판단을 다룬다면, 첫 파일럿은 리스크가 큰 질문 20개로 시작하면 됩니다." data-en="If your agent handles Korea-related judgment, start the first pilot with 20 high-risk questions.">AI 에이전트가 한국 관련 판단을 다룬다면, 첫 파일럿은 리스크가 큰 질문 20개로 시작하면 됩니다.</p>
       </div>
-      <a class="btn btn-primary btn-lg" href="mailto:ydlee@krsys.net?subject=KPN%20Pilot%20Inquiry" data-ko="파일럿 문의하기" data-en="Request a pilot">파일럿 문의하기</a>
+      <div class="pilot-form" style="min-width:300px;flex:1;max-width:420px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+          <input id="pf-name" type="text" placeholder="" data-ko-ph="이름 *" data-en-ph="Name *" style="padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);font-size:14px">
+          <input id="pf-company" type="text" placeholder="" data-ko-ph="회사 (선택)" data-en-ph="Company (optional)" style="padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);font-size:14px">
+        </div>
+        <input id="pf-email" type="email" autocomplete="email" placeholder="" data-ko-ph="이메일 *" data-en-ph="Email *" style="width:100%;margin-top:9px;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);font-size:14px">
+        <select id="pf-ctype" style="width:100%;margin-top:9px;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);font-size:14px">
+          <option value="Corporate" data-ko="기업" data-en="Corporate">기업</option>
+          <option value="Individual" data-ko="개인" data-en="Individual">개인</option>
+          <option value="AI Agent" data-ko="AI 에이전트" data-en="AI Agent">AI 에이전트</option>
+        </select>
+        <textarea id="pf-message" rows="3" placeholder="" data-ko-ph="문의 내용 *" data-en-ph="Your message *" style="width:100%;margin-top:9px;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);font-size:14px;resize:vertical"></textarea>
+        <!-- honeypot(봇 차단) — 사람에겐 안 보임 -->
+        <input id="pf-website" type="text" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true">
+        <button class="btn btn-primary btn-lg" id="pf-submit" type="button" style="width:100%;margin-top:11px" data-ko="파일럿 문의하기" data-en="Request a pilot">파일럿 문의하기</button>
+        <div id="pf-msg" style="margin-top:9px;font-size:13px;color:var(--muted)"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1369,6 +1385,11 @@
     document.querySelectorAll('[data-ko]').forEach(n=>{
       const v = n.getAttribute('data-' + lang);
       if(v != null) n.innerHTML = v;
+    });
+    // 플레이스홀더 i18n(파일럿 문의 폼 등)
+    document.querySelectorAll('[data-ko-ph]').forEach(n=>{
+      const v = n.getAttribute('data-' + lang + '-ph');
+      if(v != null) n.setAttribute('placeholder', v);
     });
   }
   applyLang(); // 저장/감지된 언어로 시작(국문 1급)
@@ -1784,6 +1805,25 @@
       bindPay(box);
     } catch(e){ box.innerHTML='<div class="track-card" style="color:var(--refuse)">'+(lang==='en'?'Error: ':'오류: ')+esc(e.message)+'</div>'; }
   });
+
+  // 파일럿 문의 폼 → 서버(/pilot/inquiry) → Resend로 ydlee 발송(회신주소=문의자)+자동회신. mailto 대체(리드 유실 방지).
+  (function pilotForm(){
+    const btnEl = document.getElementById('pf-submit'); if(!btnEl) return;
+    btnEl.onclick = async function(){
+      const g = id => (document.getElementById(id)||{}).value || '';
+      const name=g('pf-name').trim(), email=g('pf-email').trim(), company=g('pf-company').trim(), ctype=g('pf-ctype'), message=g('pf-message').trim(), hp=g('pf-website').trim();
+      const msgEl = document.getElementById('pf-msg');
+      if(!name || !message || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msgEl.style.color='var(--refuse)'; msgEl.textContent=(lang==='en'?'Name, a valid email, and a message are required.':'이름·유효한 이메일·문의내용은 필수입니다.'); return; }
+      btnEl.disabled=true; msgEl.style.color='var(--muted)'; msgEl.textContent=(lang==='en'?'Sending…':'전송 중…');
+      try{
+        const r = await fetch(REPORT_BASE+'/pilot/inquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,company,ctype,message,website:hp})});
+        const d = await r.json().catch(()=>({}));
+        if(r.ok && d.ok){ msgEl.style.color='var(--answer)'; msgEl.textContent=(lang==='en'?'Received — we’ll reply to your email soon. Thank you!':'문의가 접수되었습니다. 이메일로 회신드리겠습니다. 감사합니다!'); ['pf-name','pf-company','pf-email','pf-message'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';}); }
+        else { msgEl.style.color='var(--refuse)'; msgEl.textContent=(d.error||(lang==='en'?'Failed to send. Please email ydlee@krsys.net.':'발송 실패 — ydlee@krsys.net로 연락 주세요.')); }
+      }catch(e){ msgEl.style.color='var(--refuse)'; msgEl.textContent=(lang==='en'?'Network error. Please email ydlee@krsys.net.':'오류가 발생했습니다. ydlee@krsys.net로 연락 주세요.'); }
+      finally{ btnEl.disabled=false; }
+    };
+  })();
 
   // 메일 '진행 상황 조회' 링크(/?ref=KPN-XXXX#track) 대응 — URL ref 파라미터를 접수번호 칸에 자동 채우고 자동 조회.
   //   ref 없으면 빈 칸 유지(기존 동작). #track 앵커는 브라우저가 해당 섹션으로 스크롤.
