@@ -1248,7 +1248,7 @@ function renderQueuePage(){
         +   '<span class="qcust">'+esc(q.name)+(q.company?(' · '+esc(q.company)):'')+(q.region?(' · '+esc(q.region)):'')+'</span>'
         +   (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
         +   (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
-        +   (aiUsed?'<span class="ttag ai">AI 초안</span>':'<span class="ttag noai">초안 미생성</span>')
+        +   (aiUsed?'<span class="ttag ai">AI 초안</span>':'<span class="ttag noai">초안 미생성 · '+esc(noAiReason(q))+'</span>')
         + '</div>'
         + '<div class="qtitle">'+esc(q.title)+'</div>'
         + '<div class="qdraft">'+esc(draft)+(draft.length>=180?'…':'')+'</div>'
@@ -1257,6 +1257,18 @@ function renderQueuePage(){
     }).join('') + pagerHtml('queue', QUEUE.length);
   slot.querySelectorAll('[data-review]').forEach(b=> b.onclick=()=>openReview(b.dataset.review));
   bindPager(slot);
+}
+
+// 초안 미생성 사유 — 실제 pipeline_error를 분류(타임아웃/키/재시도/과부하/기타). 하드코딩 'API 키'로 오진단 방지.
+function noAiReason(q){
+  const e = String((q && q.pipeline_error) || '').toLowerCase();
+  if(!e) return '미생성';
+  if(/timeout|aborted|시간초과/.test(e)) return '생성 시간초과';
+  if(/api[_\s-]?key|invalid.*key|\b401\b|unauth|authentication|x-api-key/.test(e)) return 'API 키 확인';
+  if(/max_attempts|retry_beyond|attempts.*exceed/.test(e)) return '재시도 한도 초과';
+  if(/rate|\b429\b|overload|\b529\b/.test(e)) return '레이트리밋/과부하';
+  if(/did.*reverif|council.*fail|member.*fail/.test(e)) return '위원 검증 실패';
+  return '생성 실패';
 }
 
 function openReview(ref){
@@ -1270,7 +1282,7 @@ function openReview(ref){
   $('rm-meta').innerHTML =
       (q.category?'<span class="ttag cat">'+esc(q.category)+'</span>':'')
     + (tier?'<span class="ttag tier">'+esc(TIER_LABEL[tier]||tier)+'</span>':'')
-    + (aiUsed?'<span class="ttag ai">AI 초안 생성됨</span>':'<span class="ttag noai">AI 초안 미생성 (API 키 확인)</span>');
+    + (aiUsed?'<span class="ttag ai">AI 초안 생성됨</span>':'<span class="ttag noai">AI 초안 미생성 · '+esc(noAiReason(q))+'</span>');
   $('rm-info').innerHTML = '<b>'+esc(q.name)+'</b>'+(q.company?(' · '+esc(q.company)):'')
     + (q.region?(' · '+esc(q.region)):'')
     + '<br><br><b>의뢰 제목</b><br>'+esc(q.title)
