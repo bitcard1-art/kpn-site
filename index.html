@@ -983,7 +983,12 @@
 
         <!-- 자동견적 제거(2026-06-26): 접수 전 견적은 구조 모순(Failed to fetch). 견적은 접수 후 어드민 금액 입력→track 표시로 일원화. -->
 
-        <div style="margin-top:18px"><button class="btn btn-primary btn-lg" id="in-submit" data-ko="접수하기" data-en="Submit">접수하기</button></div>
+        <!-- 필수 동의(전자상거래법·개인정보보호법) — 접수·결제 전 약관·개인정보 동의 -->
+        <label style="display:flex;align-items:flex-start;gap:9px;margin-top:18px;font-size:13.5px;color:var(--muted);cursor:pointer;line-height:1.6">
+          <input type="checkbox" id="in-agree" style="margin-top:3px;flex-shrink:0;width:16px;height:16px;accent-color:var(--answer)">
+          <span data-ko="(필수) <a href='/terms.html' target='_blank' rel='noopener' style='color:var(--answer);text-decoration:underline'>이용약관</a> 및 <a href='/privacy.html' target='_blank' rel='noopener' style='color:var(--answer);text-decoration:underline'>개인정보처리방침</a>에 동의합니다. 의뢰 내용은 자문 생성을 위해 처리(AI 포함·국외 위탁)됩니다." data-en="(Required) I agree to the <a href='/terms.html' target='_blank' rel='noopener' style='color:var(--answer);text-decoration:underline'>Terms of Service</a> and <a href='/privacy.html' target='_blank' rel='noopener' style='color:var(--answer);text-decoration:underline'>Privacy Policy</a>. My request is processed to generate the advisory (including AI and overseas processors).">(필수) <a href='/terms.html' target='_blank' rel='noopener' style='color:var(--answer);text-decoration:underline'>이용약관</a> 및 <a href='/privacy.html' target='_blank' rel='noopener' style='color:var(--answer);text-decoration:underline'>개인정보처리방침</a>에 동의합니다. 의뢰 내용은 자문 생성을 위해 처리(AI 포함·국외 위탁)됩니다.</span>
+        </label>
+        <div style="margin-top:16px"><button class="btn btn-primary btn-lg" id="in-submit" data-ko="접수하기" data-en="Submit">접수하기</button></div>
         <div class="intake-msg" id="in-msg"></div>
       </div>
 
@@ -1640,6 +1645,8 @@
       report_lang: (document.getElementById('in-lang')||{}).value === 'en' ? 'en' : 'ko',   // 1단계: 리포트 언어 저장
     };
     if(!project.name || !project.email || !project.title){ imsg(lang==='en'?'Name, email, and title are required.':'이름·이메일·프로젝트 제목은 필수입니다.', false); return; }
+    const agree = document.getElementById('in-agree');
+    if(agree && !agree.checked){ imsg(lang==='en'?'Please agree to the Terms and Privacy Policy to continue.':'이용약관 및 개인정보처리방침에 동의해 주세요.', false); return; }
     imsg(lang==='en'?'Submitting…':'접수 중…', true);
     try {
       const res = await fetch(PROJ_FN, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({action:'submit'}, {project})) });
