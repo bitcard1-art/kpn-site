@@ -1798,7 +1798,10 @@
       lineEl.innerHTML=(lang==='en'
         ? 'Assessed as <b>'+esc(rec.label||'')+'</b> — amount <b>'+esc(amtEl.textContent)+'</b>.'
         : '이 의뢰의 자문 등급은 <b>'+esc(rec.label||'')+'</b>, 금액은 <b>'+esc(amtEl.textContent)+'</b>입니다.')
-        +(data.admin_override?(' ('+(lang==='en'?'admin quote':'어드민 견적')+')'):'');
+        +(data.admin_override?(' ('+(lang==='en'?'admin quote':'어드민 견적')+')'):'')
+        // 견적 근거 한 줄(백엔드 reason 그대로·지어내기 0) + 상향 안내
+        +(rec.reason?('<div style="color:var(--muted-2);font-size:12px;margin-top:5px">'+(lang==='en'?'Basis':'견적 근거')+': '+esc(rec.reason)+'</div>'):'')
+        +'<div style="color:var(--muted-2);font-size:12px;margin-top:3px">'+(lang==='en'?'This tier is auto-assessed by scope. Need deeper verification? Contact us to move to a higher tier.':'등급은 사안 범위에 맞춰 자동 산정됩니다. 더 깊은 검증이 필요하면 문의해 상위 등급으로 올릴 수 있습니다.')+'</div>';
       goBtn.textContent=(curSel.value==='USD')?(lang==='en'?'Overseas (coming soon)':'해외 결제 준비 중'):(lang==='en'?'Pay now (card)':'결제하기 (카드)');
     }
     curSel.onchange=refresh; refresh();
