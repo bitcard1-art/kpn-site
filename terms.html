@@ -118,7 +118,11 @@
 <!-- ================= ENGLISH (summary; Korean text governs) ================= -->
 <div class="lang-en">
   <h1>Terms of Service</h1>
-  <div class="sub">Effective: 1 July 2026 · KR Systems Co., Ltd. (KPN) — English summary; the Korean text is legally authoritative.</div>
+  <div class="sub">Effective: 1 July 2026 · KR Systems Co., Ltd. (KPN)</div>
+  <div class="box" style="border-color:var(--answer)">
+    ⚖️ <b>This is an English summary.</b> The Korean version (이용약관) is the <b>legally binding original</b>. In case of any discrepancy, the Korean text prevails.
+    <div style="margin-top:10px"><button type="button" onclick="setLang('ko')" style="font-size:13px;color:#03201c;background:var(--answer);border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-weight:700">한국어 원문 보기 →</button></div>
+  </div>
 
   <h2>1. Purpose</h2>
   <p>These Terms govern use of KPN (Korea Persona Network, the "Service"), operated by KR Systems Co., Ltd. (the "Company"), and the rights and obligations between the Company and users.</p>
@@ -143,10 +147,19 @@
 <script>
 (function(){
   var saved; try{ saved = localStorage.getItem('kpn_lang'); }catch(e){}
-  var lang = (saved==='en'||saved==='ko') ? saved : (/^ko/i.test(navigator.language||'')?'ko':'en');
-  function apply(){ document.body.classList.toggle('en', lang==='en'); document.documentElement.lang=lang; }
+  var urlLang; try{ urlLang=(new URLSearchParams(location.search)).get('lang'); }catch(e){}
+  var lang = (urlLang==='en'||urlLang==='ko') ? urlLang
+           : (saved==='en'||saved==='ko') ? saved
+           : (/^ko/i.test(navigator.language||'')?'ko':'en');
+  var btn = document.getElementById('lang');
+  function apply(){
+    document.body.classList.toggle('en', lang==='en');
+    document.documentElement.lang = lang;
+    if(btn) btn.textContent = (lang==='en' ? '한국어' : 'English');   // 대상 언어 표시(명확)
+  }
+  window.setLang = function(l){ lang = (l==='en'?'en':'ko'); try{localStorage.setItem('kpn_lang',lang);}catch(e){} apply(); window.scrollTo(0,0); };
   apply();
-  document.getElementById('lang').onclick=function(){ lang=(lang==='en'?'ko':'en'); try{localStorage.setItem('kpn_lang',lang);}catch(e){} apply(); };
+  if(btn) btn.onclick = function(){ setLang(lang==='en'?'ko':'en'); };
 })();
 </script>
 </body></html>
