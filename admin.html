@@ -875,7 +875,7 @@ document.querySelectorAll('.sent-filter button').forEach(b=> b.onclick=()=>{
 /* ===== 프로젝트 관리 ===== */
 const PROJ_FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-projects";
 const ST = {received:'접수됨',quote_ready:'결제 대기',quoted:'견적 대기',paid:'결제 완료',processing:'처리 중',done:'완료'};
-const CT = {enterprise:'외국 기업',individual:'개인',ai_agent:'AI 에이전트'};
+const CT = {enterprise:'기업',individual:'개인',ai_agent:'AI 에이전트'};
 // STEP1: 결제·등급·자문생성 표시 헬퍼
 const PAYST = {approved:{t:'승인',c:'y'},failed:{t:'실패',c:'n'},cancelled:{t:'취소',c:'n'},refunded:{t:'환불',c:'n'}};
 const TIER_SHORT = {one_question:'One Question',quick_read:'Quick Read',deep_read:'Deep Read',strategic_review:'Strategic'};
