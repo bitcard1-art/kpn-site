@@ -1002,7 +1002,21 @@
         </select>
         <div style="margin-top:5px;color:var(--muted-2);font-size:12px" data-ko="결과 리포트를 받을 언어입니다. 의뢰 내용 언어에 맞춰 자동 선택되며, 바꿀 수 있습니다." data-en="Language for your result report. Auto-selected from your request, changeable.">결과 리포트를 받을 언어입니다. 의뢰 내용 언어에 맞춰 자동 선택되며, 바꿀 수 있습니다.</div>
 
-        <!-- 자동견적 제거(2026-06-26): 접수 전 견적은 구조 모순(Failed to fetch). 견적은 접수 후 어드민 금액 입력→track 표시로 일원화. -->
+        <!-- 자동 견적 재활성(2026-07): CORS preflight 해소(전역 OPTIONS 처리) 확인 후. 명시 신호 → /human/quote → 가격+근거(reason 백엔드 규칙 그대로). -->
+        <div class="autoquote" style="margin-top:18px;border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--ink-2)">
+          <div style="font-weight:700;font-size:14px" data-ko="자동 견적 추천 (선택)" data-en="Auto quote (optional)">자동 견적 추천 (선택)</div>
+          <div style="color:var(--muted-2);font-size:12px;margin:5px 0 12px" data-ko="사안 신호를 입력하면 규칙 기반으로 추천 등급·가격과 그 근거를 바로 보여드립니다." data-en="Enter case signals for a rule-based recommended tier, price, and the exact reason.">사안 신호를 입력하면 규칙 기반으로 추천 등급·가격과 그 근거를 바로 보여드립니다.</div>
+          <div class="frow">
+            <div><label data-ko="쟁점(질문) 수" data-en="Number of issues">쟁점(질문) 수</label><input id="q-issue" type="number" min="1" value="1"></div>
+            <div><label data-ko="관련 분야 수" data-en="Domains involved">관련 분야 수</label><input id="q-domain" type="number" min="1" value="1"></div>
+          </div>
+          <div style="display:flex;gap:18px;margin-top:10px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer"><input type="checkbox" id="q-legal" style="width:15px;height:15px;accent-color:var(--answer)"><span data-ko="법령·계약·규제 관련" data-en="Legal/contract/regulatory">법령·계약·규제 관련</span></label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer"><input type="checkbox" id="q-doc" style="width:15px;height:15px;accent-color:var(--answer)"><span data-ko="첨부·원문 자료 있음" data-en="Has source documents">첨부·원문 자료 있음</span></label>
+          </div>
+          <div style="margin-top:12px"><button type="button" class="btn" id="q-btn" data-ko="자동 견적 보기" data-en="Get estimate">자동 견적 보기</button></div>
+          <div id="q-result" style="margin-top:12px"></div>
+        </div>
 
         <!-- 필수 동의(전자상거래법·개인정보보호법) — 접수·결제 전 약관·개인정보 동의 -->
         <label style="display:flex;align-items:flex-start;gap:9px;margin-top:18px;font-size:13.5px;color:var(--muted);cursor:pointer;line-height:1.6">
@@ -1862,6 +1876,38 @@
       }catch(e){ msgEl.style.color='var(--refuse)'; msgEl.textContent=(lang==='en'?'Network error. Please email ydlee@krsys.net.':'오류가 발생했습니다. ydlee@krsys.net로 연락 주세요.'); }
       finally{ btnEl.disabled=false; }
     };
+  })();
+
+  // 자동 견적 재활성 — 명시 신호 → /human/quote → 가격 + 근거(reason 백엔드 규칙 그대로) + 상향 가능 안내.
+  //   ★근거 지어내기 0: reason은 서버가 반환한 규칙 문자열을 그대로 노출. CORS preflight는 전역 처리(해소됨).
+  (function autoQuote(){
+    const btn = document.getElementById('q-btn'); if(!btn) return;
+    btn.addEventListener('click', async ()=>{
+      const el = document.getElementById('q-result');
+      el.innerHTML = (lang==='en'?'Estimating…':'견적 계산 중…');
+      const body = {
+        issue_count: Math.max(1, parseInt(document.getElementById('q-issue').value)||1),
+        domain_count: Math.max(1, parseInt(document.getElementById('q-domain').value)||1),
+        has_legal: document.getElementById('q-legal').checked,
+        has_source_doc: document.getElementById('q-doc').checked,
+        name: (document.getElementById('in-name').value||'').trim(),
+        email: (document.getElementById('in-email').value||'').trim(),
+        title: (document.getElementById('in-title').value||'').trim()
+      };
+      try{
+        const r = await fetch(REPORT_BASE+'/human/quote', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        const d = await r.json();
+        if(!r.ok || !d.recommended_label){ el.innerHTML = '<span style="color:#c9756a">'+(lang==='en'?'Estimate failed. Please try again.':'견적을 가져오지 못했습니다. 다시 시도해 주세요.')+'</span>'; return; }
+        const tiers = (d.tiers||[]).map(t=>'<span style="display:inline-block;margin:3px 6px 3px 0;padding:5px 10px;border-radius:7px;border:1px solid '+(t.recommended?'var(--answer)':'var(--line)')+';'+(t.recommended?'background:var(--answer);color:#03201c;font-weight:700':'color:var(--muted)')+'">'+t.label+' '+t.price+'</span>').join('');
+        el.innerHTML =
+          '<div style="border-top:1px solid var(--line);padding-top:11px">'
+          + '<div style="font-size:15px;font-weight:700;color:var(--paper)">'+(lang==='en'?'Recommended':'추천 견적')+': '+d.recommended_label+'</div>'
+          + '<div style="color:var(--answer);font-size:13px;margin-top:4px">'+(lang==='en'?'Why this price':'이 가격의 근거')+': '+d.reason+'</div>'
+          + '<div style="margin-top:9px">'+tiers+'</div>'
+          + '<div style="color:var(--muted-2);font-size:12px;margin-top:8px">'+(lang==='en'?'A recommendation, not a cap — you can choose a higher tier for deeper verification. Final quote is confirmed after intake by scope.':'추천값이며 상한이 아닙니다 — 더 깊은 검증이 필요하면 상위 등급을 선택할 수 있습니다. 최종 견적은 접수 후 범위에 따라 확정됩니다.')+'</div>'
+          + '</div>';
+      }catch(e){ el.innerHTML = '<span style="color:#c9756a">'+(lang==='en'?'Network error. Please try again.':'네트워크 오류. 다시 시도해 주세요.')+'</span>'; }
+    });
   })();
 
   // 메일 '진행 상황 조회' 링크(/?ref=KPN-XXXX#track) 대응 — URL ref 파라미터를 접수번호 칸에 자동 채우고 자동 조회.
