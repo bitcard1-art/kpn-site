@@ -633,7 +633,7 @@
       <div class="hint" style="margin-top:8px">미리보기가 비어 있거나 한글이 깨져 보이면 공개하지 마세요. PDF 생성·폰트 배포 상태를 먼저 확인하세요.</div>
 
       <div class="row" style="margin-top:18px">
-        <div><label>견적 금액 (AI 제안)</label><input id="rm-amount" placeholder="예: $190 / from $490" /></div>
+        <div><label>견적 금액 (AI 제안)</label><input id="rm-amount" placeholder="예: $39 / from $69" /></div>
         <div><label>외부 결제 링크 (선택)</label><input id="rm-paylink" placeholder="https://toss.me/... 또는 PayPal.me" /></div>
       </div>
     </div>
@@ -1232,7 +1232,7 @@ document.querySelectorAll('.tabbtn').forEach(b => b.onclick = () => {
 
 /* ===== 검토 대기 (원클릭 공개) ===== */
 const TRIAGE_FN = "https://zpunqeapmpbnrjtioavr.supabase.co/functions/v1/kpn-triage";
-const TIER_LABEL = {one_question:'One Question $29',quick_read:'Quick Read $79',deep_read:'Deep Read $190',strategic_review:'Strategic Review from $490'};
+const TIER_LABEL = {one_question:'One Question $9.9',quick_read:'Quick Read $19',deep_read:'Deep Read $39',strategic_review:'Strategic Review from $69'};
 let QUEUE = [];
 
 async function tcall(action, body){
