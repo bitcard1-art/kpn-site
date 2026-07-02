@@ -1479,8 +1479,12 @@ async function loadAiVisit(){
     $('aiv-req').textContent = sum.today_requests ?? 0;
     $('aiv-free').textContent = (sum.free_used_today ?? 0)+' / '+(sum.free_cap ?? '—');
     $('aiv-contacts-n').textContent = sum.contacts_total ?? 0;
-    const f = s.funnel||{}, base = f.discovery||0;
-    $('aiv-funnel').innerHTML = [['발견','discovery'],['402 수신','payment_required'],['무료 자문','free_advisory'],['명함','contact_registered']].map(([lab,k])=>{const v=f[k]||0,pct=base?Math.round(v/base*100):0;return `<div class="bar-row"><span class="bn">${lab}</span><span class="track"><span style="display:block;height:100%;width:${pct}%;background:var(--hold)"></span></span><span class="bnum">${v}${base?' ('+pct+'%)':''}</span></div>`;}).join('');
+    const f = s.funnel||{};
+    // 에이전트는 /ai/discovery 없이 /ai/advisory를 직접 치기도 해 discovery가 퍼널 최상단이 아닐 수 있음.
+    // → 막대는 각 단계 최댓값 기준(≤100%, 상대 볼륨)으로 표시하고, 절대건수를 병기. 600%식 왜곡 방지.
+    const fv = [f.discovery||0, f.payment_required||0, f.free_advisory||0, f.contact_registered||0];
+    const peak = Math.max(1, ...fv);
+    $('aiv-funnel').innerHTML = [['발견','discovery'],['402 수신','payment_required'],['무료 자문','free_advisory'],['명함','contact_registered']].map(([lab,k])=>{const v=f[k]||0,pct=Math.min(100,Math.round(v/peak*100));return `<div class="bar-row"><span class="bn">${lab}</span><span class="track"><span style="display:block;height:100%;width:${pct}%;background:var(--hold)"></span></span><span class="bnum">${v}</span></div>`;}).join('') + '<p style="font-size:11px;color:var(--muted);margin:8px 0 0">막대=최댓값 대비 상대 볼륨. 에이전트가 discovery 없이 advisory를 직접 호출할 수 있어 단계별 절대건수를 기준으로 봅니다.</p>';
     const daily = s.daily||[];
     $('aiv-daily').innerHTML = daily.length? daily.map(x=>`<div class="bar-row"><span class="bn">${esc(String(x.day).slice(5))}</span><span class="bnum">유니크 ${x.uniq} · 무료 ${x.free}</span></div>`).join('') : '<div class="empty">데이터 없음</div>';
     const src = s.by_src||[];
