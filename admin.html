@@ -253,6 +253,7 @@
       <button class="tabbtn" data-tab="review">검토·발송 <span id="queue-badge" class="qbadge hide">0</span></button>
       <button class="tabbtn" data-tab="sent">발송 현황</button>
       <button class="tabbtn" data-tab="dash">운영 대시보드</button>
+      <button class="tabbtn" data-tab="aivisit">AI 방문</button>
       <button class="tabbtn" data-tab="members">위원 관리</button>
     </div>
 
@@ -498,6 +499,28 @@
         <p class="dnote">과금 대상 = ANSWER + HOLD. <b>HOLD는 답변 회피가 아니라 근거 없는 확신을 차단한 검증 행위</b>로, ANSWER와 동일하게 과금됩니다. 단가는 호출 시점 값으로 기록됩니다.</p>
       </div>
     </div><!-- /tab-dash -->
+
+    <!-- ===== AI 방문 탭 ===== -->
+    <div class="tabpane hide" id="tab-aivisit">
+      <div class="card" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <span style="font-family:var(--mono);font-size:12px">기간</span>
+        <select id="aiv-days" onchange="loadAiVisit()" style="padding:6px 10px"><option value="7">7일</option><option value="14" selected>14일</option><option value="30">30일</option></select>
+        <button class="btn" onclick="loadAiVisit()">새로고침</button>
+        <span id="aiv-mode" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="k">오늘 유니크 방문</div><div class="v" id="aiv-uniq">—</div><div class="s">ip해시+지갑 기준</div></div>
+        <div class="stat"><div class="k">오늘 요청수</div><div class="v" id="aiv-req">—</div><div class="s">전 이벤트</div></div>
+        <div class="stat hero"><div class="k">무료 자문 소진</div><div class="v" id="aiv-free">—</div><div class="s">오늘 / 일일한도</div></div>
+        <div class="stat"><div class="k">누적 명함</div><div class="v" id="aiv-contacts-n">—</div><div class="s">복구 알림 대상</div></div>
+      </div>
+      <div class="card"><h2 style="font-size:14px;font-family:var(--mono)">퍼널 · 발견 → 402 → 무료자문 → 명함</h2><div id="aiv-funnel"><div class="empty">불러오는 중…</div></div></div>
+      <div class="card"><h2 style="font-size:14px;font-family:var(--mono)">일별 추이 · 유니크 / 무료</h2><div id="aiv-daily"><div class="empty">불러오는 중…</div></div></div>
+      <div class="card"><h2 style="font-size:14px;font-family:var(--mono)">유입 경로 (src)</h2><div style="overflow-x:auto"><table><thead><tr><th>경로</th><th>방문</th><th>자문</th><th>명함</th></tr></thead><tbody id="aiv-src"><tr><td colspan="4" class="empty">불러오는 중…</td></tr></tbody></table></div></div>
+      <div class="card"><h2 style="font-size:14px;font-family:var(--mono)">호출자 구성 (asn · UA기반 근사)</h2><div style="overflow-x:auto"><table><thead><tr><th>분류</th><th>건수</th></tr></thead><tbody id="aiv-asn"><tr><td colspan="2" class="empty">불러오는 중…</td></tr></tbody></table></div></div>
+      <div class="card"><h2 style="font-size:14px;font-family:var(--mono)">최근 방문 (50)</h2><div style="overflow-x:auto"><table><thead><tr><th>시각(KST)</th><th>이벤트</th><th>src</th><th>asn</th><th>티어</th><th>ref/audit</th><th>지갑</th></tr></thead><tbody id="aiv-recent"><tr><td colspan="7" class="empty">불러오는 중…</td></tr></tbody></table></div></div>
+      <div class="card"><h2 style="font-size:14px;font-family:var(--mono)">명함 리스트 · 복구일 발송 대상</h2><div style="overflow-x:auto"><table><thead><tr><th>등록(KST)</th><th>agent</th><th>연락수단</th><th>이메일</th><th>연결 auditId</th><th>발송</th></tr></thead><tbody id="aiv-contacts"><tr><td colspan="6" class="empty">불러오는 중…</td></tr></tbody></table></div></div>
+    </div><!-- /tab-aivisit -->
   </div>
 </div>
 
@@ -1202,6 +1225,7 @@ document.querySelectorAll('.tabbtn').forEach(b => b.onclick = () => {
   if (t === 'review') pg.queue = 1;
   if (t === 'sent') pg.sent = 1;
   if (t === 'dash') loadDashboard();
+  if (t === 'aivisit') loadAiVisit();
   if (t === 'review') loadQueue();
   if (t === 'sent') { loadProjects().then(renderSent); }
 });
@@ -1439,6 +1463,36 @@ $('rm-pdf-load').onclick = () => {
 };
 
 /* ===== 고객에게 발송 — [확정 공개 + 발송]으로 통합됨(별도 버튼 제거). 재발송은 발송 현황 탭. ===== */
+
+/* ===== AI 방문 통계 ===== */
+async function loadAiVisit(){
+  const esc = s => String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const days = (document.getElementById('aiv-days')||{}).value || '14';
+  const mode = document.getElementById('aiv-mode');
+  try {
+    const r = await fetch('https://persona-mcp-server.onrender.com/admin/ai-stats?days='+encodeURIComponent(days), { headers:{'x-admin-password':PW} });
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok || !d.ok){ if(mode) mode.textContent = '불러오기 실패: '+(d.error||r.status); return; }
+    const s = d.stats||{}, sum = s.summary||{};
+    if(mode) mode.textContent = d.free_mode ? '● 무료 개방 중' : '유료 모드';
+    $('aiv-uniq').textContent = sum.today_unique ?? 0;
+    $('aiv-req').textContent = sum.today_requests ?? 0;
+    $('aiv-free').textContent = (sum.free_used_today ?? 0)+' / '+(sum.free_cap ?? '—');
+    $('aiv-contacts-n').textContent = sum.contacts_total ?? 0;
+    const f = s.funnel||{}, base = f.discovery||0;
+    $('aiv-funnel').innerHTML = [['발견','discovery'],['402 수신','payment_required'],['무료 자문','free_advisory'],['명함','contact_registered']].map(([lab,k])=>{const v=f[k]||0,pct=base?Math.round(v/base*100):0;return `<div class="bar-row"><span class="bn">${lab}</span><span class="track"><span style="display:block;height:100%;width:${pct}%;background:var(--hold)"></span></span><span class="bnum">${v}${base?' ('+pct+'%)':''}</span></div>`;}).join('');
+    const daily = s.daily||[];
+    $('aiv-daily').innerHTML = daily.length? daily.map(x=>`<div class="bar-row"><span class="bn">${esc(String(x.day).slice(5))}</span><span class="bnum">유니크 ${x.uniq} · 무료 ${x.free}</span></div>`).join('') : '<div class="empty">데이터 없음</div>';
+    const src = s.by_src||[];
+    $('aiv-src').innerHTML = src.length? src.map(x=>`<tr><td>${esc(x.src)}</td><td>${x.visits}</td><td>${x.advisories}</td><td>${x.contacts}</td></tr>`).join('') : '<tr><td colspan="4" class="empty">데이터 없음</td></tr>';
+    const asn = s.by_asn||[];
+    $('aiv-asn').innerHTML = asn.length? asn.map(x=>`<tr><td>${esc(x.asn)}</td><td>${x.cnt}</td></tr>`).join('') : '<tr><td colspan="2" class="empty">데이터 없음</td></tr>';
+    const rec = s.recent||[];
+    $('aiv-recent').innerHTML = rec.length? rec.map(x=>`<tr><td>${esc(x.ts)}</td><td>${esc(x.event_type)}</td><td>${esc(x.src||'')}</td><td>${esc(x.asn_class||'')}</td><td>${esc(x.tier||'')}</td><td>${esc(x.audit_id||'')}</td><td style="font-family:var(--mono)">${esc(x.wallet_mask||'')}</td></tr>`).join('') : '<tr><td colspan="7" class="empty">데이터 없음</td></tr>';
+    const c = s.contacts||[];
+    $('aiv-contacts').innerHTML = c.length? c.map(x=>`<tr><td>${esc(x.created_at)}</td><td>${esc(x.agent_name||'-')}</td><td>${esc(x.contact_kind)}</td><td>${esc(x.email||'')}</td><td>${esc(x.audit_id||'')}</td><td>${x.notified_at?'✓':''}</td></tr>`).join('') : '<tr><td colspan="6" class="empty">데이터 없음</td></tr>';
+  } catch(e){ if(mode) mode.textContent = '오류: '+e.message; }
+}
 
 /* ===== 대시보드 ===== */
 const VMAP = {ANSWER:'a', HOLD:'h'};
