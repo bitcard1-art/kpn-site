@@ -2187,5 +2187,77 @@
   checkMagicSession();
 })();
 </script>
+  <!-- ═══ 고객센터 안내봇 클로3 (WO-SUPPORT-BOT-01) — 안내 전용·자문 차단 ═══ -->
+  <style>
+    #c3-fab{position:fixed;right:20px;bottom:20px;z-index:9999;width:56px;height:56px;border-radius:50%;background:var(--answer,#2fb8a8);color:#04121a;border:none;cursor:pointer;font-size:23px;box-shadow:0 6px 20px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;transition:transform .15s}
+    #c3-fab:hover{transform:scale(1.06)}
+    #c3-panel{position:fixed;right:20px;bottom:86px;z-index:9999;width:360px;max-width:calc(100vw - 32px);height:520px;max-height:calc(100vh - 120px);background:#0d1a26;border:1px solid rgba(255,255,255,.12);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.5);display:none;flex-direction:column;overflow:hidden;font-size:14px}
+    #c3-panel.on{display:flex}
+    .c3-head{padding:13px 15px;background:#0a1420;border-bottom:1px solid rgba(255,255,255,.08);position:relative}
+    .c3-head b{color:#eaf2f6;font-size:14px}
+    .c3-head .c3-sub{display:block;font-size:11px;color:#8aa2b6;margin-top:3px;padding-right:20px}
+    .c3-head .c3-x{position:absolute;right:12px;top:10px;background:none;border:none;color:#8aa2b6;font-size:21px;cursor:pointer;line-height:1}
+    .c3-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+    .c3-m{max-width:86%;padding:9px 12px;border-radius:12px;line-height:1.55;white-space:pre-wrap;word-break:break-word;font-size:13.5px}
+    .c3-m.bot{background:#16283a;color:#dfeaf2;align-self:flex-start;border-bottom-left-radius:4px}
+    .c3-m.me{background:var(--answer,#2fb8a8);color:#04121a;align-self:flex-end;border-bottom-right-radius:4px}
+    .c3-m.typing{color:#8aa2b6;font-style:italic}
+    .c3-quick{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 8px}
+    .c3-quick button{font-size:12px;background:#16283a;color:#bcd;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:5px 11px;cursor:pointer}
+    .c3-quick button:hover{background:#1d3448}
+    .c3-in{display:flex;gap:8px;padding:11px 12px;border-top:1px solid rgba(255,255,255,.08)}
+    .c3-in input{flex:1;background:#0a1420;border:1px solid rgba(255,255,255,.14);border-radius:10px;color:#eaf2f6;padding:9px 11px;font-size:14px;outline:none}
+    .c3-in button{background:var(--answer,#2fb8a8);color:#04121a;border:none;border-radius:10px;width:40px;font-size:16px;cursor:pointer}
+  </style>
+  <button id="c3-fab" aria-label="KPN 안내 도우미 클로3">💬</button>
+  <div id="c3-panel" role="dialog" aria-label="KPN 안내 도우미 클로3">
+    <div class="c3-head"><b id="c3-title"></b><span class="c3-sub" id="c3-note"></span><button class="c3-x" id="c3-close" aria-label="close">×</button></div>
+    <div class="c3-body" id="c3-body"></div>
+    <div class="c3-quick" id="c3-quick"></div>
+    <div class="c3-in"><input id="c3-input" autocomplete="off" /><button id="c3-send" aria-label="send">➤</button></div>
+  </div>
+  <script>
+  (function(){
+    var EP="https://persona-mcp-server.onrender.com/chat/support";
+    function L(){ try{ var s=localStorage.getItem('kpn_lang'); if(s==='ko'||s==='en') return s; }catch(e){} return /^ko/i.test(navigator.language||'')?'ko':'en'; }
+    var T={
+      title:{ko:"KPN 안내 도우미 · 클로3",en:"KPN Support · Claw3"},
+      note:{ko:"클로3는 안내 도우미이며 자문을 제공하지 않습니다.",en:"Claw3 is a support assistant and does not provide advisory."},
+      first:{ko:"안녕하세요, KPN 안내 도우미 클로3입니다. 요금·이용 방법·접수 절차를 안내해 드려요. (자문 답변은 접수 후 위원 교차검증 리포트로 제공됩니다.)",en:"Hi, I'm Claw3, KPN's support assistant. I can help with pricing, how it works, and how to submit. (Advisory answers are provided as committee-verified reports after intake.)"},
+      ph:{ko:"메시지를 입력하세요…",en:"Type a message…"},
+      err:{ko:"잠시 후 다시 시도해 주세요.",en:"Please try again in a moment."},
+      quick:[
+        {ko:"요금제",en:"Pricing",msg:{ko:"요금제가 어떻게 되나요?",en:"What are the prices?"}},
+        {ko:"이용 방법",en:"How it works",msg:{ko:"이용 방법(프로세스)이 어떻게 되나요?",en:"How does the process work?"}},
+        {ko:"환불 규정",en:"Refund",msg:{ko:"환불 규정이 어떻게 되나요?",en:"What is the refund policy?"}},
+        {ko:"접수하기",en:"Submit",intake:true}
+      ]
+    };
+    var sid; try{ sid=sessionStorage.getItem('c3_sid'); if(!sid){ sid='c3_'+Math.random().toString(36).slice(2)+Date.now().toString(36); sessionStorage.setItem('c3_sid',sid);} }catch(e){ sid='c3_'+Date.now(); }
+    var fab=document.getElementById('c3-fab'),panel=document.getElementById('c3-panel'),body=document.getElementById('c3-body'),input=document.getElementById('c3-input'),quickWrap=document.getElementById('c3-quick'),opened=false,busy=false;
+    function tr(o){ return o[L()]||o.en; }
+    function render(){
+      document.getElementById('c3-title').textContent=tr(T.title);
+      document.getElementById('c3-note').textContent=tr(T.note);
+      input.placeholder=tr(T.ph);
+      quickWrap.innerHTML='';
+      T.quick.forEach(function(q){ var b=document.createElement('button'); b.textContent=tr(q); b.onclick=function(){ if(q.intake){ panel.classList.remove('on'); opened=false; location.hash='#intake'; } else send(tr(q.msg)); }; quickWrap.appendChild(b); });
+    }
+    function add(cls,text){ var d=document.createElement('div'); d.className='c3-m '+cls; d.textContent=text; body.appendChild(d); body.scrollTop=body.scrollHeight; return d; }
+    function send(text){
+      text=(text||input.value||'').trim(); if(!text||busy) return; input.value='';
+      add('me',text); busy=true; var t=add('bot typing','…');
+      fetch(EP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:sid,message:text})})
+        .then(function(r){return r.json();}).then(function(j){ t.remove(); add('bot',(j&&j.reply)||tr(T.err)); })
+        .catch(function(){ t.remove(); add('bot',tr(T.err)); })
+        .finally(function(){ busy=false; input.focus(); });
+    }
+    function open(){ render(); panel.classList.add('on'); opened=true; if(!body.childElementCount) add('bot',tr(T.first)); input.focus(); }
+    fab.onclick=function(){ opened?(panel.classList.remove('on'),opened=false):open(); };
+    document.getElementById('c3-close').onclick=function(){ panel.classList.remove('on'); opened=false; };
+    document.getElementById('c3-send').onclick=function(){ send(); };
+    input.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); send(); } });
+  })();
+  </script>
 </body>
 </html>
