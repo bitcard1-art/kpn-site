@@ -1716,27 +1716,13 @@
     t.addEventListener('input',detect); if(d) d.addEventListener('input',detect);
   })();
 
-  const inSubmit = document.getElementById('in-submit');
-  if (inSubmit) inSubmit.addEventListener('click', async () => {
-    const project = {
-      client_type: clientType,
-      name: (document.getElementById('in-name').value||'').trim(),
-      email: (document.getElementById('in-email').value||'').trim(),
-      company: (document.getElementById('in-company').value||'').trim(),
-      region: (document.getElementById('in-region').value||'').trim(),
-      title: (document.getElementById('in-title').value||'').trim(),
-      detail: (document.getElementById('in-detail').value||'').trim(),
-      report_lang: (document.getElementById('in-lang')||{}).value === 'en' ? 'en' : 'ko',   // 1단계: 리포트 언어 저장
-    };
-    if(!project.name || !project.email || !project.title){ imsg(lang==='en'?'Name, email, and title are required.':'이름·이메일·프로젝트 제목은 필수입니다.', false); return; }
-    const agree = document.getElementById('in-agree');
-    if(agree && !agree.checked){ imsg(lang==='en'?'Please agree to the Terms and Privacy Policy to continue.':'이용약관 및 개인정보처리방침에 동의해 주세요.', false); return; }
+  // ★실제 접수(PROJ_FN submit) — 요약 확인 후에만 호출. 성공 시 견적+결제 표시.
+  async function doIntakeSubmit(project){
     imsg(lang==='en'?'Submitting…':'접수 중…', true);
     try {
       const res = await fetch(PROJ_FN, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({action:'submit'}, {project})) });
       const data = await res.json();
       if(!res.ok) throw new Error(data.error||('HTTP '+res.status));
-      // 선결1: submit은 quote_ready에서 정지. 접수 직후 견적 금액(어드민 미입력 시 기본 ₩9,900)+결제/보류 버튼을 바로 표시.
       const pseudo = { ref_code: data.ref_code, status: 'quote_ready', pay_amount: null };
       imsg(lang==='en'?'Received. Your reference code:':'접수되었습니다. 접수번호:', true,
         '<span class="ref">'+esc(data.ref_code)+'</span>'
@@ -1747,6 +1733,34 @@
       bindPay(document.getElementById('in-msg'));
       ['in-name','in-email','in-company','in-region','in-title','in-detail'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
     } catch(e){ imsg((lang==='en'?'Error: ':'오류: ')+e.message, false); }
+  }
+  const inSubmit = document.getElementById('in-submit');
+  if (inSubmit) inSubmit.addEventListener('click', () => {
+    const project = {
+      client_type: clientType,
+      name: (document.getElementById('in-name').value||'').trim(),
+      email: (document.getElementById('in-email').value||'').trim(),
+      company: (document.getElementById('in-company').value||'').trim(),
+      region: (document.getElementById('in-region').value||'').trim(),
+      title: (document.getElementById('in-title').value||'').trim(),
+      detail: (document.getElementById('in-detail').value||'').trim(),
+      report_lang: (document.getElementById('in-lang')||{}).value === 'en' ? 'en' : 'ko',
+    };
+    if(!project.name || !project.email || !project.title){ imsg(lang==='en'?'Name, email, and title are required.':'이름·이메일·프로젝트 제목은 필수입니다.', false); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(project.email)){ imsg(lang==='en'?'Enter a valid email with a domain, e.g. name@company.com':'유효한 이메일(도메인 포함)을 입력하세요. 예: name@company.com', false); return; }
+    const agree = document.getElementById('in-agree');
+    if(agree && !agree.checked){ imsg(lang==='en'?'Please agree to the Terms and Privacy Policy to continue.':'이용약관 및 개인정보처리방침에 동의해 주세요.', false); return; }
+    // ★결제 전 입력 요약 확인 — 바로 접수하지 않고 요약+수정하기/접수확인(결제 직전 수정 기능).
+    const L2=(ko,en)=>lang==='en'?en:ko;
+    const rows=[[L2('이름','Name'),project.name],[L2('이메일','Email'),project.email],[L2('회사','Company'),project.company||'—'],[L2('지역','Region'),project.region||'—'],[L2('제목','Title'),project.title],[L2('상세','Detail'),project.detail||'—'],[L2('리포트 언어','Report language'),project.report_lang==='en'?'English':'한국어']];
+    const rowHtml=rows.map(function(r){return '<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--hair)"><span style="min-width:88px;color:var(--muted-2);font-size:12px">'+esc(r[0])+'</span><span style="flex:1;font-size:13px;word-break:break-word">'+esc(String(r[1]))+'</span></div>';}).join('');
+    const reviewHtml='<div class="intake-review" style="margin-top:12px;padding:14px;border:1px solid var(--answer);border-radius:12px;background:var(--ink-2)">'
+      +'<div style="font-weight:700;margin-bottom:8px">'+L2('접수 전 입력 확인','Review before submitting')+'</div>'
+      +rowHtml
+      +'<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap"><button class="btn btn-ghost" id="rv-edit" type="button">'+L2('수정하기','Edit')+'</button><button class="btn btn-primary" id="rv-confirm" type="button">'+L2('확인하고 접수','Confirm & submit')+'</button></div></div>';
+    imsg('', true, reviewHtml);
+    const ed=document.getElementById('rv-edit'); if(ed) ed.onclick=function(){ imsg('', true); document.getElementById('in-name').focus(); };  // 요약 닫고 폼 유지(입력값 그대로 수정)
+    const cf=document.getElementById('rv-confirm'); if(cf) cf.onclick=function(){ doIntakeSubmit(project); };
   });
 
   // 자동견적 제거(2026-06-26) — 접수 전 견적은 구조 모순(Failed to fetch). 견적=접수 후 어드민 금액 입력→track 결제.
@@ -1825,7 +1839,7 @@
         +(data.admin_override?(' ('+(lang==='en'?'admin quote':'어드민 견적')+')'):'')
         // 견적 근거 한 줄(백엔드 reason 그대로·지어내기 0) + 상향 안내
         +(rec.reason?('<div style="color:var(--muted-2);font-size:12px;margin-top:5px">'+(lang==='en'?'Basis':'견적 근거')+': '+esc(rec.reason)+'</div>'):'')
-        +'<div style="color:var(--muted-2);font-size:12px;margin-top:3px">'+(lang==='en'?'This tier is auto-assessed by scope. Need deeper verification? Contact us to move to a higher tier.':'등급은 사안 범위에 맞춰 자동 산정됩니다. 더 깊은 검증이 필요하면 문의해 상위 등급으로 올릴 수 있습니다.')+'</div>';
+        +'<div style="color:var(--muted-2);font-size:12px;margin-top:3px">'+(lang==='en'?'This tier is auto-assessed by scope. Need deeper verification? <a href="mailto:ydlee@krsys.net?subject='+encodeURIComponent('Higher tier request ('+(ref||'')+')')+'" style="color:var(--answer);text-decoration:underline">Contact us</a> to move to a higher tier.':'등급은 사안 범위에 맞춰 자동 산정됩니다. 더 깊은 검증이 필요하면 <a href="mailto:ydlee@krsys.net?subject='+encodeURIComponent('상위 등급 요청 ('+(ref||'')+')')+'" style="color:var(--answer);text-decoration:underline">문의하기</a>로 상위 등급을 요청할 수 있습니다.')+'</div>';
       goBtn.textContent=(curSel.value==='USD')?(lang==='en'?'Overseas (coming soon)':'해외 결제 준비 중'):(lang==='en'?'Pay now (card)':'결제하기 (카드)');
     }
     curSel.onchange=refresh; refresh();
@@ -2011,7 +2025,7 @@
   // 1) 매직링크 발송
   if (loginBtn) loginBtn.addEventListener('click', async () => {
     const email = (document.getElementById('login-email').value||'').trim();
-    if(!email || !email.includes('@')){ lmsg(lang==='en'?'Enter a valid email.':'올바른 이메일을 입력하세요.', false); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ lmsg(lang==='en'?'Enter a valid email (with domain).':'유효한 이메일(도메인 포함)을 입력하세요.', false); return; }
     lmsg(lang==='en'?'Sending login link…':'로그인 링크 보내는 중…', true);
     try {
       const res = await fetch(SUPA_URL+'/auth/v1/otp', {
