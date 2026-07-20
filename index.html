@@ -300,6 +300,7 @@
   .report .r-liner{font-size:12.5px;line-height:1.55;color:var(--muted);margin-top:9px;flex:1}
   .report .r-meta{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:13px;border-top:1px solid var(--hair)}
   .report .r-verdict{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--hold);background:var(--hold-dim);padding:3px 8px;border-radius:999px;letter-spacing:.04em}
+  .report .r-verdict.info{color:var(--muted-2);background:rgba(255,255,255,.06);font-weight:600;letter-spacing:.02em}  /* WO-2614: 정보 리포트 중립 배지(판정 톤 0) */
   .report .r-risk{font-family:var(--mono);font-size:10px;color:var(--muted-2)}
   .report .r-risk .rdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle}
   .report .r-risk .rdot.med{background:var(--hold)}
@@ -2111,8 +2112,11 @@
         +'<h4 data-ko="'+esc2(c.title_ko)+'" data-en="'+esc2(c.title_en)+'">'+esc2(en?c.title_en:c.title_ko)+'</h4>'
         +'<p class="r-liner" data-ko="'+esc2(c.lede_ko)+'" data-en="'+esc2(c.lede_en)+'">'+esc2(en?c.lede_en:c.lede_ko)+'</p>'
         +'<div class="r-meta">'
-          +'<span class="r-verdict" data-ko="'+esc2(c.verdict_ko)+'" data-en="'+esc2(c.verdict_en)+'">'+esc2(en?c.verdict_en:c.verdict_ko)+'</span>'
-          +'<span class="r-risk" data-ko="'+riskKo+'" data-en="'+riskEn+'"><span class="rdot '+rc+'"></span>'+(en?riskEn:riskKo)+'</span>'
+          // ★WO-2614: info(법률·규제) 리포트 = 판정 톤 억제 → 중립 배지만, 위험등급 dot 미노출(PDF WO-2612 parity)
+          +(c.is_info
+            ? '<span class="r-verdict info" data-ko="'+esc2(c.verdict_ko)+'" data-en="'+esc2(c.verdict_en)+'">'+esc2(en?c.verdict_en:c.verdict_ko)+'</span>'
+            : '<span class="r-verdict" data-ko="'+esc2(c.verdict_ko)+'" data-en="'+esc2(c.verdict_en)+'">'+esc2(en?c.verdict_en:c.verdict_ko)+'</span>'
+              +'<span class="r-risk" data-ko="'+riskKo+'" data-en="'+riskEn+'"><span class="rdot '+rc+'"></span>'+(en?riskEn:riskKo)+'</span>')
         +'</div>'
         + (c.tier_label_ko ? '<div class="r-tier" style="margin-top:9px;font-size:11.5px;color:var(--muted-2);font-family:var(--mono)" data-ko="이 리포트 등급: '+esc2(c.tier_label_ko)+'" data-en="Report tier: '+esc2(c.tier_label_en||'')+'">'+(en?('Report tier: '+esc2(c.tier_label_en||'')):('이 리포트 등급: '+esc2(c.tier_label_ko)))+'</div>' : '');
       host.appendChild(a);
