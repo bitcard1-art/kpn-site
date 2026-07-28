@@ -99,6 +99,8 @@
   .mobile-menu a{padding:15px 22px;border-bottom:1px solid var(--hair);color:var(--paper);font-size:15px}
   .mobile-menu a:hover{background:rgba(255,255,255,.03)}
   .mobile-menu .mm-cta{color:var(--answer);font-weight:600}
+  .mobile-menu .mm-intake{background:var(--answer);color:#04231f;font-weight:700;text-align:center;border-bottom:1px solid var(--hair)}
+  .mobile-menu .mm-intake:hover{background:var(--answer);filter:brightness(1.08)}
   .mobile-menu.open{display:flex}
   .nav-cta{display:flex;align-items:center;gap:10px}
   .lang{
@@ -547,7 +549,7 @@
   @media (max-width:980px){
     .nav-links{display:none}
     .hamb{display:flex}
-    .pilot-cta{display:none}
+    .pilot-cta,.intake-cta{display:none}
     .hero-grid,.s-head,.net,.cta-box{grid-template-columns:1fr}
     .hero-grid>*{min-width:0}
     .hero{padding-top:46px}
@@ -587,7 +589,8 @@
     .band,.cta-box{padding:28px}
     .acro{font-size:12px}
     .netmap{max-width:340px}
-    h1{font-size:clamp(27px,8vw,40px)}
+    h1{font-size:clamp(25px,7vw,38px)}
+    h1 br{display:none}   /* 모바일: 하드 줄바꿈 해제 → 헤드라인 자연 줄바꿈(가로 오버플로·햄버거 잘림 방지). 데스크톱 2줄 디자인은 불변 */
   }
 </style>
 </head>
@@ -604,18 +607,17 @@
     </a>
     <div class="nav-links">
       <a href="#guide" data-ko="이용 가이드" data-en="How It Works">이용 가이드</a>
-      <a href="#segments" data-ko="고객 유형" data-en="Who it's for">고객 유형</a>
-      <a href="#demo" data-ko="사례 보기" data-en="See examples">사례 보기</a>
       <a href="#pricing" data-ko="요금제" data-en="Pricing">요금제</a>
-      <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
+      <a href="#demo" data-ko="사례 보기" data-en="See examples">사례 보기</a>
       <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
     </div>
     <div class="nav-cta">
       <button class="lang" id="lang" type="button" aria-label="한국어로 전환">
         <span class="ko-dot"></span><span id="langlabel">한</span>
       </button>
+      <a class="btn btn-primary intake-cta" href="#intake" data-ko="프로젝트 접수" data-en="Start a project">프로젝트 접수</a>
       <div class="inq-dd pilot-cta" id="inqDd">
-        <button class="btn btn-primary" id="inqBtn" type="button" aria-haspopup="true" aria-expanded="false" data-ko="문의하기 ▾" data-en="Contact ▾">문의하기 ▾</button>
+        <button class="btn btn-ghost" id="inqBtn" type="button" aria-haspopup="true" aria-expanded="false" data-ko="문의하기 ▾" data-en="Contact ▾">문의하기 ▾</button>
         <div class="inq-menu" id="inqMenu" role="menu">
           <a href="#contact" data-inq="제휴 문의" role="menuitem"><b data-ko="제휴 문의" data-en="Partnership">제휴 문의</b><small data-ko="함께할 파트너·기관을 찾습니다" data-en="Partners & institutions">함께할 파트너·기관을 찾습니다</small></a>
           <a href="#contact" data-inq="국가별 구축 문의" role="menuitem"><b data-ko="국가별 구축 문의" data-en="Country build-out">국가별 구축 문의</b><small data-ko="KPN 구조를 귀국에서 — 현지 라이선스(로열티) · 일본·베트남·태국·대만 등" data-en="Run KPN in your country — local license (royalty) · Japan·Vietnam·Thailand·Taiwan, etc.">KPN 구조를 귀국에서 — 현지 라이선스(로열티) · 일본·베트남·태국·대만 등</small></a>
@@ -629,12 +631,11 @@
     </div>
   </div>
   <div class="mobile-menu" id="mobileMenu">
+    <a href="#intake" class="mm-intake" data-ko="프로젝트 접수 →" data-en="Start a project →">프로젝트 접수 →</a>
     <a href="#guide" data-ko="이용 가이드" data-en="How It Works">이용 가이드</a>
-    <a href="#segments" data-ko="고객 유형" data-en="Who it's for">고객 유형</a>
-    <a href="#demo" data-ko="사례 보기" data-en="See examples">사례 보기</a>
     <a href="#pricing" data-ko="요금제" data-en="Pricing">요금제</a>
+    <a href="#demo" data-ko="사례 보기" data-en="See examples">사례 보기</a>
     <a href="#council" data-ko="자문위원회" data-en="Council">자문위원회</a>
-    <a href="#intake" data-ko="프로젝트 접수" data-en="Intake">프로젝트 접수</a>
     <a href="#contact" class="mm-cta" data-inq="제휴 문의" data-ko="제휴 문의" data-en="Partnership">제휴 문의</a>
     <a href="#contact" class="mm-cta" data-inq="국가별 구축 문의" data-ko="국가별 구축 문의" data-en="Country build-out">국가별 구축 문의</a>
     <a href="#contact" class="mm-cta" data-inq="자문위원 문의" data-ko="자문위원 문의" data-en="Advisor recruitment">자문위원 문의</a>
