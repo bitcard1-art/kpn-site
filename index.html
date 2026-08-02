@@ -514,6 +514,8 @@
   .mcard .vbadge{font-family:var(--mono);font-size:11px;color:var(--answer);display:inline-flex;align-items:center;gap:6px}
   .mcard .vbadge .dot{width:6px;height:6px;border-radius:50%;background:var(--answer)}
   .mcard .mdid{font-family:var(--mono);font-size:10.5px;color:var(--muted-2)}
+  .mcard .mverify{font-family:var(--mono);font-size:10.5px;color:var(--answer);text-decoration:none;border-bottom:1px dotted rgba(47,184,168,.5);white-space:nowrap}
+  .mcard .mverify:hover{color:#fff;border-bottom-color:#fff}
   .mcard.pending .pending-tag{font-family:var(--mono);font-size:11px;color:var(--muted-2)}
   .mem-foot{margin-top:24px;font-family:var(--mono);font-size:12px;color:var(--muted-2);text-align:center}
 
@@ -1613,7 +1615,7 @@
     let foot;
     if (m.verified) {
       foot = '<span class="vbadge"><span class="dot"></span>' + (lang==='en'?'MCP-verified':'MCP 진본 검증됨') + '</span>'
-           + (m.did ? '<span class="mdid">' + esc(m.did) + '</span>' : '');
+           + (m.did ? '<span class="mdid">' + esc(m.did) + '</span> <a class="mverify" href="' + REPORT_BASE + '/verify/' + encodeURIComponent(m.did) + '" target="_blank" rel="noopener">' + (lang==='en'?'Verify →':'진본 조회 →') + '</a>' : '');
     } else {
       foot = '<span class="pending-tag">' + (lang==='en'?'Awaiting MCP verification':'MCP 검증 대기') + '</span>';
     }
@@ -1637,7 +1639,7 @@
       + '<div class="mname">' + (lang==='en'?'Youngdo Lee':'이영도') + '</div>'
       + '<div class="mrole">' + (lang==='en'?'IT Platform Architect · Digital & Data':'IT 플랫폼 아키텍트 · 디지털·플랫폼·데이터') + '</div>'
       + '<div class="mexp">' + (lang==='en'?'Decades as IT-company CEO · Information Processing Engineer · GS certification · ISMS-certified operations':'수십 년 IT 기업 CEO · 정보처리기사 · GS 인증 경험 · ISMS 인증 기업 운영 경험') + '</div>'
-      + '<div class="mfoot"><span class="vbadge"><span class="dot"></span>' + (lang==='en'?'MCP-verified':'MCP 진본 검증됨') + '</span><span class="mdid">did:mip:persona:lee-youngdo</span></div>'
+      + '<div class="mfoot"><span class="vbadge"><span class="dot"></span>' + (lang==='en'?'MCP-verified':'MCP 진본 검증됨') + '</span><span class="mdid">did:mip:persona:lee-youngdo</span> <a class="mverify" href="' + REPORT_BASE + '/verify/did:mip:persona:lee-youngdo" target="_blank" rel="noopener">' + (lang==='en'?'Verify →':'진본 조회 →') + '</a></div>'
       + '</article>';
   }
 
